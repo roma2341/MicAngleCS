@@ -24,7 +24,10 @@ namespace MicAngle
 	{
 		
 		int k;
-			k=(int) (SignalsManager.getDistance(x, y, Mn.x, Mn.y)*samplingRate/SignalsManager.V);
+            double distanceFromSoundEmiterToMic = SignalsManager.getDistance(x, y, Mn.x, Mn.y);
+            
+            k =(int) (distanceFromSoundEmiterToMic * samplingRate/SignalsManager.V);
+            System.Console.WriteLine("generated signal shift(k):"+k +" and distance:"+ distanceFromSoundEmiterToMic);
             int[] SMn = new int[signal.Length - k];
             int smLength = SMn.Length;
             Array.Copy(signal, k, SMn,0, smLength);

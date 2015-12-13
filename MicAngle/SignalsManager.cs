@@ -23,32 +23,38 @@ namespace MicAngle
 	}
     public static void shiftRight(int[,] source,int i,int n)
     {
-       // int []result = new int[source.Length];
-        for (int j = source.GetLength(1)-1; j >= 0; j--)
+            // int []result = new int[source.Length];
+          
+            for (int j = source.GetLength(1)-1; j >= 0; j--)
         {
             if (j - n < 0) source[i,j] = 0;
             else
             source[i,j] = source[i,j - n];
         }
-      //  return result;
-    }
+            Console.WriteLine("shift right");
+            //  return result;
+        }
         public static void shiftLeft(int[,] source, int i, int n)
         {
             // int []result = new int[source.Length];
+           
             for (int j = 0; j < source.GetLength(1); j++)
             {
                 if (j - n >= 0) 
                      source[i, j - n] = source[i, j];
             }
+            Console.WriteLine("shift left");
             //  return result;
         }
-        public static void shif(int[,] source, int i, int n)
+        public static void shift(int[,] source, int i, int n)
         {
+            if (n == 0) return;
             if (n >= 0) shiftRight(source, i, n);
             else shiftLeft(source, i, -n);
         }
         public static int[] shiftRight(int[] source, int n)
         {
+            Console.WriteLine("shift right");
             int[] result = new int[source.Length];
             for (int j = source.Length - 1; j >= 0; j--)
             {
@@ -81,10 +87,10 @@ namespace MicAngle
 				
 	}
 	 public double  interCorelationFunc(int[,] buf,long[] maxes=null,int leftBorder=0,int rightBorder=0){
-         const int MIC_COUNT = 2;
+       //  const int MIC_COUNT = 2;
 		 const int SHIFT_COUNT = 48;
          double result = 0;
-			int[] delays = new int[]{0,0,0,0};
+			int[] delays = new int[]{0,1,2,4};
 			//long[] SM = new long[buf1.Length];
 			///
         /* int[] buf1Saved =  new int[buf1.Length];
@@ -103,44 +109,54 @@ namespace MicAngle
              }*/
             Array.Copy(buf, 0, bufSaved, 0, buf.Length);
             ///
-            delays[0] = 0;
-                for (int l = 1; l < MIC_COUNT; l++)
-                {
-                    delays[l] = l;
+            //delays[0] = 0;
+              //  for (int l = 1; l < MIC_COUNT; l++)
+               // {
+                   // delays = new int[]{0,1,2,4};
                     int maxIndex = 0;
-                    long maxValue = long.MinValue;
+                    long maxValue = 0;
                     
                     for (int k = -SHIFT_COUNT; k < SHIFT_COUNT; k++)
                     {
-
+                Console.WriteLine("k:"+k);
                     long summ = 0;
-                    
-                    // buf[0]=shiftRight(buf[0], delays[l]);
-                    //  buf[1] = shiftRight(buf[1], delays[l]);
-                    for (int i = 0; i < buf.GetLength(0); i++)
-                        {
-                            shiftRight(buf,l, delays[l]);
-                        }
+                if (k==0) Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
 
-                        long[] SM = new long[buf.GetLength(1)];
-                        for (int i = 0; i < SM.Length; i++)
-                           SM[i] = 1;
-                        for (int j = 0+leftBorder; j < SM.Length-rightBorder; j++)//for (int j = 27000; j < SM.Length; j++)
-                    {
-                        for (int i = 0; i < Mn.Count; i++)
+                // buf[0]=shiftRight(buf[0], delays[l]);
+                //  buf[1] = shiftRight(buf[1], delays[l]);
+                for (int i = 0; i < buf.GetLength(0); i++)
                         {
-                            SM[j] *= buf[i,j];
+                              if (k<0)
+                            shift(buf,i, -delays[i]);
+                            else
+                     shift(buf, i, delays[i]);
+                    }
+
+                //  long[] SM = new long[buf.GetLength(1)];
+                
+                       // for (int i = 0; i < SM.Length; i++)
+                         //  SM[i] = 1;
+                        for (int j = 0+leftBorder; j < buf.GetLength(1) - rightBorder; j++)//for (int j = 27000; j < SM.Length; j++)
+                    {
+                    //Console.WriteLine("j:" + j);
+                    long summOfDifferentSignalValues = 1;
+                    for (int i = 0; i < Mn.Count; i++)
+                        {
+                        summOfDifferentSignalValues *= buf[i,j];
                            // Console.Write(buf[i][j]+" ");
                         }
-                                summ += SM[j]/10000000;
+                                summ += summOfDifferentSignalValues;
                               //  Console.Out.WriteLine("sum:" + summ);
                             }
                     //  Console.Out.WriteLine("MaxValue:" + maxValue);
                     if (maxes != null) maxes[k+SHIFT_COUNT] = summ;
-                    if (summ > maxValue)//Брати абсолютне значенння
+                Console.Out.WriteLine("before comparsion of  summ:" + summ + " and maxValue:" + maxValue);
+                if (Math.Abs(summ) > Math.Abs(maxValue))//Брати абсолютне значенння
+                //   if (summ > maxValue)
                         {
-                            maxValue = summ;
-                            maxIndex = k;
+                    Console.Out.WriteLine("index " + k+">"+maxIndex);
+                    maxValue = summ;
+                            maxIndex = (k );
                         }
                    
                     Console.Out.WriteLine("SUM:" + summ);
@@ -166,7 +182,7 @@ namespace MicAngle
                 }*/
                 Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
 
-            }
+            
 			return result;
 			}
 	 

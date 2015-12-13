@@ -22,3 +22,11 @@ C:\Users\roma\GDrive\4KURS\Science\MicAngle\MicAngle\obj\x86\Debug\MicAngle.cspr
 C:\Users\roma\GDrive\4KURS\Science\MicAngle\MicAngle\obj\x86\Debug\MicAngle.Form1.resources
 C:\Users\roma\GDrive\4KURS\Science\MicAngle\MicAngle\obj\x86\Debug\MicAngle.Properties.Resources.resources
 C:\Users\roma\GDrive\4KURS\Science\MicAngle\MicAngle\obj\x86\Debug\MicAngle.csproj.GenerateResource.Cache
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.exe
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.pdb
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\MicAngle.exe
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\MicAngle.pdb
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.csprojResolveAssemblyReference.cache
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.Form1.resources
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.Properties.Resources.resources
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.csproj.GenerateResource.Cache
