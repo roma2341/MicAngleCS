@@ -34,35 +34,39 @@ namespace MicAngle
             //for (int i = 0; i < signalsArr.Length;i++ )
             // signalsArr[i]=new int[signalValuesCount];
             const int SIGNAL_VALUES_TO_OUTPUT = 20;
-            Console.WriteLine("PROCESSING SIGNALS ON MICS...");
+           // Console.WriteLine("PROCESSING SIGNALS ON MICS...");
             for (int i = 0; i < sm.Mn.Count; i++)
                {
                    int[] arr = sm.Sn[0].generateSignal(sm.Mn[i]);
                 for (int j = 0; j < arr.Length; j++)
                 {
                     signalsArr[i, j] = arr[j];
-                    if (j< SIGNAL_VALUES_TO_OUTPUT)
-                    Console.Write(arr[j]+" ");
+                  //  if (j< SIGNAL_VALUES_TO_OUTPUT)
+                  //  Console.Write(arr[j]+" ");
                 }
-                Console.WriteLine();
+               // Console.WriteLine();
             }
-            Console.WriteLine("PROCESSING FINISHED.");
+         //   Console.WriteLine("PROCESSING FINISHED.");
             int SHIFT_COUNT = 48;
             long[] maxes = new long[SHIFT_COUNT*2];//*2 because need contains left and right shift
             double result =  sm.interCorelationFunc(signalsArr, maxes);
-            this.chartMaximum.Series.Clear();
-            Series series = this.chartMaximum.Series.Add("Intercorelation function\n value");
+            this.chartMaximum.Series[0].Points.Clear();
+            this.chartMaximum.Series[1].Points.Clear();
+            Series series = this.chartMaximum.Series[0];//.Add("Intercorelation function\n value");
+            Series seriesOfMax = this.chartMaximum.Series[1];//.Add("Intercorelation function\n value");
             this.chartMaximum.ChartAreas[0].AxisX.Maximum = SHIFT_COUNT;
             this.chartMaximum.ChartAreas[0].AxisX.Minimum = -SHIFT_COUNT;
-            long yMin = int.MaxValue;
-            long yMax = int.MinValue;
+            this.chartMaximum.ChartAreas[0].AxisX.Interval = 1;
+            long yMin = maxes.Min();
+            long yMax = maxes.Max();
             for (int i = -SHIFT_COUNT; i < SHIFT_COUNT; i++)
             {
                 long value = maxes[i + SHIFT_COUNT];
-                if (value > yMax) yMax = value;
-                if (value < yMin) yMin = value;
+                if (value==yMax || value==yMin)
+                    seriesOfMax.Points.AddXY(i, value);
+                else
                 series.Points.AddXY(i, value);
-                Console.WriteLine("series max[ " + i + "]=" + maxes[i+ SHIFT_COUNT]);
+               // Console.WriteLine("series max[ " + i + "]=" + maxes[i+ SHIFT_COUNT]);
             }
             this.chartMaximum.ChartAreas[0].AxisY.Minimum = yMin;
             this.chartMaximum.ChartAreas[0].AxisY.Maximum = yMax;

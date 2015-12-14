@@ -118,7 +118,7 @@ namespace MicAngle
                     
                     for (int k = -SHIFT_COUNT; k < SHIFT_COUNT; k++)
                     {
-                Console.WriteLine("k:"+k);
+               // Console.WriteLine("k:"+k);
                     long summ = 0;
                 if (k==0) Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
 
@@ -138,7 +138,6 @@ namespace MicAngle
                          //  SM[i] = 1;
                         for (int j = 0+leftBorder; j < buf.GetLength(1) - rightBorder; j++)//for (int j = 27000; j < SM.Length; j++)
                     {
-                    //Console.WriteLine("j:" + j);
                     long summOfDifferentSignalValues = 1;
                     for (int i = 0; i < Mn.Count; i++)
                         {
@@ -150,11 +149,11 @@ namespace MicAngle
                             }
                     //  Console.Out.WriteLine("MaxValue:" + maxValue);
                     if (maxes != null) maxes[k+SHIFT_COUNT] = summ;
-                Console.Out.WriteLine("before comparsion of  summ:" + summ + " and maxValue:" + maxValue);
+               // Console.Out.WriteLine("before comparsion of  summ:" + summ + " and maxValue:" + maxValue);
                 if (Math.Abs(summ) > Math.Abs(maxValue))//Брати абсолютне значенння
                 //   if (summ > maxValue)
                         {
-                    Console.Out.WriteLine("index " + k+">"+maxIndex);
+                   // Console.Out.WriteLine("index " + k+">"+maxIndex);
                     maxValue = summ;
                             maxIndex = (k );
                         }
