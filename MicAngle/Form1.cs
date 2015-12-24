@@ -12,11 +12,14 @@ namespace MicAngle
 {
     public partial class Form1 : Form
     {
+        MapForm mapForm;
+        bool mapShowed = false;
         SignalsManager sm;
         int dataInputCounter=0;
         public Form1()
         {
             InitializeComponent();
+            mapForm = new MapForm(this);
         }
 
         private void btnProcessAngle_Click(object sender, EventArgs e)
@@ -82,8 +85,21 @@ namespace MicAngle
             sm.addMicrophoneFromString(rtbSettings.Text);
             dataInputCounter++;
         }
-        
 
-   
+        private void btnToggleMap_Click(object sender, EventArgs e)
+        {
+            if (mapShowed)
+            {
+                btnToggleMap.Text = "Показати карту";
+                mapForm.Hide();
+               
+            }
+            else
+            {
+                btnToggleMap.Text = "Сховати карту";
+                mapForm.Show();
+            }
+            mapShowed = !mapShowed;
+        }
     }
 }
