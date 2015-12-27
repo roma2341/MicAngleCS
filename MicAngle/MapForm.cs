@@ -73,6 +73,7 @@ namespace MicAngle
             markersCollection.Add(marker2);
             markersCollection.Add(marker3);
             markersCollection.Add(marker4);
+            //fake commit
             map.Markers = markersCollection;
             var imgTagSrc = map.ToUri();
             mapBrowser.Url = imgTagSrc;
