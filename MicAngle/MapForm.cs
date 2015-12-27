@@ -7,23 +7,31 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Google.Maps.StaticMaps;
+using System.Net;
+using GMap.NET;
+using GMap.NET.WindowsForms.Markers;
+using GMap.NET.WindowsForms;
 
 namespace MicAngle
 {
     public partial class MapForm : Form
     {
         Form1 parent;
+        public SignalsManager signalsManger { get; set; }
         enum CoordTypeMode {COORD_MODE_DECART,COORD_MODE_GEO};
         CoordTypeMode coordTypeMode = CoordTypeMode.COORD_MODE_GEO;
-        public MapForm(Form1 parent)
+        public MapForm(Form1 parent, SignalsManager sm)
         {
             InitializeComponent();
             this.parent = parent;
+            signalsManger = sm;
         }
 
         private void MapForm_Load(object sender, EventArgs e)
         {
-
+            mapControl.MapProvider = GMap.NET.MapProviders.GMapProviders.GoogleMap;
+            GMap.NET.GMaps.Instance.Mode = GMap.NET.AccessMode.ServerOnly;
+           // mapControl.SetCurrentPositionByKeywords("Maputo, Mozambique");
         }
 
         private bool readGeoCoord(ref Point pt)
@@ -55,28 +63,17 @@ namespace MicAngle
         {
             Point coord = new Point();
             if(!readGeoCoord(ref coord)) return;
+           
+            ////
+            GMapOverlay markersOverlay = new GMapOverlay("markers");
+            GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(-25.966688, 32.580528),
+              GMarkerGoogleType.green);
+            mapControl.Overlays.Clear();
+            markersOverlay.Markers.Add(marker);
+            mapControl.Overlays.Add(markersOverlay);
+            mapControl.Position = new PointLatLng(coord.X, coord.Y);
 
-            var map = new StaticMapRequest();
-            //map.Center = new Google.Maps.Location("1600 Amphitheatre Parkay Mountain View, CA 94043");
-            map.Size = new System.Drawing.Size(mapBrowser.Width, mapBrowser.Height);
-            map.Zoom = 18;
-            map.Sensor = false;
-            map.Center = new Google.Maps.LatLng(coord.X, coord.Y);
-
-            var marker1 = new Google.Maps.LatLng(coord.X, coord.Y);
-            var marker2 = new Google.Maps.LatLng(coord.X + 0.0002, coord.Y + 0.0002);
-            var marker3 = new Google.Maps.LatLng(coord.X + 0.0003, coord.Y + 0.0003);
-            var marker4 = new Google.Maps.LatLng(coord.X + 0.0004, coord.Y + 0.0004);
-            var markersArr = new Google.Maps.Location[4] { marker1, marker2, marker3, marker4 };
-            Google.Maps.MapMarkersCollection markersCollection = new Google.Maps.MapMarkersCollection();
-            markersCollection.Add(marker1);
-            markersCollection.Add(marker2);
-            markersCollection.Add(marker3);
-            markersCollection.Add(marker4);
-            //fake commit
-            map.Markers = markersCollection;
-            var imgTagSrc = map.ToUri();
-            mapBrowser.Url = imgTagSrc;
+            //mapBrowser.Url = imgTagSrc;
         }
 
         private void rbCoordType_Clicked(object sender, EventArgs e)
@@ -118,6 +115,49 @@ namespace MicAngle
                 
                 coordTypeMode = CoordTypeMode.COORD_MODE_GEO;
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (signalsManger.Mn.Count == 0) return;
+            int zoom = 0;
+            int.TryParse(tbZoom.Text, out zoom);
+            Point geoCoordOfMicrophone = signalsManger.Mn[0].GeoPosition;
+
+            //map.Center = new Google.Maps.Location("1600 Amphitheatre Parkay Mountain View, CA 94043");
+
+           
+            mapControl.Zoom = zoom;
+            mapControl.Overlays.Clear();
+            GMapOverlay markersOverlay = new GMapOverlay("markers");
+            
+            foreach (Microphone mic in signalsManger.Mn)
+            {
+                GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(mic.GeoPosition.X, mic.GeoPosition.Y),
+                 GMarkerGoogleType.green);
+                markersOverlay.Markers.Add(marker);
+            }
+           
+            mapControl.Overlays.Add(markersOverlay);
+            mapControl.Position = new PointLatLng(geoCoordOfMicrophone.X, geoCoordOfMicrophone.Y);
+
+
+
+            ////
+
+
+            /*System.Drawing.Image mapImage = System.Drawing.Image.FromStream(wc.OpenRead(imgTagSrc));
+            System.Drawing.Pen blackPen = new System.Drawing.Pen(System.Drawing.Color.Black, 3);
+            using (var graphics = System.Drawing.Graphics.FromImage(mapImage))
+            {
+                graphics.DrawLine(blackPen, 0, 0, 50, 50);
+            }*/
+
+        }
+
+        private void MapForm_Resize(object sender, EventArgs e)
+        {
+
         }
     }
 }

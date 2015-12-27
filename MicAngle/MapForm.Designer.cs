@@ -38,12 +38,15 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.labelZoom = new System.Windows.Forms.Label();
+            this.tbZoom = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnTestMap = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.gbCoordType = new System.Windows.Forms.GroupBox();
             this.rbGeo = new System.Windows.Forms.RadioButton();
             this.rbDecart = new System.Windows.Forms.RadioButton();
-            this.mapBrowser = new System.Windows.Forms.WebBrowser();
+            this.mapControl = new GMap.NET.WindowsForms.GMapControl();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -62,7 +65,7 @@
             this.tbLatitude.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbLatitude.Location = new System.Drawing.Point(77, 3);
             this.tbLatitude.Name = "tbLatitude";
-            this.tbLatitude.Size = new System.Drawing.Size(235, 20);
+            this.tbLatitude.Size = new System.Drawing.Size(248, 20);
             this.tbLatitude.TabIndex = 0;
             this.tbLatitude.Text = "49,226718";
             // 
@@ -71,7 +74,7 @@
             this.tbLongtitude.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbLongtitude.Location = new System.Drawing.Point(77, 29);
             this.tbLongtitude.Name = "tbLongtitude";
-            this.tbLongtitude.Size = new System.Drawing.Size(235, 20);
+            this.tbLongtitude.Size = new System.Drawing.Size(248, 20);
             this.tbLongtitude.TabIndex = 1;
             this.tbLongtitude.Text = "28,4062673";
             // 
@@ -91,7 +94,7 @@
             this.labelLongtitude.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labelLongtitude.Location = new System.Drawing.Point(3, 26);
             this.labelLongtitude.Name = "labelLongtitude";
-            this.labelLongtitude.Size = new System.Drawing.Size(68, 154);
+            this.labelLongtitude.Size = new System.Drawing.Size(68, 26);
             this.labelLongtitude.TabIndex = 3;
             this.labelLongtitude.Text = "Longtitude(y)";
             // 
@@ -101,7 +104,8 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Location = new System.Drawing.Point(12, 12);
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -110,9 +114,9 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.mapBrowser);
-            this.splitContainer1.Size = new System.Drawing.Size(813, 515);
-            this.splitContainer1.SplitterDistance = 315;
+            this.splitContainer1.Panel2.Controls.Add(this.mapControl);
+            this.splitContainer1.Size = new System.Drawing.Size(847, 581);
+            this.splitContainer1.SplitterDistance = 328;
             this.splitContainer1.TabIndex = 7;
             // 
             // splitContainer2
@@ -129,8 +133,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.flowLayoutPanel1);
-            this.splitContainer2.Size = new System.Drawing.Size(315, 515);
-            this.splitContainer2.SplitterDistance = 180;
+            this.splitContainer2.Size = new System.Drawing.Size(328, 581);
+            this.splitContainer2.SplitterDistance = 203;
             this.splitContainer2.TabIndex = 8;
             // 
             // tableLayoutPanel1
@@ -138,39 +142,72 @@
             this.tableLayoutPanel1.AutoSize = true;
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.labelLatitude, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.labelLongtitude, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.tbLatitude, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.tbLongtitude, 1, 1);
+            this.tableLayoutPanel1.Controls.Add(this.labelZoom, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.tbZoom, 1, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
+            this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(315, 180);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(328, 203);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // labelZoom
+            // 
+            this.labelZoom.AutoSize = true;
+            this.labelZoom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelZoom.Location = new System.Drawing.Point(3, 52);
+            this.labelZoom.Name = "labelZoom";
+            this.labelZoom.Size = new System.Drawing.Size(68, 151);
+            this.labelZoom.TabIndex = 4;
+            this.labelZoom.Text = "Zoom";
+            // 
+            // tbZoom
+            // 
+            this.tbZoom.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tbZoom.Location = new System.Drawing.Point(77, 55);
+            this.tbZoom.Name = "tbZoom";
+            this.tbZoom.Size = new System.Drawing.Size(248, 20);
+            this.tbZoom.TabIndex = 5;
+            this.tbZoom.Text = "16";
             // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this.btnTestMap);
+            this.flowLayoutPanel1.Controls.Add(this.button1);
             this.flowLayoutPanel1.Controls.Add(this.gbCoordType);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(315, 331);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(328, 374);
             this.flowLayoutPanel1.TabIndex = 1;
             // 
             // btnTestMap
             // 
             this.btnTestMap.Location = new System.Drawing.Point(3, 3);
             this.btnTestMap.Name = "btnTestMap";
-            this.btnTestMap.Size = new System.Drawing.Size(182, 23);
+            this.btnTestMap.Size = new System.Drawing.Size(73, 23);
             this.btnTestMap.TabIndex = 6;
-            this.btnTestMap.Text = "Тест карти";
+            this.btnTestMap.Text = "Тест мапи";
             this.btnTestMap.UseVisualStyleBackColor = true;
             this.btnTestMap.Click += new System.EventHandler(this.btnTestMap_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(82, 3);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(177, 23);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "Відобразити обрахунки на мапі";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // gbCoordType
             // 
@@ -209,14 +246,32 @@
             this.rbDecart.UseVisualStyleBackColor = true;
             this.rbDecart.Click += new System.EventHandler(this.rbCoordType_Clicked);
             // 
-            // mapBrowser
+            // mapControl
             // 
-            this.mapBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.mapBrowser.Location = new System.Drawing.Point(0, 0);
-            this.mapBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-            this.mapBrowser.Name = "mapBrowser";
-            this.mapBrowser.Size = new System.Drawing.Size(494, 515);
-            this.mapBrowser.TabIndex = 7;
+            this.mapControl.Bearing = 0F;
+            this.mapControl.CanDragMap = true;
+            this.mapControl.Cursor = System.Windows.Forms.Cursors.Cross;
+            this.mapControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mapControl.EmptyTileColor = System.Drawing.Color.Navy;
+            this.mapControl.GrayScaleMode = false;
+            this.mapControl.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
+            this.mapControl.LevelsKeepInMemmory = 5;
+            this.mapControl.Location = new System.Drawing.Point(0, 0);
+            this.mapControl.MarkersEnabled = true;
+            this.mapControl.MaxZoom = 20;
+            this.mapControl.MinZoom = 2;
+            this.mapControl.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
+            this.mapControl.Name = "mapControl";
+            this.mapControl.NegativeMode = false;
+            this.mapControl.PolygonsEnabled = true;
+            this.mapControl.RetryLoadTile = 0;
+            this.mapControl.RoutesEnabled = true;
+            this.mapControl.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
+            this.mapControl.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
+            this.mapControl.ShowTileGridLines = false;
+            this.mapControl.Size = new System.Drawing.Size(515, 581);
+            this.mapControl.TabIndex = 0;
+            this.mapControl.Zoom = 0D;
             // 
             // MapForm
             // 
@@ -228,6 +283,7 @@
             this.Text = "MapForm";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MapForm_FormClosing);
             this.Load += new System.EventHandler(this.MapForm_Load);
+            this.Resize += new System.EventHandler(this.MapForm_Resize);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -255,7 +311,6 @@
         private System.Windows.Forms.ToolTip toolTipLongtitude;
         private System.Windows.Forms.ToolTip toolTipLatitude;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.WebBrowser mapBrowser;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.SplitContainer splitContainer2;
@@ -263,5 +318,9 @@
         private System.Windows.Forms.GroupBox gbCoordType;
         private System.Windows.Forms.RadioButton rbGeo;
         private System.Windows.Forms.RadioButton rbDecart;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label labelZoom;
+        private System.Windows.Forms.TextBox tbZoom;
+        private GMap.NET.WindowsForms.GMapControl mapControl;
     }
 }

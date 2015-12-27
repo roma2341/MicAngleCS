@@ -28,10 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.btnProcessAngle = new System.Windows.Forms.Button();
             this.rtbSettings = new System.Windows.Forms.RichTextBox();
             this.btnInputData = new System.Windows.Forms.Button();
@@ -63,7 +63,9 @@
             this.rtbSettings.Name = "rtbSettings";
             this.rtbSettings.Size = new System.Drawing.Size(409, 83);
             this.rtbSettings.TabIndex = 2;
-            this.rtbSettings.Text = "З(X:-100;y:100;A:1,0;F:44100)\nМ(X:10;y:-10)\nМ(X:10,47;y:-10)";
+            this.rtbSettings.Text = "//На карті світу, мікрофони біля гуртожитку 5=) \nЗ(X:5479843,48118407;y:3300192,0" +
+    "3251104;A:1,0;F:16000)\nМ(X:5479893,18118407;y:3300292,03251104)\nМ(X:5479893,4811" +
+    "8407;y:3300292,03251104)";
             // 
             // btnInputData
             // 
@@ -108,35 +110,35 @@
             // 
             // chartMaximum
             // 
-            chartArea4.Area3DStyle.IsRightAngleAxes = false;
-            chartArea4.AxisX.Title = "Номер зсуву";
-            chartArea4.AxisY.Title = "Сумма сигналів";
-            chartArea4.BackColor = System.Drawing.Color.Black;
-            chartArea4.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.DiagonalRight;
-            chartArea4.BackSecondaryColor = System.Drawing.Color.Azure;
-            chartArea4.CursorX.IsUserSelectionEnabled = true;
-            chartArea4.Name = "ChartArea1";
-            this.chartMaximum.ChartAreas.Add(chartArea4);
+            chartArea1.Area3DStyle.IsRightAngleAxes = false;
+            chartArea1.AxisX.Title = "Номер зсуву";
+            chartArea1.AxisY.Title = "Сумма сигналів";
+            chartArea1.BackColor = System.Drawing.Color.Black;
+            chartArea1.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.DiagonalRight;
+            chartArea1.BackSecondaryColor = System.Drawing.Color.Azure;
+            chartArea1.CursorX.IsUserSelectionEnabled = true;
+            chartArea1.Name = "ChartArea1";
+            this.chartMaximum.ChartAreas.Add(chartArea1);
             this.chartMaximum.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend4.Name = "Legend1";
-            this.chartMaximum.Legends.Add(legend4);
+            legend1.Name = "Legend1";
+            this.chartMaximum.Legends.Add(legend1);
             this.chartMaximum.Location = new System.Drawing.Point(0, 0);
             this.chartMaximum.Name = "chartMaximum";
-            series7.BorderWidth = 4;
-            series7.ChartArea = "ChartArea1";
-            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series7.Legend = "Legend1";
-            series7.Name = "Сума сигналів";
-            series8.BorderWidth = 4;
-            series8.ChartArea = "ChartArea1";
-            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
-            series8.Legend = "Legend1";
-            series8.MarkerColor = System.Drawing.Color.Red;
-            series8.MarkerSize = 10;
-            series8.Name = "Максимальна сума сигналів";
-            series8.YValuesPerPoint = 2;
-            this.chartMaximum.Series.Add(series7);
-            this.chartMaximum.Series.Add(series8);
+            series1.BorderWidth = 4;
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series1.Legend = "Legend1";
+            series1.Name = "Сума сигналів";
+            series2.BorderWidth = 4;
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+            series2.Legend = "Legend1";
+            series2.MarkerColor = System.Drawing.Color.Red;
+            series2.MarkerSize = 10;
+            series2.Name = "Максимальна сума сигналів";
+            series2.YValuesPerPoint = 2;
+            this.chartMaximum.Series.Add(series1);
+            this.chartMaximum.Series.Add(series2);
             this.chartMaximum.Size = new System.Drawing.Size(952, 477);
             this.chartMaximum.TabIndex = 1;
             this.chartMaximum.Text = "chart1";

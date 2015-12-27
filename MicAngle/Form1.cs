@@ -19,7 +19,9 @@ namespace MicAngle
         public Form1()
         {
             InitializeComponent();
-            mapForm = new MapForm(this);
+            sm = new SignalsManager();
+            mapForm = new MapForm(this,sm);
+
         }
 
         private void btnProcessAngle_Click(object sender, EventArgs e)
@@ -80,7 +82,7 @@ namespace MicAngle
         private void btnInputData_Click(object sender, EventArgs e)
         {
             if (rtbSettings.Text.Length < 1) return;
-            sm = new SignalsManager();
+            sm.clear();
             sm.addSoundEmiterFromString(rtbSettings.Text);
             sm.addMicrophoneFromString(rtbSettings.Text);
             dataInputCounter++;

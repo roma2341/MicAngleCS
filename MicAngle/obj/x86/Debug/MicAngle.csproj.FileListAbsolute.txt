@@ -36,3 +36,7 @@ C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\Newtonsoft.Json
 C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\MicAngle.exe.config
 C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\Google.Maps.dll
 C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\Google.Maps.pdb
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\GMap.NET.Core.dll
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\GMap.NET.WindowsForms.dll
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\GMap.NET.Core.xml
+C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\GMap.NET.WindowsForms.xml

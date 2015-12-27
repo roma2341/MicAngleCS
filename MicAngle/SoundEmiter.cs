@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MicAngle
 {
-    class SoundEmiter
+    public class SoundEmiter
     {
         public SoundEmiter(double x, double y, double A, int samplingRate)
         {
@@ -24,7 +24,7 @@ namespace MicAngle
 	{
 		
 		int k;
-            double distanceFromSoundEmiterToMic = SignalsManager.getDistance(x, y, Mn.x, Mn.y);
+            double distanceFromSoundEmiterToMic = SignalsManager.getDistance(x, y, Mn.X, Mn.Y);
             
             k =(int) (distanceFromSoundEmiterToMic * samplingRate/SignalsManager.V);
             System.Console.WriteLine("generated signal shift(k):"+k +" and distance:"+ distanceFromSoundEmiterToMic);

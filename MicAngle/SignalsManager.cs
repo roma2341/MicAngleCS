@@ -6,17 +6,22 @@ using System.Text.RegularExpressions;
 
 namespace MicAngle
 {
-    class SignalsManager
+    public class SignalsManager
     {
     static short MAX_SHORT = 32767;//32767
 	public static double V =300;
    public List<SoundEmiter> Sn { get; set; }
-    public List<Microphone> Mn { get; set; }
+     public List<Microphone> Mn { get; set; }
 
 	public SignalsManager(){
 		Sn = new List<SoundEmiter>();
 		Mn = new List<Microphone>();
 	}
+        public void clear()
+        {
+            Sn.Clear();
+            Mn.Clear();
+        }
 	public static int generateSignal(int t,double A,int F,int samplingRate){
 		int signal = (int) (A * Math.Sin(2.0*Math.PI*t*F/samplingRate)*(double)MAX_SHORT+A/2);
 		return signal;
@@ -164,7 +169,7 @@ namespace MicAngle
                     //System.out.println("summ:"+summ);
                 }
               
-                double L = SignalsManager.getDistance(Mn[0].x, Mn[0].y, Mn[1].x, Mn[1].y);
+                double L = SignalsManager.getDistance(Mn[0].X, Mn[0].Y, Mn[1].X, Mn[1].Y);
                     double cosA = V * (double)maxIndex / (L * (double)Sn[0].samplingRate);
                     double arcCosA = Math.Acos(cosA);
                 result = arcCosA * 180 / Math.PI;
