@@ -18,8 +18,9 @@ namespace MicAngle
         private const double OriginShift = 2 * Math.PI * EarthRadius / 2;
 
         //Converts given lat/lon in WGS84 Datum to XY in Spherical Mercator EPSG:900913
-        public static Point LatLonToMeters(double lat, double lon)
+        public static Point LatLonToMeters(double lon, double lat)
         {
+            Console.WriteLine("LatLonToMeters lat:" + lat+ " lon:" + lon);
             var p = new Point();
             p.X = lon * OriginShift / 180;
             p.Y = Math.Log(Math.Tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180);
@@ -30,13 +31,14 @@ namespace MicAngle
         //Converts XY point from Spherical Mercator EPSG:900913 to lat/lon in WGS84 Datum
         public static Point MetersToLatLon(Point m)
         {
+            Console.WriteLine("MetersToLatLon x:"+m.X+" y:"+m.Y);
             var ll = new Point();
             ll.X = (m.X / OriginShift) * 180;
             ll.Y = (m.Y / OriginShift) * 180;
             ll.Y = 180 / Math.PI * (2 * Math.Atan(Math.Exp(ll.Y * Math.PI / 180)) - Math.PI / 2);
             return ll;
         }
-
+        
         //Converts pixel coordinates in given zoom level of pyramid to EPSG:900913
         public static Point PixelsToMeters(Point p, int zoom)
         {
