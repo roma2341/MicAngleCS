@@ -52,21 +52,21 @@ namespace MicAngle
                // Console.WriteLine();
             }
          //   Console.WriteLine("PROCESSING FINISHED.");
-            int SHIFT_COUNT = 48;
-            long[] maxes = new long[SHIFT_COUNT*2];//*2 because need contains left and right shift
+    
+            long[] maxes = new long[SignalsManager.SHIFT_COUNT];//*2 because need contains left and right shift
             double result =  sm.interCorelationFunc(signalsArr, maxes);
             this.chartMaximum.Series[0].Points.Clear();
             this.chartMaximum.Series[1].Points.Clear();
             Series series = this.chartMaximum.Series[0];//.Add("Intercorelation function\n value");
             Series seriesOfMax = this.chartMaximum.Series[1];//.Add("Intercorelation function\n value");
-            this.chartMaximum.ChartAreas[0].AxisX.Maximum = SHIFT_COUNT;
-            this.chartMaximum.ChartAreas[0].AxisX.Minimum = -SHIFT_COUNT;
+            this.chartMaximum.ChartAreas[0].AxisX.Maximum = SignalsManager.SHIFT_COUNT;
+            this.chartMaximum.ChartAreas[0].AxisX.Minimum = 0;
             this.chartMaximum.ChartAreas[0].AxisX.Interval = 1;
             long yMin = maxes.Min();
             long yMax = maxes.Max();
-            for (int i = -SHIFT_COUNT; i < SHIFT_COUNT; i++)
+            for (int i = 0; i < SignalsManager.SHIFT_COUNT; i++)
             {
-                long value = maxes[i + SHIFT_COUNT];
+                long value = maxes[i];
                 if (value==yMax || value==yMin)
                     seriesOfMax.Points.AddXY(i, value);
                 else
@@ -102,6 +102,11 @@ namespace MicAngle
                 mapForm.Show();
             }
             mapShowed = !mapShowed;
+        }
+
+        private void rtbSettings_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -8,7 +8,8 @@ namespace MicAngle
 {
     public class SignalsManager
     {
-    static short MAX_SHORT = 32767;//32767
+        public const int SHIFT_COUNT = 48;
+        static short MAX_SHORT = short.MaxValue;//32767
 	public static double V =300;
    public List<SoundEmiter> Sn { get; set; }
      public List<Microphone> Mn { get; set; }
@@ -91,17 +92,27 @@ namespace MicAngle
 		return result;
 				
 	}
-	 public double  interCorelationFunc(int[,] buf,long[] maxes=null,int leftBorder=0,int rightBorder=0){
+	 public double  interCorelationFunc(int[,] buf,long[] maxes=null,int elementsInMiddle = 10000){
        //  const int MIC_COUNT = 2;
-		 const int SHIFT_COUNT = 48;
+		
          double result = 0;
 			int[] delays = new int[]{0,1,2,4};
-			//long[] SM = new long[buf1.Length];
-			///
-        /* int[] buf1Saved =  new int[buf1.Length];
-			buf1.CopyTo(buf1Saved,0);
-         int[] buf2Saved =  new int[buf2.Length];
-			buf2.CopyTo(buf2Saved,0);*/
+
+            /*
+            *Визначаєм затримку для повороту планки, але покищо працює лише статично заданий варіант
+            for (int i = 1; i < Mn.Count; i++)
+            {
+                double distanceFromSoundEmiterToMic = getDistance(Mn[0].X, Mn[0].Y, Mn[i].X, Mn[i].Y);
+                delays[i] = (int)(distanceFromSoundEmiterToMic * Sn[0].samplingRate / V);
+                Console.WriteLine("delay["+i+"]="+delays[i]);
+            }
+            */
+            //long[] SM = new long[buf1.Length];
+            ///
+            /* int[] buf1Saved =  new int[buf1.Length];
+                buf1.CopyTo(buf1Saved,0);
+             int[] buf2Saved =  new int[buf2.Length];
+                buf2.CopyTo(buf2Saved,0);*/
             int[,] bufSaved = new int[buf.GetLength(0),buf.GetLength(1)];
             /* for (int i = 0; i < bufSaved.GetLength(0); i++)
              {
@@ -121,7 +132,7 @@ namespace MicAngle
                     int maxIndex = 0;
                     long maxValue = 0;
                     
-                    for (int k = -SHIFT_COUNT; k < SHIFT_COUNT; k++)
+                    for (int k = 0; k < SHIFT_COUNT; k++)
                     {
                // Console.WriteLine("k:"+k);
                     long summ = 0;
@@ -138,43 +149,51 @@ namespace MicAngle
                     }
 
                 //  long[] SM = new long[buf.GetLength(1)];
-                
-                       // for (int i = 0; i < SM.Length; i++)
-                         //  SM[i] = 1;
-                        for (int j = 0+leftBorder; j < buf.GetLength(1) - rightBorder; j++)//for (int j = 27000; j < SM.Length; j++)
+
+                // for (int i = 0; i < SM.Length; i++)
+                //  SM[i] = 1;
+                int middleOfSignalArray = buf.GetLength(1) / 2;
+                int startIndex = middleOfSignalArray - elementsInMiddle / 2;
+                int endIndex = startIndex + elementsInMiddle;
+                        for (int j = startIndex; j < endIndex; j++)//for (int j = 27000; j < SM.Length; j++)
                     {
                     long summOfDifferentSignalValues = 1;
                     for (int i = 0; i < Mn.Count; i++)
                         {
                         summOfDifferentSignalValues *= buf[i,j];
-                           // Console.Write(buf[i][j]+" ");
-                        }
+                        //Console.Out.WriteLine("i="+i+" j="+j+ " buf=" + buf[i,j]);
+                        // Console.Write(buf[i][j]+" ");
+                    }
                                 summ += summOfDifferentSignalValues;
                               //  Console.Out.WriteLine("sum:" + summ);
                             }
-                    //  Console.Out.WriteLine("MaxValue:" + maxValue);
-                    if (maxes != null) maxes[k+SHIFT_COUNT] = summ;
+                long absSumm = Math.Abs(summ);
+                summ = (long)Math.Sqrt(absSumm);
+                    if (maxes != null) maxes[k] = summ;
                // Console.Out.WriteLine("before comparsion of  summ:" + summ + " and maxValue:" + maxValue);
                 if (Math.Abs(summ) > Math.Abs(maxValue))//Брати абсолютне значенння
-                //   if (summ > maxValue)
                         {
                    // Console.Out.WriteLine("index " + k+">"+maxIndex);
-                    maxValue = summ;
+                            maxValue = summ;
                             maxIndex = (k );
                         }
                    
                     Console.Out.WriteLine("SUM:" + summ);
                     Console.Out.WriteLine("MAX_SUM:" + maxValue);
                     Console.Out.WriteLine("MAX_INDEX:" + maxIndex);
-                    //System.out.println("summ:"+summ);
-                }
-              
                 double L = SignalsManager.getDistance(Mn[0].X, Mn[0].Y, Mn[1].X, Mn[1].Y);
-                    double cosA = V * (double)maxIndex / (L * (double)Sn[0].samplingRate);
-                    double arcCosA = Math.Acos(cosA);
-                result = arcCosA * 180 / Math.PI;
+                // Console.WriteLine("L:" + L);
+                double cosA = 0, arcCosA = 0;
+                    cosA = V * (double)maxIndex / (L * (double)Sn[0].samplingRate);
+                    arcCosA = Math.Acos(cosA);
+                    result = arcCosA * 180 / Math.PI;
+               
 
-                    Console.Out.WriteLine("maxIndex:" + maxIndex + "cos:" + cosA + " Alpha:" + result);
+                Console.Out.WriteLine("maxIndex:" + maxIndex + "cos:" + cosA + " Alpha:" + result);
+                //System.out.println("summ:"+summ);
+            }
+              
+             
 
                 //buffer=savedBuffer;
 

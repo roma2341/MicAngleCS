@@ -36,7 +36,7 @@ namespace MicAngle
 	}
         public int processEmiterArr(int timeRange, int samplingRate, int F)
         {
-           signal = new int[(int)(samplingRate * timeRange)];
+           signal = new int[(samplingRate * timeRange)];
             //	double step = 1.0/samplingRate; 
             //	double t=0;
             for (int l = 0; l < signal.Length; l++)
