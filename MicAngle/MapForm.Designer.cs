@@ -42,7 +42,7 @@
             this.tbZoom = new System.Windows.Forms.TextBox();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnTestMap = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnProcessMap = new System.Windows.Forms.Button();
             this.gbCoordType = new System.Windows.Forms.GroupBox();
             this.rbGeo = new System.Windows.Forms.RadioButton();
             this.rbDecart = new System.Windows.Forms.RadioButton();
@@ -181,7 +181,7 @@
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this.btnTestMap);
-            this.flowLayoutPanel1.Controls.Add(this.button1);
+            this.flowLayoutPanel1.Controls.Add(this.btnProcessMap);
             this.flowLayoutPanel1.Controls.Add(this.gbCoordType);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
@@ -199,15 +199,15 @@
             this.btnTestMap.UseVisualStyleBackColor = true;
             this.btnTestMap.Click += new System.EventHandler(this.btnTestMap_Click);
             // 
-            // button1
+            // btnProcessMap
             // 
-            this.button1.Location = new System.Drawing.Point(82, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(177, 23);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Відобразити обрахунки на мапі";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnProcessMap.Location = new System.Drawing.Point(82, 3);
+            this.btnProcessMap.Name = "btnProcessMap";
+            this.btnProcessMap.Size = new System.Drawing.Size(177, 23);
+            this.btnProcessMap.TabIndex = 8;
+            this.btnProcessMap.Text = "Відобразити обрахунки на мапі";
+            this.btnProcessMap.UseVisualStyleBackColor = true;
+            this.btnProcessMap.Click += new System.EventHandler(this.btnProcessMap_Click);
             // 
             // gbCoordType
             // 
@@ -258,7 +258,7 @@
             this.mapControl.LevelsKeepInMemmory = 5;
             this.mapControl.Location = new System.Drawing.Point(0, 0);
             this.mapControl.MarkersEnabled = true;
-            this.mapControl.MaxZoom = 20;
+            this.mapControl.MaxZoom = 30;
             this.mapControl.MinZoom = 2;
             this.mapControl.MouseWheelZoomType = GMap.NET.MouseWheelZoomType.MousePositionAndCenter;
             this.mapControl.Name = "mapControl";
@@ -318,7 +318,7 @@
         private System.Windows.Forms.GroupBox gbCoordType;
         private System.Windows.Forms.RadioButton rbGeo;
         private System.Windows.Forms.RadioButton rbDecart;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnProcessMap;
         private System.Windows.Forms.Label labelZoom;
         private System.Windows.Forms.TextBox tbZoom;
         private GMap.NET.WindowsForms.GMapControl mapControl;

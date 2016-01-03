@@ -14,6 +14,7 @@ namespace MicAngle
     {
         MapForm mapForm;
         bool mapShowed = false;
+       public double resultAngle { get; set; }
         SignalsManager sm;
         int dataInputCounter=0;
         public Form1()
@@ -42,7 +43,13 @@ namespace MicAngle
            // Console.WriteLine("PROCESSING SIGNALS ON MICS...");
             for (int i = 0; i < sm.Mn.Count; i++)
                {
-                   int[] arr = sm.Sn[0].generateSignal(sm.Mn[i]);
+                bool generationSuccess;
+                   int[] arr = sm.Sn[0].generateSignal(sm.Mn[i], out generationSuccess);
+                if (!generationSuccess)
+                {
+                    MessageBox.Show("Помилкові данні, не вдалось згенерувати масив звуку");
+                    return;
+                }
                 for (int j = 0; j < arr.Length; j++)
                 {
                     signalsArr[i, j] = arr[j];
@@ -53,20 +60,20 @@ namespace MicAngle
             }
          //   Console.WriteLine("PROCESSING FINISHED.");
     
-            long[] maxes = new long[SignalsManager.SHIFT_COUNT];//*2 because need contains left and right shift
-            double result =  sm.interCorelationFunc(signalsArr, maxes);
+            long[] maxes = new long[SignalsManager.SHIFT_COUNT*2];//*2 because need contains left and right shift
+            resultAngle =  sm.interCorelationFunc(signalsArr, maxes);
             this.chartMaximum.Series[0].Points.Clear();
             this.chartMaximum.Series[1].Points.Clear();
             Series series = this.chartMaximum.Series[0];//.Add("Intercorelation function\n value");
             Series seriesOfMax = this.chartMaximum.Series[1];//.Add("Intercorelation function\n value");
             this.chartMaximum.ChartAreas[0].AxisX.Maximum = SignalsManager.SHIFT_COUNT;
-            this.chartMaximum.ChartAreas[0].AxisX.Minimum = 0;
+            this.chartMaximum.ChartAreas[0].AxisX.Minimum = -SignalsManager.SHIFT_COUNT;
             this.chartMaximum.ChartAreas[0].AxisX.Interval = 1;
             long yMin = maxes.Min();
             long yMax = maxes.Max();
-            for (int i = 0; i < SignalsManager.SHIFT_COUNT; i++)
+            for (int i = -SignalsManager.SHIFT_COUNT; i < SignalsManager.SHIFT_COUNT; i++)
             {
-                long value = maxes[i];
+                long value = maxes[i + SignalsManager.SHIFT_COUNT];
                 if (value==yMax || value==yMin)
                     seriesOfMax.Points.AddXY(i, value);
                 else
@@ -75,8 +82,8 @@ namespace MicAngle
             }
             this.chartMaximum.ChartAreas[0].AxisY.Minimum = yMin;
             this.chartMaximum.ChartAreas[0].AxisY.Maximum = yMax;
-            lblResult.Text = ""+result;
-           
+            lblResult.Text = ""+ resultAngle;
+            mapForm.processMap();
         }
 
         private void btnInputData_Click(object sender, EventArgs e)

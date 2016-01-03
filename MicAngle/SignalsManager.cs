@@ -132,7 +132,7 @@ namespace MicAngle
                     int maxIndex = 0;
                     long maxValue = 0;
                     
-                    for (int k = 0; k < SHIFT_COUNT; k++)
+                    for (int k = -SHIFT_COUNT; k < SHIFT_COUNT; k++)
                     {
                // Console.WriteLine("k:"+k);
                     long summ = 0;
@@ -169,7 +169,7 @@ namespace MicAngle
                             }
                 long absSumm = Math.Abs(summ);
                 summ = (long)Math.Sqrt(absSumm);
-                    if (maxes != null) maxes[k] = summ;
+                    if (maxes != null) maxes[k+SHIFT_COUNT] = summ;
                // Console.Out.WriteLine("before comparsion of  summ:" + summ + " and maxValue:" + maxValue);
                 if (Math.Abs(summ) > Math.Abs(maxValue))//Брати абсолютне значенння
                         {
