@@ -31,7 +31,7 @@ namespace MicAngle
         //Converts XY point from Spherical Mercator EPSG:900913 to lat/lon in WGS84 Datum
         public static Point MetersToLatLon(Point m)
         {
-            Console.WriteLine("MetersToLatLon x:"+m.X+" y:"+m.Y);
+            //Console.WriteLine("MetersToLatLon x:"+m.X+" y:"+m.Y);
             var ll = new Point();
             ll.X = (m.X / OriginShift) * 180;
             ll.Y = (m.Y / OriginShift) * 180;

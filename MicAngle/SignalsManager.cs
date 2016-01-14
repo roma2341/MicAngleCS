@@ -27,40 +27,46 @@ namespace MicAngle
 		int signal = (int) (A * Math.Sin(2.0*Math.PI*t*F/samplingRate)*(double)MAX_SHORT+A/2);
 		return signal;
 	}
-    public static void shiftRight(int[,] source,int i,int n)
+    public static void shiftRight(int[,] source,int dimensionI,int n)
     {
             // int []result = new int[source.Length];
-          
+
             for (int j = source.GetLength(1)-1; j >= 0; j--)
         {
-            if (j - n < 0) source[i,j] = 0;
+            if (j - n < 0) source[dimensionI, j] = 0;
             else
-            source[i,j] = source[i,j - n];
+            source[dimensionI, j] = source[dimensionI, j - n];
         }
-            Console.WriteLine("shift right");
             //  return result;
         }
-        public static void shiftLeft(int[,] source, int i, int n)
+        public static void shiftLeft(int[,] source, int dimensionI, int n)
         {
             // int []result = new int[source.Length];
+           // Console.WriteLine("SHIFT LEFT TEST...");
+           // for (int i = 0; i < 10; i++)
+            //    Console.Write(source[dimensionI, i]+" ");
            
+
             for (int j = 0; j < source.GetLength(1); j++)
             {
-                if (j - n >= 0) 
-                     source[i, j - n] = source[i, j];
+                    if (j + n >= source.GetLength(1)) source[dimensionI, j] = 0;
+                    else
+                    source[dimensionI, j] = source[dimensionI, j+n];
+ 
             }
-            Console.WriteLine("shift left");
+            //for (int i = 0; i < 10; i++)
+               // Console.Write(source[dimensionI, i] + " ");
+            //Console.WriteLine("\nSHIFT LEFT TEST END.");
             //  return result;
         }
-        public static void shift(int[,] source, int i, int n)
+        public static void shift(int[,] source, int dimensionI, int n)
         {
             if (n == 0) return;
-            if (n >= 0) shiftRight(source, i, n);
-            else shiftLeft(source, i, -n);
+            if (n >= 0) shiftRight(source, dimensionI, n);
+            else shiftLeft(source, dimensionI, -n);
         }
         public static int[] shiftRight(int[] source, int n)
         {
-            Console.WriteLine("shift right");
             int[] result = new int[source.Length];
             for (int j = source.Length - 1; j >= 0; j--)
             {
@@ -92,9 +98,10 @@ namespace MicAngle
 		return result;
 				
 	}
-	 public double  interCorelationFunc(int[,] buf,long[] maxes=null,int elementsInMiddle = 10000){
-       //  const int MIC_COUNT = 2;
-		
+       //I THINK BUG HERE we need to sum all values not only midle
+	 public double  interCorelationFunc(int[,] buf,out bool success,long[] maxes=null,int elementsInMiddle = 1000){
+            //  const int MIC_COUNT = 2;
+            success = true;
          double result = 0;
 			int[] delays = new int[]{0,1,2,4};
 
@@ -131,11 +138,12 @@ namespace MicAngle
                    // delays = new int[]{0,1,2,4};
                     int maxIndex = 0;
                     long maxValue = 0;
-                    
-                    for (int k = -SHIFT_COUNT; k < SHIFT_COUNT; k++)
+            double cosA = 0, arcCosA = 0;
+            for (int k = -SHIFT_COUNT; k < SHIFT_COUNT; k++)
                     {
                // Console.WriteLine("k:"+k);
                     long summ = 0;
+                //Вертаємо масив в початковий стан без зсувів
                 if (k==0) Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
 
                 // buf[0]=shiftRight(buf[0], delays[l]);
@@ -161,49 +169,61 @@ namespace MicAngle
                     for (int i = 0; i < Mn.Count; i++)
                         {
                         summOfDifferentSignalValues *= buf[i,j];
-                        //Console.Out.WriteLine("i="+i+" j="+j+ " buf=" + buf[i,j]);
-                        // Console.Write(buf[i][j]+" ");
                     }
                                 summ += summOfDifferentSignalValues;
-                              //  Console.Out.WriteLine("sum:" + summ);
                             }
-                long absSumm = Math.Abs(summ);
-                summ = (long)Math.Sqrt(absSumm);
+                //long absSumm = Math.Abs(summ);
+                //summ = (long)Math.Sqrt(absSumm);
                     if (maxes != null) maxes[k+SHIFT_COUNT] = summ;
-               // Console.Out.WriteLine("before comparsion of  summ:" + summ + " and maxValue:" + maxValue);
-                if (Math.Abs(summ) > Math.Abs(maxValue))//Брати абсолютне значенння
-                        {
-                   // Console.Out.WriteLine("index " + k+">"+maxIndex);
+                 if (Math.Abs(summ) > Math.Abs(maxValue))
+                //if (summ > maxValue)
+                {
+                   Console.Out.WriteLine("max Long:"+long.MaxValue);
                             maxValue = summ;
                             maxIndex = (k );
                         }
-                   
-                    Console.Out.WriteLine("SUM:" + summ);
-                    Console.Out.WriteLine("MAX_SUM:" + maxValue);
-                    Console.Out.WriteLine("MAX_INDEX:" + maxIndex);
+                Console.Out.WriteLine();
+                    Console.Out.WriteLine("K:"+k+ " SUM:" + summ +" MAX_SUM:" + maxValue +
+                " MAX_INDEX:" + maxIndex);
                 double L = SignalsManager.getDistance(Mn[0].X, Mn[0].Y, Mn[1].X, Mn[1].Y);
+                if (L==0)
+                {
+                    success = false;
+                    return 0;
+                }
                 // Console.WriteLine("L:" + L);
-                double cosA = 0, arcCosA = 0;
+              
+                if (maxIndex >= 0)
+                {
                     cosA = V * (double)maxIndex / (L * (double)Sn[0].samplingRate);
                     arcCosA = Math.Acos(cosA);
                     result = arcCosA * 180 / Math.PI;
+                }
+                else
+                {
+                    cosA = -1*V * (double)maxIndex / (L * (double)Sn[0].samplingRate);
+                    arcCosA = Math.Acos(cosA);
+                    result = arcCosA * 180 / Math.PI;
+                }
+                
                
 
-                Console.Out.WriteLine("maxIndex:" + maxIndex + "cos:" + cosA + " Alpha:" + result);
+               // Console.Out.WriteLine("maxIndex:" + maxIndex + "cos:" + cosA + " Alpha:" + result);
                 //System.out.println("summ:"+summ);
             }
-              
-             
-
-                //buffer=savedBuffer;
+            if (cosA > 1) success = false;
 
 
-                /*for (int i = 0; i < buf.GetLength(0); i++)
-                {
-                    for (int j = 0; j < buf.GetLength(1); j++)
-                        buf[i,j] = bufSaved[i,j];
-                }*/
-                Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
+
+            //buffer=savedBuffer;
+
+
+            /*for (int i = 0; i < buf.GetLength(0); i++)
+            {
+                for (int j = 0; j < buf.GetLength(1); j++)
+                    buf[i,j] = bufSaved[i,j];
+            }*/
+            Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
 
             
 			return result;

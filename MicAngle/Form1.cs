@@ -47,7 +47,7 @@ namespace MicAngle
                    int[] arr = sm.Sn[0].generateSignal(sm.Mn[i], out generationSuccess);
                 if (!generationSuccess)
                 {
-                    MessageBox.Show("Помилкові данні, не вдалось згенерувати масив звуку");
+                    MessageBox.Show("Помилкові данні, не вдалось згенерувати масив звуку", "Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
                 for (int j = 0; j < arr.Length; j++)
@@ -61,7 +61,13 @@ namespace MicAngle
          //   Console.WriteLine("PROCESSING FINISHED.");
     
             long[] maxes = new long[SignalsManager.SHIFT_COUNT*2];//*2 because need contains left and right shift
-            resultAngle =  sm.interCorelationFunc(signalsArr, maxes);
+            bool success;
+            resultAngle =  sm.interCorelationFunc(signalsArr, out success, maxes);
+            if (!success)
+            {
+                MessageBox.Show("Схоже що відстань між мікрофонами і джерелом звуку рівна нулю","Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             this.chartMaximum.Series[0].Points.Clear();
             this.chartMaximum.Series[1].Points.Clear();
             Series series = this.chartMaximum.Series[0];//.Add("Intercorelation function\n value");
