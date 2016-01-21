@@ -6,7 +6,6 @@ using System.Windows;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Google.Maps.StaticMaps;
 using System.Net;
 using GMap.NET;
 using GMap.NET.WindowsForms.Markers;
@@ -174,12 +173,25 @@ namespace MicAngle
             PointLatLng directionPos = rotate(mainMicPos, secondMicPos, angle);
             PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
                 directionPos.Lng - secondMicPos.Lng);
+            
+            //Доводим вказівник на джерело звуку до меж екрану
+            double arrowVectorSizeWidth = mapControl.FromLocalToLatLng(mapControl.Width, 0).Lat;
+            double arrowVectorSizeHeight = mapControl.FromLocalToLatLng(0, mapControl.Height).Lng;
+            //Довжина вектору
+           // double arrowVectorSize = Math.Abs((arrowVectorSizeWidth > arrowVectorSizeHeight) ? arrowVectorSizeWidth : arrowVectorSizeHeight);
+            //Приводимо вектор до одиничної форми
+           // if (vectorFormOfDirection.Lat!=0)
+           // vectorFormOfDirection.Lat /= Math.Abs(vectorFormOfDirection.Lat);
+           // if (vectorFormOfDirection.Lng != 0)
+           //     vectorFormOfDirection.Lng /= Math.Abs(vectorFormOfDirection.Lng);
+            //Саме виконуєм доводку вказівника до меж екрану.
             vectorFormOfDirection.Lat *= 100;
             vectorFormOfDirection.Lng *= 100;
+
             directionPos = new PointLatLng(vectorFormOfDirection.Lat + secondMicPos.Lat,
                 vectorFormOfDirection.Lng + secondMicPos.Lng);
 
-
+          
             //Будем повертати головний мікрофон відносно іншого, щоб отримати позицію звідки йде звук
 
 
@@ -191,7 +203,7 @@ namespace MicAngle
             markersOverlay.Polygons.Add(directionPolygon);
 
 
-            mapControl.Overlays.Add(markersOverlay);
+            mapControl.Overlays.Add(markersOverlay);        
 
             //set position must be called last because otherwise map won't be redrawed
             mapControl.Position = new PointLatLng(geoCoordOfMicrophone.X, geoCoordOfMicrophone.Y);

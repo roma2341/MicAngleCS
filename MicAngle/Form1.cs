@@ -24,6 +24,16 @@ namespace MicAngle
             mapForm = new MapForm(this,sm);
 
         }
+        T[,] ResizeArray<T>(T[,] original, int rows, int cols)
+        {
+            var newArray = new T[rows, cols];
+            int minRows = Math.Min(rows, original.GetLength(0));
+            int minCols = Math.Min(cols, original.GetLength(1));
+            for (int i = 0; i < minRows; i++)
+                for (int j = 0; j < minCols; j++)
+                    newArray[i, j] = original[i, j];
+            return newArray;
+        }
 
         private void btnProcessAngle_Click(object sender, EventArgs e)
         {
@@ -32,14 +42,16 @@ namespace MicAngle
            // sm.Mn.Add(new Microphone(10, -10));
            // sm.Mn.Add(new Microphone(10.47,-10));
            // sm.Sn.Add(new SoundEmiter(-100,100,1,44100));
-            int signalValuesCount = sm.Sn[0].processEmiterArr(1, sm.Sn[0].samplingRate, (int)SignalsManager.V);
+            int signalValuesCount =
+                sm.Sn[0].processEmiterArr(1, sm.Sn[0].samplingRate, (int)SignalsManager.V);
            
         
            int[,] signalsArr = new int[sm.Mn.Count, signalValuesCount];
 
             //for (int i = 0; i < signalsArr.Length;i++ )
             // signalsArr[i]=new int[signalValuesCount];
-            const int SIGNAL_VALUES_TO_OUTPUT = 20;
+           // const int SIGNAL_VALUES_TO_OUTPUT = 20;
+            int smnSizeMin = int.MaxValue;
            // Console.WriteLine("PROCESSING SIGNALS ON MICS...");
             for (int i = 0; i < sm.Mn.Count; i++)
                {
@@ -50,6 +62,8 @@ namespace MicAngle
                     MessageBox.Show("Помилкові данні, не вдалось згенерувати масив звуку", "Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
+                if (arr.Length < smnSizeMin) smnSizeMin = arr.Length;
+                
                 for (int j = 0; j < arr.Length; j++)
                 {
                     signalsArr[i, j] = arr[j];
@@ -58,8 +72,10 @@ namespace MicAngle
                 }
                // Console.WriteLine();
             }
+            //Підганяємо масиви по масиву з мінімальною кількістю ел.
+            ResizeArray<int>(signalsArr, sm.Mn.Count, smnSizeMin);
          //   Console.WriteLine("PROCESSING FINISHED.");
-    
+
             long[] maxes = new long[SignalsManager.SHIFT_COUNT*2];//*2 because need contains left and right shift
             bool success;
             resultAngle =  sm.interCorelationFunc(signalsArr, out success, maxes);

@@ -34,8 +34,8 @@ namespace MicAngle
                 status = false;
                 return null;
             }
-            int[] SMn = new int[signal.Length - k];
-            int smLength = SMn.Length;
+            int smLength = signal.Length - k;
+            int[] SMn = new int[smLength];
             Array.Copy(signal, k, SMn,0, smLength);
             //SMn=SignalsManager.shiftRight(signal, k);
             status = true;

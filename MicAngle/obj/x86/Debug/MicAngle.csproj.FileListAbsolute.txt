@@ -40,3 +40,17 @@ C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\GMap.NET.Core.d
 C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\GMap.NET.WindowsForms.dll
 C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\GMap.NET.Core.xml
 C:\Users\roma\GDrive\4KURS\Science\MicAngleCS\MicAngle\bin\Debug\GMap.NET.WindowsForms.xml
+F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\MicAngle.exe.config
+F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.csprojResolveAssemblyReference.cache
+F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.Form1.resources
+F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.MapForm.resources
+F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.Properties.Resources.resources
+F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.csproj.GenerateResource.Cache
+F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\MicAngle.exe
+F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\MicAngle.pdb
+F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\GMap.NET.Core.dll
+F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\GMap.NET.WindowsForms.dll
+F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\GMap.NET.Core.xml
+F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\GMap.NET.WindowsForms.xml
+F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.exe
+F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.pdb

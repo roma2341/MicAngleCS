@@ -99,7 +99,7 @@ namespace MicAngle
 				
 	}
        //I THINK BUG HERE we need to sum all values not only midle
-	 public double  interCorelationFunc(int[,] buf,out bool success,long[] maxes=null,int elementsInMiddle = 1000){
+	 public double  interCorelationFunc(int[,] buf,out bool success,long[] maxes=null,int elementsToSum = 1000){
             //  const int MIC_COUNT = 2;
             success = true;
          double result = 0;
@@ -154,22 +154,22 @@ namespace MicAngle
                             shift(buf,i, -delays[i]);
                             else
                      shift(buf, i, delays[i]);
-                    }
+                        }   
 
                 //  long[] SM = new long[buf.GetLength(1)];
 
                 // for (int i = 0; i < SM.Length; i++)
                 //  SM[i] = 1;
-                int middleOfSignalArray = buf.GetLength(1) / 2;
-                int startIndex = middleOfSignalArray - elementsInMiddle / 2;
-                int endIndex = startIndex + elementsInMiddle;
+                //int middleOfSignalArray = buf.GetLength(1) / 2;
+                int startIndex = 0;
+                int endIndex = buf.GetLength(1); //startIndex + elementsToSum;
                         for (int j = startIndex; j < endIndex; j++)//for (int j = 27000; j < SM.Length; j++)
-                    {
+                        {
                     long summOfDifferentSignalValues = 1;
                     for (int i = 0; i < Mn.Count; i++)
                         {
                         summOfDifferentSignalValues *= buf[i,j];
-                    }
+                        }
                                 summ += summOfDifferentSignalValues;
                             }
                 //long absSumm = Math.Abs(summ);
@@ -189,6 +189,7 @@ namespace MicAngle
                 if (L==0)
                 {
                     success = false;
+                    Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
                     return 0;
                 }
                 // Console.WriteLine("L:" + L);
@@ -201,7 +202,7 @@ namespace MicAngle
                 }
                 else
                 {
-                    cosA = -1*V * (double)maxIndex / (L * (double)Sn[0].samplingRate);
+                    cosA = V * (double)maxIndex / (L * (double)Sn[0].samplingRate);
                     arcCosA = Math.Acos(cosA);
                     result = arcCosA * 180 / Math.PI;
                 }
@@ -211,7 +212,9 @@ namespace MicAngle
                // Console.Out.WriteLine("maxIndex:" + maxIndex + "cos:" + cosA + " Alpha:" + result);
                 //System.out.println("summ:"+summ);
             }
-            if (cosA > 1) success = false;
+            if (cosA > 1)
+                success = false;
+            
 
 
 
