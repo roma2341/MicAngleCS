@@ -47,6 +47,8 @@
             this.rbGeo = new System.Windows.Forms.RadioButton();
             this.rbDecart = new System.Windows.Forms.RadioButton();
             this.mapControl = new GMap.NET.WindowsForms.GMapControl();
+            this.tbTestAngle = new System.Windows.Forms.TextBox();
+            this.labelTestAngle = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -149,13 +151,16 @@
             this.tableLayoutPanel1.Controls.Add(this.tbLongtitude, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.labelZoom, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.tbZoom, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.tbTestAngle, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.labelTestAngle, 0, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(328, 203);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -165,7 +170,7 @@
             this.labelZoom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.labelZoom.Location = new System.Drawing.Point(3, 52);
             this.labelZoom.Name = "labelZoom";
-            this.labelZoom.Size = new System.Drawing.Size(68, 151);
+            this.labelZoom.Size = new System.Drawing.Size(68, 26);
             this.labelZoom.TabIndex = 4;
             this.labelZoom.Text = "Zoom";
             // 
@@ -177,6 +182,7 @@
             this.tbZoom.Size = new System.Drawing.Size(248, 20);
             this.tbZoom.TabIndex = 5;
             this.tbZoom.Text = "16";
+            this.tbZoom.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbZoom_KeyPress);
             // 
             // flowLayoutPanel1
             // 
@@ -273,6 +279,22 @@
             this.mapControl.TabIndex = 0;
             this.mapControl.Zoom = 0D;
             // 
+            // tbTestAngle
+            // 
+            this.tbTestAngle.Location = new System.Drawing.Point(77, 81);
+            this.tbTestAngle.Name = "tbTestAngle";
+            this.tbTestAngle.Size = new System.Drawing.Size(100, 20);
+            this.tbTestAngle.TabIndex = 6;
+            // 
+            // labelTestAngle
+            // 
+            this.labelTestAngle.AutoSize = true;
+            this.labelTestAngle.Location = new System.Drawing.Point(3, 78);
+            this.labelTestAngle.Name = "labelTestAngle";
+            this.labelTestAngle.Size = new System.Drawing.Size(58, 13);
+            this.labelTestAngle.TabIndex = 7;
+            this.labelTestAngle.Text = "Test Angle";
+            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -322,5 +344,7 @@
         private System.Windows.Forms.Label labelZoom;
         private System.Windows.Forms.TextBox tbZoom;
         private GMap.NET.WindowsForms.GMapControl mapControl;
+        private System.Windows.Forms.TextBox tbTestAngle;
+        private System.Windows.Forms.Label labelTestAngle;
     }
 }

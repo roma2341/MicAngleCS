@@ -12,6 +12,7 @@ namespace MicAngle
 {
     public partial class Form1 : Form
     {
+        const double SOUND_EMITER_LISTEN_TIME = 10;
         MapForm mapForm;
         bool mapShowed = false;
        public double resultAngle { get; set; }
@@ -43,7 +44,7 @@ namespace MicAngle
            // sm.Mn.Add(new Microphone(10.47,-10));
            // sm.Sn.Add(new SoundEmiter(-100,100,1,44100));
             int signalValuesCount =
-                sm.Sn[0].processEmiterArr(1, sm.Sn[0].samplingRate, (int)SignalsManager.V);
+                sm.Sn[0].processEmiterArr(SOUND_EMITER_LISTEN_TIME, sm.Sn[0].samplingRate, (int)SignalsManager.V);
            
         
            int[,] signalsArr = new int[sm.Mn.Count, signalValuesCount];

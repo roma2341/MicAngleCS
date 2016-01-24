@@ -17,6 +17,7 @@ namespace MicAngle
     public partial class MapForm : Form
     {
         Form1 parent;
+        public int testAngle = 0;
         public SignalsManager signalsManger { get; set; }
         enum CoordTypeMode {COORD_MODE_DECART,COORD_MODE_GEO};
         CoordTypeMode coordTypeMode = CoordTypeMode.COORD_MODE_GEO;
@@ -119,18 +120,16 @@ namespace MicAngle
         }
         public void processMap()
         {
+            if (tbTestAngle.TextLength > 0) testAngle = int.Parse(tbTestAngle.Text);
             if (signalsManger.Mn.Count == 0) return;
-            int zoom = 0;
-            int.TryParse(tbZoom.Text, out zoom);
-            System.Windows.Point geoCoordOfMicrophone = signalsManger.Mn[0].GeoPosition;
+
+            PointLatLng geoCoordOfMicrophone = signalsManger.Mn[0].GeoPosition;
 
             //map.Center = new Google.Maps.Location("1600 Amphitheatre Parkay Mountain View, CA 94043");
 
-
-            mapControl.Zoom = zoom;
             mapControl.Overlays.Clear();
             GMapOverlay markersOverlay = new GMapOverlay("markers");
-            List<PointLatLng> polygonPoints = new List<PointLatLng>();
+           
 
             PointLatLng soundLocation = new PointLatLng(signalsManger.Sn[0].GeoPosition.X,
                 signalsManger.Sn[0].GeoPosition.Y);
@@ -141,9 +140,10 @@ namespace MicAngle
 
 
             int markersCount = 0;
-            foreach (Microphone mic in signalsManger.Mn)
+            for(int i = 0; i < signalsManger.Mn.Count();i++)
             {
-                PointLatLng micLocation = new PointLatLng(mic.GeoPosition.X, mic.GeoPosition.Y);
+                Microphone mic = signalsManger.Mn[i];
+                PointLatLng micLocation = new PointLatLng(mic.GeoPosition.Lat, mic.GeoPosition.Lng);
                 GMarkerGoogleType markerType;
                 switch (markersCount)
                 {
@@ -164,37 +164,42 @@ namespace MicAngle
                 GMarkerGoogle marker = new GMarkerGoogle(micLocation,
                  markerType);
                 markersOverlay.Markers.Add(marker);
-                polygonPoints.Add(micLocation);
                 markersCount++;
             }
             double angle = parent.resultAngle;
-            PointLatLng mainMicPos = polygonPoints.First();//signalsManger.Mn[0].GeoPosition
-            PointLatLng secondMicPos = polygonPoints.Last();//fiction zero
-            PointLatLng directionPos = rotate(mainMicPos, secondMicPos, angle);
-            PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
-                directionPos.Lng - secondMicPos.Lng);
+            if (testAngle != 0) angle = testAngle;
+            PointLatLng mainMicPos = signalsManger.Mn.First().GeoPosition; //signalsManger.Mn[0].GeoPosition
+            PointLatLng secondMicPos = signalsManger.Mn.Last().GeoPosition;//fiction zero
             
+            PointLatLng directionPos = rotate(secondMicPos, mainMicPos, -angle);
+           /* PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
+                directionPos.Lng - secondMicPos.Lng);*/
+
+            List<PointLatLng> polygonPoints = new List<PointLatLng>();
+
+
             //Доводим вказівник на джерело звуку до меж екрану
             double arrowVectorSizeWidth = mapControl.FromLocalToLatLng(mapControl.Width, 0).Lat;
             double arrowVectorSizeHeight = mapControl.FromLocalToLatLng(0, mapControl.Height).Lng;
             //Довжина вектору
-           // double arrowVectorSize = Math.Abs((arrowVectorSizeWidth > arrowVectorSizeHeight) ? arrowVectorSizeWidth : arrowVectorSizeHeight);
+            double arrowVectorSize = Math.Abs((arrowVectorSizeWidth > arrowVectorSizeHeight) ? arrowVectorSizeWidth : arrowVectorSizeHeight);
             //Приводимо вектор до одиничної форми
-           // if (vectorFormOfDirection.Lat!=0)
-           // vectorFormOfDirection.Lat /= Math.Abs(vectorFormOfDirection.Lat);
-           // if (vectorFormOfDirection.Lng != 0)
-           //     vectorFormOfDirection.Lng /= Math.Abs(vectorFormOfDirection.Lng);
+            /* if (vectorFormOfDirection.Lat!=0)
+             vectorFormOfDirection.Lat /= Math.Abs(vectorFormOfDirection.Lat);
+             if (vectorFormOfDirection.Lng != 0)
+                 vectorFormOfDirection.Lng /= Math.Abs(vectorFormOfDirection.Lng);*/
             //Саме виконуєм доводку вказівника до меж екрану.
-            vectorFormOfDirection.Lat *= 100;
-            vectorFormOfDirection.Lng *= 100;
+            // vectorFormOfDirection.Lat *= 10000;
+            // vectorFormOfDirection.Lng *= 10000;
 
-            directionPos = new PointLatLng(vectorFormOfDirection.Lat + secondMicPos.Lat,
-                vectorFormOfDirection.Lng + secondMicPos.Lng);
-
-          
+            /*directionPos = new PointLatLng(vectorFormOfDirection.Lat + secondMicPos.Lat,
+                vectorFormOfDirection.Lng + secondMicPos.Lng);*/
+           // secondMicPos = Geometry.multiplyVector(secondMicPos, mainMicPos, 1000000);
+          //  directionPos = Geometry.multiplyVector(directionPos, mainMicPos, 1000000);
             //Будем повертати головний мікрофон відносно іншого, щоб отримати позицію звідки йде звук
 
-
+            polygonPoints.Add(mainMicPos);
+            polygonPoints.Add(secondMicPos);
             polygonPoints.Add(directionPos);
             //direction poly
             GMapPolygon directionPolygon = new GMapPolygon(polygonPoints, "mypolygon");
@@ -206,7 +211,7 @@ namespace MicAngle
             mapControl.Overlays.Add(markersOverlay);        
 
             //set position must be called last because otherwise map won't be redrawed
-            mapControl.Position = new PointLatLng(geoCoordOfMicrophone.X, geoCoordOfMicrophone.Y);
+            mapControl.Position = new PointLatLng(geoCoordOfMicrophone.Lat, geoCoordOfMicrophone.Lng);
             // mapControl.ReloadMap();
 
 
@@ -248,6 +253,14 @@ namespace MicAngle
             point.Lat = xnew + center.Lat;
             point.Lng = ynew + center.Lng;
             return point;
+        }
+
+        private void tbZoom_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar != (char)13) return; // process only ENTER key;
+            int zoom = 0;
+            int.TryParse(tbZoom.Text, out zoom);
+            mapControl.Zoom = zoom;
         }
     }
 }

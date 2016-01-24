@@ -101,6 +101,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Geometry.cs" />
     <Compile Include="GlobalMercator.cs" />
     <Compile Include="MapForm.cs">
       <SubType>Form</SubType>

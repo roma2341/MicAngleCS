@@ -41,9 +41,9 @@ namespace MicAngle
             status = true;
 	return SMn;
 	}
-        public int processEmiterArr(int timeRange, int samplingRate, int F)
+        public int processEmiterArr(double timeRange, int samplingRate, int F)
         {
-           signal = new int[(samplingRate * timeRange)];
+           signal = new int[(int)(samplingRate * timeRange)];
             //	double step = 1.0/samplingRate; 
             //	double t=0;
             for (int l = 0; l < signal.Length; l++)
@@ -53,7 +53,7 @@ namespace MicAngle
                 //Console.Out.WriteLine("FFFFF:" + signal[l]);
             }
             
-            return samplingRate * timeRange;
+            return (int)(samplingRate * timeRange);
         }
         public Point Position
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GMap.NET;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,15 +21,16 @@ namespace MicAngle
             get { return new Point(X, Y); }
             set { X = value.X; Y = value.Y; }
         }
-        public Point GeoPosition
+        public PointLatLng GeoPosition
         {
             get
             {
-                return GlobalMercator.MetersToLatLon(Position);
+                Point latLon = GlobalMercator.MetersToLatLon(Position);
+                return new PointLatLng(latLon.X, latLon.Y);
             }
             set
             {
-                Point decartPos = GlobalMercator.LatLonToMeters(value.X,value.Y);
+                Point decartPos = GlobalMercator.LatLonToMeters(value.Lng, value.Lat);
                X = decartPos.X; Y = decartPos.Y;
             }
         }
