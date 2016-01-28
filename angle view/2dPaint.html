@@ -4,6 +4,17 @@
         src="mydrawing.js"></script>
 	</head>
 	<body onload="mydraw();">
-		<canvas id="mycanvas" width="1366" height="768"></canvas>
+		<canvas id="mycanvas" width="768" height="400"></canvas>
+		<br/>
+		<input id="pt1x" type="text" value="0"/> 
+		<input id="pt1y" type="text" value="0"/> 
+		<br/>
+		<input id="pt2x" type="text" value="50"/> 
+		<input id="pt2y" type="text" value="100"/>
+		<br/> 
+		<input id="pt3x" type="text" value="50.3"/> 
+		<input id="pt3y" type="text" value="100"/> 
+		<br/>
+		<button id="btn_process" onclick="process();">Process</button>
 	</body>
 </html>

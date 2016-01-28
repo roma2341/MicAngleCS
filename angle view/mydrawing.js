@@ -10,12 +10,28 @@ var p3 = {//Mic2 pos
 	x: 500.3,
 	y: 100
 }
-
+function process(){
+	readPts();
+	mydraw();
+}
+function readPts(){
+	p1.x=document.getElementById("pt1x").value;
+	p1.y=document.getElementById("pt1y").value;
+	p2.x=document.getElementById("pt2x").value;
+	p2.y=document.getElementById("pt2y").value;
+	p3.x=document.getElementById("pt3x").value;
+	p3.y=document.getElementById("pt3y").value;
+}
 
 
 function mydraw(){
-	var context = document.getElementById('mycanvas').getContext("2d");
+	var canvas = document.getElementById('mycanvas');
+	var context = canvas.getContext("2d");
 	//microphones line
+	//context.setfillstyle("#aaaaaa");
+	context.beginPath();
+	context.clearRect(0,0,canvas.width,canvas.height);
+
 context.moveTo(p1.x,p2.y);
 context.lineTo(p3.x,p3.y);
 
@@ -25,6 +41,7 @@ context.lineTo(p3.x,p3.y);
 
 //paint angle value
 context.fillText(find_angle(p1,p3,p2),p3.x-3,p3.y-3);
+context.closePath();
 context.stroke();
 
 }

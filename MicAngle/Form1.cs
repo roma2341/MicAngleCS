@@ -77,7 +77,7 @@ namespace MicAngle
             ResizeArray<int>(signalsArr, sm.Mn.Count, smnSizeMin);
          //   Console.WriteLine("PROCESSING FINISHED.");
 
-            long[] maxes = new long[SignalsManager.SHIFT_COUNT*2];//*2 because need contains left and right shift
+            long[] maxes = new long[SignalsManager.SHIFT_COUNT];//*2 because need contains left and right shift
             bool success;
             resultAngle =  sm.interCorelationFunc(signalsArr, out success, maxes);
             if (!success)
@@ -90,14 +90,15 @@ namespace MicAngle
             Series series = this.chartMaximum.Series[0];//.Add("Intercorelation function\n value");
             Series seriesOfMax = this.chartMaximum.Series[1];//.Add("Intercorelation function\n value");
             this.chartMaximum.ChartAreas[0].AxisX.Maximum = SignalsManager.SHIFT_COUNT;
-            this.chartMaximum.ChartAreas[0].AxisX.Minimum = -SignalsManager.SHIFT_COUNT;
+            this.chartMaximum.ChartAreas[0].AxisX.Minimum = 0;
             this.chartMaximum.ChartAreas[0].AxisX.Interval = 1;
             long yMin = maxes.Min();
             long yMax = maxes.Max();
-            for (int i = -SignalsManager.SHIFT_COUNT; i < SignalsManager.SHIFT_COUNT; i++)
+            long yMaxAbs = (Math.Abs(yMax) > Math.Abs(yMin)) ? yMax : yMin;
+            for (int i = 0; i < SignalsManager.SHIFT_COUNT; i++)
             {
-                long value = maxes[i + SignalsManager.SHIFT_COUNT];
-                if (value==yMax || value==yMin)
+                long value = maxes[i];
+                if (Math.Abs(value) == Math.Abs(yMaxAbs))
                     seriesOfMax.Points.AddXY(i, value);
                 else
                 series.Points.AddXY(i, value);

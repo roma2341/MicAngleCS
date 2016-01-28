@@ -195,10 +195,10 @@ namespace MicAngle
             /*directionPos = new PointLatLng(vectorFormOfDirection.Lat + secondMicPos.Lat,
                 vectorFormOfDirection.Lng + secondMicPos.Lng);*/
            // secondMicPos = Geometry.multiplyVector(secondMicPos, mainMicPos, 1000000);
-          //  directionPos = Geometry.multiplyVector(directionPos, mainMicPos, 1000000);
+            directionPos = Geometry.multiplyVector(directionPos, secondMicPos, 1);
             //Будем повертати головний мікрофон відносно іншого, щоб отримати позицію звідки йде звук
 
-            polygonPoints.Add(mainMicPos);
+           // polygonPoints.Add(mainMicPos);
             polygonPoints.Add(secondMicPos);
             polygonPoints.Add(directionPos);
             //direction poly

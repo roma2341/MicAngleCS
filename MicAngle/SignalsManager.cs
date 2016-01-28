@@ -9,7 +9,7 @@ namespace MicAngle
     public class SignalsManager
     {
         public const int SHIFT_COUNT = 48;
-        static short MAX_SHORT = 256;//short.MaxValue;//32767
+        static short MAX_SHORT = short.MaxValue;//short.MaxValue;//32767
 	public static double V =300;
    public List<SoundEmiter> Sn { get; set; }
      public List<Microphone> Mn { get; set; }
@@ -139,7 +139,7 @@ namespace MicAngle
                     int maxIndex = 0;
                     long maxValue = 0;
             double cosA = 0, arcCosA = 0;
-            for (int k = -SHIFT_COUNT; k < SHIFT_COUNT; k++)
+            for (int k = 0; k < SHIFT_COUNT; k++)
                     {
                // Console.WriteLine("k:"+k);
                     long summ = 0;
@@ -173,11 +173,12 @@ namespace MicAngle
                         {
                         summOfDifferentSignalValues *= buf[i,j];
                         }
-                                summ += summOfDifferentSignalValues;
-                            }
+                    //summ += (long)Math.Sqrt((double)Math.Abs(summOfDifferentSignalValues));
+                    summ += summOfDifferentSignalValues;
+                }
                 //long absSumm = Math.Abs(summ);
                 //summ = (long)Math.Sqrt(absSumm);
-                    if (maxes != null) maxes[k+SHIFT_COUNT] = summ;
+                    if (maxes != null) maxes[k] = summ;
                  if (Math.Abs(summ) > Math.Abs(maxValue))
                 //if (summ > maxValue)
                 {
