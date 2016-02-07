@@ -12,9 +12,11 @@ namespace MicAngle
 {
     public partial class Form1 : Form
     {
+        RecordForm recordForm;
         const double SOUND_EMITER_LISTEN_TIME = 10;
         MapForm mapForm;
         bool mapShowed = false;
+        bool recordFormShowed = false;
        public double resultAngle { get; set; }
         SignalsManager sm;
         int dataInputCounter=0;
@@ -23,6 +25,7 @@ namespace MicAngle
             InitializeComponent();
             sm = new SignalsManager();
             mapForm = new MapForm(this,sm);
+            recordForm = new RecordForm();
 
         }
         T[,] ResizeArray<T>(T[,] original, int rows, int cols)
@@ -138,6 +141,22 @@ namespace MicAngle
         private void rtbSettings_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnToggleRecordForm_Click(object sender, EventArgs e)
+        {
+            if (recordFormShowed)
+            {
+                btnToggleMap.Text = "Показати карту";
+                recordForm.Hide();
+
+            }
+            else
+            {
+                btnToggleMap.Text = "Сховати карту";
+                recordForm.Show();
+            }
+            recordFormShowed = !recordFormShowed;
         }
     }
 }

@@ -99,7 +99,7 @@ namespace MicAngle
 				
 	}
        //I THINK BUG HERE we need to sum all values not only midle
-	 public double  interCorelationFunc(int[,] buf,out bool success,long[] maxes=null,int elementsToSum = 1000){
+	 public double  interCorelationFunc(int[,] buf,out bool success,long[] maxes=null){
             //  const int MIC_COUNT = 2;
             success = true;
          double result = 0;
@@ -166,16 +166,17 @@ namespace MicAngle
                 if (k < 0) startIndex = -k - 1;
                 if (k > 0) endIndex -= (k-1);
                 
-                        for (int j = startIndex; j < endIndex; j++)//for (int j = 27000; j < SM.Length; j++)
-                        {
-                    long summOfDifferentSignalValues = 1;
+                  for (int j = startIndex; j < endIndex; j++)//for (int j = 27000; j < SM.Length; j++)
+                    {
+                    long summOfDifferentSignalValues = 0;
                     for (int i = 0; i < Mn.Count; i++)
                         {
-                        summOfDifferentSignalValues *= buf[i,j];
+                        summOfDifferentSignalValues += buf[i,j];
                         }
                     //summ += (long)Math.Sqrt((double)Math.Abs(summOfDifferentSignalValues));
-                    summ += summOfDifferentSignalValues;
-                }
+                    summ += (summOfDifferentSignalValues*summOfDifferentSignalValues);
+                    }
+                summ /= buf.GetLength(1);
                 //long absSumm = Math.Abs(summ);
                 //summ = (long)Math.Sqrt(absSumm);
                     if (maxes != null) maxes[k] = summ;

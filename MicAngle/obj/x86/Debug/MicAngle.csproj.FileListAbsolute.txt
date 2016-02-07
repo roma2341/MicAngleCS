@@ -54,3 +54,4 @@ F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\GMap.NET.Core.xml
 F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\GMap.NET.WindowsForms.xml
 F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.exe
 F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.pdb
+F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.RecordForm.resources

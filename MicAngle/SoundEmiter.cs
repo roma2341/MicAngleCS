@@ -44,13 +44,9 @@ namespace MicAngle
         public int processEmiterArr(double timeRange, int samplingRate, int F)
         {
            signal = new int[(int)(samplingRate * timeRange)];
-            //	double step = 1.0/samplingRate; 
-            //	double t=0;
             for (int l = 0; l < signal.Length; l++)
             {
                 signal[l] = SignalsManager.generateSignal(l, A, F, samplingRate);
-                //Console.WriteLine(signal[l]);
-                //Console.Out.WriteLine("FFFFF:" + signal[l]);
             }
             
             return (int)(samplingRate * timeRange);
