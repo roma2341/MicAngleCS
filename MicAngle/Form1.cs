@@ -46,38 +46,46 @@ namespace MicAngle
            // sm.Mn.Add(new Microphone(10, -10));
            // sm.Mn.Add(new Microphone(10.47,-10));
            // sm.Sn.Add(new SoundEmiter(-100,100,1,44100));
-            int signalValuesCount =
-                sm.Sn[0].processEmiterArr(SOUND_EMITER_LISTEN_TIME, sm.Sn[0].samplingRate, (int)SignalsManager.V);
-           
-        
-           int[,] signalsArr = new int[sm.Mn.Count, signalValuesCount];
+          
+
+
+            int[,] signalsArr;
 
             //for (int i = 0; i < signalsArr.Length;i++ )
             // signalsArr[i]=new int[signalValuesCount];
            // const int SIGNAL_VALUES_TO_OUTPUT = 20;
             int smnSizeMin = int.MaxValue;
-           // Console.WriteLine("PROCESSING SIGNALS ON MICS...");
-            for (int i = 0; i < sm.Mn.Count; i++)
-               {
-                bool generationSuccess;
-                   int[] arr = sm.Sn[0].generateSignal(sm.Mn[i], out generationSuccess);
-                if (!generationSuccess)
+            // Console.WriteLine("PROCESSING SIGNALS ON MICS...");
+            int[,] signalFromRealMicrophones = recordForm.getSignalFromMics<int>();
+            if (signalFromRealMicrophones == null)
+            {
+                int signalValuesCount =
+              sm.Sn[0].processEmiterArr(SOUND_EMITER_LISTEN_TIME, sm.Sn[0].samplingRate, (int)SignalsManager.V);
+                signalsArr = new int[sm.Mn.Count, signalValuesCount];
+                for (int i = 0; i < sm.Mn.Count; i++)
                 {
-                    MessageBox.Show("Помилкові данні, не вдалось згенерувати масив звуку", "Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
+                    bool generationSuccess;
+                    int[] arr = sm.Sn[0].generateSignal(sm.Mn[i], out generationSuccess);
+                    if (!generationSuccess)
+                    {
+                        MessageBox.Show("Помилкові данні, не вдалось згенерувати масив звуку", "Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    if (arr.Length < smnSizeMin) smnSizeMin = arr.Length;
+
+                    for (int j = 0; j < arr.Length; j++)
+                    {
+                        signalsArr[i, j] = arr[j];
+                        //  if (j< SIGNAL_VALUES_TO_OUTPUT)
+                        //  Console.Write(arr[j]+" ");
+                    }
+                    // Console.WriteLine();
                 }
-                if (arr.Length < smnSizeMin) smnSizeMin = arr.Length;
-                
-                for (int j = 0; j < arr.Length; j++)
-                {
-                    signalsArr[i, j] = arr[j];
-                  //  if (j< SIGNAL_VALUES_TO_OUTPUT)
-                  //  Console.Write(arr[j]+" ");
-                }
-               // Console.WriteLine();
+                ResizeArray<int>(signalsArr, sm.Mn.Count, smnSizeMin);
             }
+            else signalsArr= signalFromRealMicrophones;
             //Підганяємо масиви по масиву з мінімальною кількістю ел.
-            ResizeArray<int>(signalsArr, sm.Mn.Count, smnSizeMin);
+           
          //   Console.WriteLine("PROCESSING FINISHED.");
 
             long[] maxes = new long[SignalsManager.SHIFT_COUNT];//*2 because need contains left and right shift

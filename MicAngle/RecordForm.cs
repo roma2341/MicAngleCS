@@ -254,5 +254,27 @@ namespace MicAngle
                 chart3.Series[0].Points.AddXY(i, ComputeCoeffd(sigLbd, sigRbd));
             }
         }
+
+        public T[,] getSignalFromMics<T>() where T : IConvertible
+        {
+            CountdownEvent cntEvent = new CountdownEvent(1);
+            if (comboBox1.SelectedIndex == -1) return null;
+            uint aMicId = Convert.ToUInt32(comboBox1.SelectedIndex);
+            if (comboBox1.GetItemText(comboBox1.SelectedItem)=="")return null;
+            Thread sound1 = new Thread(delegate () { a.readMic(aMicId); cntEvent.Signal(); });
+            sound1.Start();
+            cntEvent.Wait();
+            int n = 0;
+            T[,] signal = new T[2,44100];
+            for (int i = 0; i < 4000; i++)
+            {
+                signal[0,n] = (T)(object)((a.buffer[n + 1] << 8) | a.buffer[n + 0]);
+                signal[1,n] = (T)(object)((a.buffer[n + 3] << 8) | a.buffer[n + 2]);
+                n += 4;
+            }
+            return signal;
+
+        }
+
     }
 }
