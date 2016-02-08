@@ -13,8 +13,14 @@ using System.Threading;
 
 namespace MicAngle
 {
+
+   
+
     public partial class RecordForm : Form
     {
+        CountdownEvent cntEvent = new CountdownEvent(1);
+        Thread soundRecorderThread = null;
+        uint aMicId = 0;
         #region struct WaveInCaps
         [StructLayout(LayoutKind.Sequential)]
         public struct WaveInCaps
@@ -124,6 +130,7 @@ namespace MicAngle
                 String szPname = new string(waveInCaps.szPname).Remove(new string(waveInCaps.szPname).IndexOf('\0')).Trim() + ")";
                 comboBox1.Items.Add(szPname);
             }
+             
         }
         public class readSound
         {
@@ -131,7 +138,7 @@ namespace MicAngle
             private IntPtr hwWaveIn = IntPtr.Zero;
             private IntPtr dwCallBack = IntPtr.Zero;
             private GCHandle bufferPin;
-            public byte[] buffer;
+           volatile public byte[] buffer;
             public double[] valueBufferL = new double[24000];
             public double[] valueBufferR = new double[24000];
             public void readMic(uint deviceId)
@@ -196,11 +203,6 @@ namespace MicAngle
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-
-            CountdownEvent cntEvent = new CountdownEvent(1);
-            uint aMicId = Convert.ToUInt32(comboBox1.SelectedIndex);
-            Thread sound1 = new Thread(delegate () { a.readMic(aMicId); cntEvent.Signal(); });
-            sound1.Start();
             cntEvent.Wait();
             chart1.ChartAreas[0].CursorX.IsUserEnabled = true;
             chart1.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
@@ -257,24 +259,46 @@ namespace MicAngle
 
         public T[,] getSignalFromMics<T>() where T : IConvertible
         {
-            CountdownEvent cntEvent = new CountdownEvent(1);
+           
             if (comboBox1.SelectedIndex == -1) return null;
-            uint aMicId = Convert.ToUInt32(comboBox1.SelectedIndex);
-            if (comboBox1.GetItemText(comboBox1.SelectedItem)=="")return null;
-            Thread sound1 = new Thread(delegate () { a.readMic(aMicId); cntEvent.Signal(); });
-            sound1.Start();
             cntEvent.Wait();
-            int n = 0;
+            SharedRes.mtx.WaitOne();
             T[,] signal = new T[2,44100];
-            for (int i = 0; i < 4000; i++)
+            int n = 0;
+            for (int i = 0; i < 44100/4; i++)
             {
-                signal[0,n] = (T)(object)((a.buffer[n + 1] << 8) | a.buffer[n + 0]);
-                signal[1,n] = (T)(object)((a.buffer[n + 3] << 8) | a.buffer[n + 2]);
+                signal[0,i] = (T)(object)((a.buffer[n + 1] << 8) | a.buffer[n + 0]);
+                signal[1,i] = (T)(object)((a.buffer[n + 3] << 8) | a.buffer[n + 2]);
                 n += 4;
             }
+            SharedRes.mtx.ReleaseMutex();
             return signal;
 
         }
 
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            aMicId = Convert.ToUInt32(comboBox1.SelectedIndex);
+            if (soundRecorderThread!=null)
+            soundRecorderThread.Abort();
+            soundRecorderThread = new Thread(delegate () {
+                while (true)
+                {
+                    Console.WriteLine("RECORD THREAD");
+                    cntEvent.Reset();
+                    SharedRes.mtx.WaitOne();
+                    a.readMic(aMicId);
+                    cntEvent.Signal();
+                    SharedRes.mtx.ReleaseMutex();
+                   
+                }
+            });
+            soundRecorderThread.Start();
+        }
+    }
+    class SharedRes
+    {
+        public static int Count;
+       volatile public static Mutex mtx = new Mutex();
     }
 }
