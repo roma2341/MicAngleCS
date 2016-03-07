@@ -10,7 +10,7 @@ using System.Net;
 using GMap.NET;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms;
-using System.Drawing;
+using System.Windows;
 
 namespace MicAngle
 {
@@ -171,13 +171,13 @@ namespace MicAngle
             PointLatLng mainMicPos = signalsManger.Mn.First().GeoPosition; //signalsManger.Mn[0].GeoPosition
             PointLatLng secondMicPos = signalsManger.Mn.Last().GeoPosition;//fiction zero
             
-            PointLatLng directionPos = rotate(secondMicPos, mainMicPos, -angle);
+            PointLatLng directionPos = rotate(mainMicPos, secondMicPos, -angle);
            /* PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
                 directionPos.Lng - secondMicPos.Lng);*/
 
             List<PointLatLng> polygonPoints = new List<PointLatLng>();
 
-
+            
             //Доводим вказівник на джерело звуку до меж екрану
             double arrowVectorSizeWidth = mapControl.FromLocalToLatLng(mapControl.Width, 0).Lat;
             double arrowVectorSizeHeight = mapControl.FromLocalToLatLng(0, mapControl.Height).Lng;
@@ -191,11 +191,11 @@ namespace MicAngle
             //Саме виконуєм доводку вказівника до меж екрану.
             // vectorFormOfDirection.Lat *= 10000;
             // vectorFormOfDirection.Lng *= 10000;
-
+            
             /*directionPos = new PointLatLng(vectorFormOfDirection.Lat + secondMicPos.Lat,
                 vectorFormOfDirection.Lng + secondMicPos.Lng);*/
            // secondMicPos = Geometry.multiplyVector(secondMicPos, mainMicPos, 1000000);
-            directionPos = Geometry.multiplyVector(directionPos, secondMicPos, 1);
+            directionPos = Geometry.multiplyVector(directionPos, secondMicPos, 100000);
             //Будем повертати головний мікрофон відносно іншого, щоб отримати позицію звідки йде звук
 
            // polygonPoints.Add(mainMicPos);
@@ -203,8 +203,8 @@ namespace MicAngle
             polygonPoints.Add(directionPos);
             //direction poly
             GMapPolygon directionPolygon = new GMapPolygon(polygonPoints, "mypolygon");
-            directionPolygon.Fill = new SolidBrush(System.Drawing.Color.FromArgb(50, System.Drawing.Color.Red));
-            directionPolygon.Stroke = new Pen(System.Drawing.Color.Red, 1);
+            directionPolygon.Fill = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(50, System.Drawing.Color.Red));
+            directionPolygon.Stroke = new System.Drawing.Pen(System.Drawing.Color.Red, 1);
             markersOverlay.Polygons.Add(directionPolygon);
 
 
@@ -240,19 +240,30 @@ namespace MicAngle
            double angleRadians = angle*Math.PI / 180;
             double s = Math.Sin(angleRadians);
             double c = Math.Cos(angleRadians);
+            Point decardPoint = GlobalMercator.LatLonToMeters(point.Lat, point.Lng);
+            Point decardCenter = GlobalMercator.LatLonToMeters(center.Lat, center.Lng);
 
             // translate point back to origin:
-            point.Lat -= center.Lat;
-            point.Lng -= center.Lng;
+            decardPoint.X -= decardCenter.X;
+            decardPoint.Y -= decardCenter.Y;
+            //point.Lat -= center.Lat;
+           // point.Lng -= center.Lng;
 
             // rotate point
-            double xnew = point.Lat * c - point.Lng * s;
-            double ynew = point.Lat * s + point.Lng * c;
+            double xnew = decardPoint.X * c - decardPoint.Y * s;
+            double ynew = decardPoint.X * s + decardPoint.Y * c;
+
 
             // translate point back:
-            point.Lat = xnew + center.Lat;
-            point.Lng = ynew + center.Lng;
-            return point;
+            // point.Lat = xnew + center.Lat;
+            // point.Lng = ynew + center.Lng;
+            decardPoint.X = xnew + decardCenter.X;
+            decardPoint.Y =ynew + decardCenter.Y;
+           Point resultPoint = GlobalMercator.MetersToLatLon(decardPoint);
+            PointLatLng resultLatLng = new PointLatLng();
+            resultLatLng.Lat = resultPoint.X;
+            resultLatLng.Lng = resultPoint.Y;
+            return resultLatLng;
         }
 
         private void tbZoom_KeyPress(object sender, KeyPressEventArgs e)

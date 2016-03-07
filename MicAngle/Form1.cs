@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -83,7 +84,9 @@ namespace MicAngle
                 }
                 ResizeArray<int>(signalsArr, sm.Mn.Count, smnSizeMin);
             }
-            else signalsArr= signalFromRealMicrophones;
+            else {
+                signalsArr = signalFromRealMicrophones;
+            }
             //Підганяємо масиви по масиву з мінімальною кількістю ел.
            
          //   Console.WriteLine("PROCESSING FINISHED.");
@@ -103,6 +106,7 @@ namespace MicAngle
             this.chartMaximum.ChartAreas[0].AxisX.Maximum = SignalsManager.SHIFT_COUNT;
             this.chartMaximum.ChartAreas[0].AxisX.Minimum = 0;
             this.chartMaximum.ChartAreas[0].AxisX.Interval = 1;
+            series.Color = Color.Blue;
             long yMin = maxes.Min();
             long yMax = maxes.Max();
             long yMaxAbs = (Math.Abs(yMax) > Math.Abs(yMin)) ? yMax : yMin;

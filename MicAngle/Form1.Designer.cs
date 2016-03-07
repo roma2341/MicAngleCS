@@ -38,8 +38,8 @@
             this.lblResult = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.chartMaximum = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.btnToggleMap = new System.Windows.Forms.Button();
             this.btnToggleRecordForm = new System.Windows.Forms.Button();
+            this.btnToggleMap = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -116,8 +116,7 @@
             chartArea1.Area3DStyle.IsRightAngleAxes = false;
             chartArea1.AxisX.Title = "Номер зсуву";
             chartArea1.AxisY.Title = "Сумма сигналів";
-            chartArea1.BackColor = System.Drawing.Color.Black;
-            chartArea1.BackGradientStyle = System.Windows.Forms.DataVisualization.Charting.GradientStyle.DiagonalRight;
+            chartArea1.BackColor = System.Drawing.Color.Transparent;
             chartArea1.BackSecondaryColor = System.Drawing.Color.Azure;
             chartArea1.CursorX.IsUserSelectionEnabled = true;
             chartArea1.Name = "ChartArea1";
@@ -146,16 +145,6 @@
             this.chartMaximum.TabIndex = 1;
             this.chartMaximum.Text = "chart1";
             // 
-            // btnToggleMap
-            // 
-            this.btnToggleMap.Location = new System.Drawing.Point(431, 49);
-            this.btnToggleMap.Name = "btnToggleMap";
-            this.btnToggleMap.Size = new System.Drawing.Size(75, 23);
-            this.btnToggleMap.TabIndex = 5;
-            this.btnToggleMap.Text = "Показати карту";
-            this.btnToggleMap.UseVisualStyleBackColor = true;
-            this.btnToggleMap.Click += new System.EventHandler(this.btnToggleMap_Click);
-            // 
             // btnToggleRecordForm
             // 
             this.btnToggleRecordForm.Location = new System.Drawing.Point(513, 49);
@@ -165,6 +154,16 @@
             this.btnToggleRecordForm.Text = "ФормаЗапису";
             this.btnToggleRecordForm.UseVisualStyleBackColor = true;
             this.btnToggleRecordForm.Click += new System.EventHandler(this.btnToggleRecordForm_Click);
+            // 
+            // btnToggleMap
+            // 
+            this.btnToggleMap.Location = new System.Drawing.Point(431, 49);
+            this.btnToggleMap.Name = "btnToggleMap";
+            this.btnToggleMap.Size = new System.Drawing.Size(75, 23);
+            this.btnToggleMap.TabIndex = 5;
+            this.btnToggleMap.Text = "Показати карту";
+            this.btnToggleMap.UseVisualStyleBackColor = true;
+            this.btnToggleMap.Click += new System.EventHandler(this.btnToggleMap_Click);
             // 
             // Form1
             // 
