@@ -18,7 +18,8 @@ namespace MicAngle
         MapForm mapForm;
         bool mapShowed = false;
         bool recordFormShowed = false;
-       public double resultAngle { get; set; }
+       public bool resultIsPositiveRotation;
+        public double resultAngle { get; set; }
         SignalsManager sm;
         int dataInputCounter=0;
         public Form1()
@@ -91,9 +92,10 @@ namespace MicAngle
            
          //   Console.WriteLine("PROCESSING FINISHED.");
 
-            long[] maxes = new long[SignalsManager.SHIFT_COUNT];//*2 because need contains left and right shift
+            long[] maxes = new long[SignalsManager.SHIFT_COUNT*2];//*2 because need contains left and right shift
             bool success;
-            resultAngle =  sm.interCorelationFunc(signalsArr, out success, maxes);
+            
+            resultAngle =  sm.interCorelationFunc(signalsArr, out success,out resultIsPositiveRotation, maxes);
             if (!success)
             {
                 MessageBox.Show("Схоже що відстань між мікрофонами і джерелом звуку рівна нулю","Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -104,15 +106,15 @@ namespace MicAngle
             Series series = this.chartMaximum.Series[0];//.Add("Intercorelation function\n value");
             Series seriesOfMax = this.chartMaximum.Series[1];//.Add("Intercorelation function\n value");
             this.chartMaximum.ChartAreas[0].AxisX.Maximum = SignalsManager.SHIFT_COUNT;
-            this.chartMaximum.ChartAreas[0].AxisX.Minimum = 0;
+            this.chartMaximum.ChartAreas[0].AxisX.Minimum = -SignalsManager.SHIFT_COUNT;
             this.chartMaximum.ChartAreas[0].AxisX.Interval = 1;
             series.Color = Color.Blue;
             long yMin = maxes.Min();
             long yMax = maxes.Max();
             long yMaxAbs = (Math.Abs(yMax) > Math.Abs(yMin)) ? yMax : yMin;
-            for (int i = 0; i < SignalsManager.SHIFT_COUNT; i++)
+            for (int i = -SignalsManager.SHIFT_COUNT; i < SignalsManager.SHIFT_COUNT; i++)
             {
-                long value = maxes[i];
+                long value = maxes[SignalsManager.SHIFT_COUNT+i];
                 if (Math.Abs(value) == Math.Abs(yMaxAbs))
                     seriesOfMax.Points.AddXY(i, value);
                 else

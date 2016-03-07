@@ -98,10 +98,29 @@ namespace MicAngle
 		return result;
 				
 	}
+
+        public double ComputeCoeff(double[] values1, double[] values2)
+{
+    if(values1.Length != values2.Length)
+        throw new ArgumentException("values must be the same length");
+
+    var avg1 = values1.Average();
+    var avg2 = values2.Average();
+
+    var sum1 = values1.Zip(values2, (x1, y1) => (x1 - avg1) * (y1 - avg2)).Sum();
+
+    var sumSqr1 = values1.Sum(x => Math.Pow((x - avg1), 2.0));
+    var sumSqr2 = values2.Sum(y => Math.Pow((y - avg2), 2.0));
+
+    var result = sum1 / Math.Sqrt(sumSqr1 * sumSqr2);
+
+    return result;
+}
        //I THINK BUG HERE we need to sum all values not only midle
-	 public double  interCorelationFunc(int[,] buf,out bool success,long[] maxes=null){
+	 public double  interCorelationFunc(int[,] buf,out bool success,out bool positiveRotation,long[] maxes=null){
             //  const int MIC_COUNT = 2;
             success = true;
+            positiveRotation = true;
          double result = 0;
 			int[] delays = new int[]{0,1,2,4};
 
@@ -139,18 +158,18 @@ namespace MicAngle
                     int maxIndex = 0;
                     long maxValue = 0;
             double cosA = 0, arcCosA = 0;
-            for (int k = 0; k < SHIFT_COUNT; k++)
+            for (int k = 0; k < SHIFT_COUNT*2; k++)
                     {
                // Console.WriteLine("k:"+k);
-                    long summ = 0;
+                    long korelKoff = 0;
                 //Вертаємо масив в початковий стан без зсувів
-                if (k==0) Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
+                if (k==0 || k==SHIFT_COUNT) Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
 
                 // buf[0]=shiftRight(buf[0], delays[l]);
                 //  buf[1] = shiftRight(buf[1], delays[l]);
                 for (int i = 0; i < buf.GetLength(0); i++)
                         {
-                              if (k<0)
+                              if (k<SHIFT_COUNT)
                             shift(buf,i, -delays[i]);
                             else
                      shift(buf, i, delays[i]);
@@ -161,11 +180,14 @@ namespace MicAngle
                 // for (int i = 0; i < SM.Length; i++)
                 //  SM[i] = 1;
                 //int middleOfSignalArray = buf.GetLength(1) / 2;
-                int startIndex = 0;
+                int startIndex = delays.Max()*SHIFT_COUNT;
                 int endIndex = buf.GetLength(1); //startIndex + elementsToSum;
-                if (k < 0) startIndex = -k - 1;
-                if (k > 0) endIndex -= (k-1);
+                                                 // if (k < 0) startIndex = -k - 1;
+                                                 //if (k > 0)
+                endIndex -= startIndex;
+
                 
+
                   for (int j = startIndex; j < endIndex; j++)//for (int j = 27000; j < SM.Length; j++)
                     {
                     long summOfDifferentSignalValues = 0;
@@ -174,21 +196,21 @@ namespace MicAngle
                         summOfDifferentSignalValues += buf[i,j];
                         }
                     //summ += (long)Math.Sqrt((double)Math.Abs(summOfDifferentSignalValues));
-                    summ += (summOfDifferentSignalValues*summOfDifferentSignalValues);
+                    korelKoff += Math.Abs(summOfDifferentSignalValues);
                     }
-                summ /= buf.GetLength(1);
-                //long absSumm = Math.Abs(summ);
-                //summ = (long)Math.Sqrt(absSumm);
-                    if (maxes != null) maxes[k] = summ;
-                 if (Math.Abs(summ) > Math.Abs(maxValue))
+                korelKoff /= buf.GetLength(1);
+                  //long absSumm = Math.Abs(summ);
+                  //summ = (long)Math.Sqrt(absSumm);
+                if (maxes != null) maxes[k] = korelKoff;
+                 if (Math.Abs(korelKoff) > Math.Abs(maxValue))
                 //if (summ > maxValue)
                 {
                    Console.Out.WriteLine("max Long:"+long.MaxValue);
-                            maxValue = summ;
-                            maxIndex = (k );
+                            maxValue = korelKoff;
+                            maxIndex = (k-SHIFT_COUNT );
                         }
                 Console.Out.WriteLine();
-                    Console.Out.WriteLine("K:"+k+ " SUM:" + summ +" MAX_SUM:" + maxValue +
+                    Console.Out.WriteLine("K:"+k+ " SUM:" + korelKoff +" MAX_SUM:" + maxValue +
                 " MAX_INDEX:" + maxIndex);
                 double L = SignalsManager.getDistance(Mn[0].X, Mn[0].Y, Mn[1].X, Mn[1].Y);
                 if (L==0)
@@ -204,12 +226,14 @@ namespace MicAngle
                     cosA = V * (double)maxIndex / (L * (double)Sn[0].samplingRate);
                     arcCosA = Math.Acos(cosA);
                     result = arcCosA * 180 / Math.PI;
+                    positiveRotation = true;
                 }
                 else
                 {
                     cosA = V * (double)maxIndex / (L * (double)Sn[0].samplingRate);
                     arcCosA = Math.Acos(cosA);
                     result = -arcCosA * 180 / Math.PI;
+                    positiveRotation = false;
                 }
                 
                

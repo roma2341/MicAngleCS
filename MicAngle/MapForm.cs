@@ -170,10 +170,13 @@ namespace MicAngle
             if (testAngle != 0) angle = testAngle;
             PointLatLng mainMicPos = signalsManger.Mn.First().GeoPosition; //signalsManger.Mn[0].GeoPosition
             PointLatLng secondMicPos = signalsManger.Mn.Last().GeoPosition;//fiction zero
-            
-            PointLatLng directionPos = rotate(mainMicPos, secondMicPos, -angle);
-           /* PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
-                directionPos.Lng - secondMicPos.Lng);*/
+            PointLatLng directionPos;
+            if (parent.resultIsPositiveRotation)
+                directionPos = rotate(mainMicPos, secondMicPos, angle);
+            else
+                directionPos = rotate(mainMicPos, secondMicPos, -angle);
+            /* PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
+                 directionPos.Lng - secondMicPos.Lng);*/
 
             List<PointLatLng> polygonPoints = new List<PointLatLng>();
 
