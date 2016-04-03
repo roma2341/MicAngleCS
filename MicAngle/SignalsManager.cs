@@ -158,7 +158,7 @@ namespace MicAngle
                     int maxIndex = 0;
                     long maxValue = 0;
             double cosA = 0, arcCosA = 0;
-            for (int k = 0; k < SHIFT_COUNT*2; k++)
+            for (int k = SHIFT_COUNT; k < SHIFT_COUNT*2; k++)
                     {
                // Console.WriteLine("k:"+k);
                     long korelKoff = 0;
@@ -173,22 +173,25 @@ namespace MicAngle
                             shift(buf,i, -delays[i]);
                             else
                      shift(buf, i, delays[i]);
-                        }   
+                        }
 
                 //  long[] SM = new long[buf.GetLength(1)];
 
                 // for (int i = 0; i < SM.Length; i++)
                 //  SM[i] = 1;
                 //int middleOfSignalArray = buf.GetLength(1) / 2;
-                int startIndex = delays.Max()*SHIFT_COUNT;
-                int endIndex = buf.GetLength(1); //startIndex + elementsToSum;
-                                                 // if (k < 0) startIndex = -k - 1;
-                                                 //if (k > 0)
-                endIndex -= startIndex;
+                //   int startIndex = delays.Max() * SHIFT_COUNT;
+               // int startIndex = 0;
+                //  int endIndex = buf.GetLength(1); //startIndex + elementsToSum;
+                   int startIndex =  buf.GetLength(1)/2-2000;
+                int endIndex = buf.GetLength(1) / 2 + 2000;
+                // if (k < 0) startIndex = -k - 1;
+                //if (k > 0)
+                // endIndex -= startIndex;
 
-                
 
-                  for (int j = startIndex; j < endIndex; j++)//for (int j = 27000; j < SM.Length; j++)
+
+                for (int j = startIndex; j < endIndex; j++)//for (int j = 27000; j < SM.Length; j++)
                     {
                     long summOfDifferentSignalValues = 0;
                     for (int i = 0; i < Mn.Count; i++)
@@ -198,7 +201,7 @@ namespace MicAngle
                     //summ += (long)Math.Sqrt((double)Math.Abs(summOfDifferentSignalValues));
                     korelKoff += Math.Abs(summOfDifferentSignalValues);
                     }
-                korelKoff /= buf.GetLength(1);
+               // korelKoff /= buf.GetLength(1);
                   //long absSumm = Math.Abs(summ);
                   //summ = (long)Math.Sqrt(absSumm);
                 if (maxes != null) maxes[k] = korelKoff;

@@ -10,7 +10,6 @@ using System.Net;
 using GMap.NET;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms;
-using System.Windows;
 
 namespace MicAngle
 {
@@ -172,9 +171,9 @@ namespace MicAngle
             PointLatLng secondMicPos = signalsManger.Mn.Last().GeoPosition;//fiction zero
             PointLatLng directionPos;
             if (parent.resultIsPositiveRotation)
-                directionPos = rotate(mainMicPos, secondMicPos, angle);
-            else
                 directionPos = rotate(mainMicPos, secondMicPos, -angle);
+            else
+                directionPos = rotate(mainMicPos, secondMicPos, angle);
             /* PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
                  directionPos.Lng - secondMicPos.Lng);*/
 
