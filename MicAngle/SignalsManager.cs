@@ -9,7 +9,7 @@ namespace MicAngle
     public class SignalsManager
     {
         public const int SHIFT_COUNT = 48;
-        static short MAX_SHORT = short.MaxValue;//short.MaxValue;//32767
+        static short MAX_SHORT = 255;//short.MaxValue;//32767
 	public static double V =300;
    public List<SoundEmiter> Sn { get; set; }
      public List<Microphone> Mn { get; set; }
@@ -119,6 +119,17 @@ namespace MicAngle
        //I THINK BUG HERE we need to sum all values not only midle
 	 public double  interCorelationFunc(int[,] buf,out bool success,out bool positiveRotation,long[] maxes=null){
             //  const int MIC_COUNT = 2;
+            Console.WriteLine("******INTERCORELATION_FUNCTION********");
+            for (int i = 0; i < buf.GetLength(0); i++)
+            {
+                for (int j = 0; j < buf.GetLength(1); j++)
+                {
+                    Console.Write(buf[i, j] + " ");
+                    if (j >= 20) break;
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("***************************************");
             success = true;
             positiveRotation = true;
          double result = 0;
@@ -181,10 +192,10 @@ namespace MicAngle
                 //  SM[i] = 1;
                 //int middleOfSignalArray = buf.GetLength(1) / 2;
                 //   int startIndex = delays.Max() * SHIFT_COUNT;
-               // int startIndex = 0;
+                // int startIndex = 0;
                 //  int endIndex = buf.GetLength(1); //startIndex + elementsToSum;
-                   int startIndex =  buf.GetLength(1)/2-2000;
-                int endIndex = buf.GetLength(1) / 2 + 2000;
+                int startIndex = 0;//buf.GetLength(1)/2-2000;
+                int endIndex = buf.GetLength(1)-1;//buf.GetLength(1) / 2 + 2000;
                 // if (k < 0) startIndex = -k - 1;
                 //if (k > 0)
                 // endIndex -= startIndex;
@@ -193,11 +204,13 @@ namespace MicAngle
 
                 for (int j = startIndex; j < endIndex; j++)//for (int j = 27000; j < SM.Length; j++)
                     {
-                    long summOfDifferentSignalValues = 0;
+                    long summOfDifferentSignalValues = 1;
                     for (int i = 0; i < Mn.Count; i++)
                         {
-                        summOfDifferentSignalValues += buf[i,j];
+                        summOfDifferentSignalValues *= buf[i,j];
+                       // Console.WriteLine("buf[" + i + "," + j + "]="+ buf[i, j]);
                         }
+                   // Console.WriteLine("summOfDifferentSignalValues:"+ summOfDifferentSignalValues);
                     //summ += (long)Math.Sqrt((double)Math.Abs(summOfDifferentSignalValues));
                     korelKoff += Math.Abs(summOfDifferentSignalValues);
                     }
@@ -215,12 +228,15 @@ namespace MicAngle
                 Console.Out.WriteLine();
                     Console.Out.WriteLine("K:"+k+ " SUM:" + korelKoff +" MAX_SUM:" + maxValue +
                 " MAX_INDEX:" + maxIndex);
-                double L = SignalsManager.getDistance(Mn[0].X, Mn[0].Y, Mn[1].X, Mn[1].Y);
+                int firstMicrophoneIndex = 0;
+                int lastMicrophoneIndex = Mn.Count-1;
+                double L = SignalsManager.getDistance(Mn[firstMicrophoneIndex].X, Mn[firstMicrophoneIndex].Y, Mn[lastMicrophoneIndex].X, Mn[lastMicrophoneIndex].Y);
                 if (L==0)
                 {
-                    success = false;
+                    /*success = false;
                     Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
-                    return 0;
+                    return 0;*/
+                    L=1;
                 }
                 // Console.WriteLine("L:" + L);
               

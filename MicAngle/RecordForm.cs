@@ -10,168 +10,73 @@ using System.Runtime.InteropServices;
 using System.Collections;
 using System.IO;
 using System.Threading;
+using NAudio.Wave;
 
 namespace MicAngle
 {
 
-   
+
 
     public partial class RecordForm : Form
     {
-        CountdownEvent cntEvent = new CountdownEvent(1);
-        Thread soundRecorderThread = null;
-        uint aMicId = 0;
-        #region struct WaveInCaps
-        [StructLayout(LayoutKind.Sequential)]
-        public struct WaveInCaps
+       // CountdownEvent cntEvent = new CountdownEvent(1);
+        WaveIn waveIn;
+        Form1 angleForm;
+        const int SAMPLING_RATE = 44000;
+        //Класс для записи в файл
+        //BufferedWaveProvider bufferedWaveProvider = null;
+
+
+        void StopRecording()
         {
-            public short wMid; 	// Код изготовителя драйвера для устройства
-            public short wPid; 	// Код устройства, назначенный изготовителем
-            public int vDriverVersion;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public char[] szPname; 	// Описание устройства 
-            public uint dwFormats;	// Флаги, соответствующие стандартным форматам 
-            // звуковых данных, с которыми может работать 
-            // устройство 
-            public short wChannels;	// количество каналов (1 – моно, 2 – стерео) 
+            MessageBox.Show("StopRecording");
+            waveIn.StopRecording();
         }
-        #endregion
-        #region struct WAVEFORMAT
-        [StructLayout(LayoutKind.Sequential)]
-        public struct WAVEFORMAT
+        void waveIn_DataAvailable(object sender, WaveInEventArgs e)
         {
-            public ushort wFormatTag; //тип аудио-данных
-            public ushort nChannels; //определяет количество каналов
-            public uint nSamplesPerSec; //определяет норму отбора в секунду
-            public uint nAvgBytesPerSec;
-            public ushort nBlockAlign; //определяет выравнивание в байтах
-            public ushort wBitsPerSample; //определяет количество бит для выборки
-            public ushort cbSize; //определяет размер всей структуры
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new EventHandler<WaveInEventArgs>(waveIn_DataAvailable), sender, e);
+            }
+            else
+            {
+                //Записываем данные из буфера в файл
+                const int bytesInOnePortion = 4;
+                int channels = angleForm.getSignalManager().Mn.Count;
+                int bytesPerChannel = bytesInOnePortion - channels;
+                int[,] signalFromMics = getSignalFromMics(e.Buffer, channels, bytesInOnePortion / bytesPerChannel);
+                angleForm.processAngle(signalFromMics);
+               // Thread.Sleep(4000);
+               // bufferedWaveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
+            }
         }
-        #endregion
-        #region struct WAVEHDR
-        [StructLayout(LayoutKind.Sequential)]
-        public struct WAVEHDR
+        private void waveIn_RecordingStopped(object sender, EventArgs e)
         {
-            public IntPtr lpData;
-            public uint dwBufferLength;
-            public uint dwBytesRecorded;
-            public IntPtr dwUser;
-            public uint dwFlags;
-            public uint dwLoops;
-            public IntPtr lpNext;
-            public IntPtr reserved;
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new EventHandler(waveIn_RecordingStopped), sender, e);
+            }
+            else
+            {
+                waveIn.Dispose();
+                waveIn = null;
+              //  bufferedWaveProvider.ClearBuffer();
+            }
         }
-        #endregion
-        enum WaveInOpenFlags : uint
-        {
-            CALLBACK_NULL = 0,
-            CALLBACK_FUNCTION = 0x30000,
-            CALLBACK_EVENT = 0x50000,
-            CALLBACK_WINDOW = 0x10000,
-            CALLBACK_THREAD = 0x20000,
-            WAVE_FORMAT_QUERY = 1,
-            WAVE_MAPPED = 4,
-            WAVE_FORMAT_DIRECT = 8
-        }
-        enum MMRESULT : uint
-        {
-            MMSYSERR_NOERROR = 0, //успіх
-            MMSYSERR_ERROR = 1,
-            MMSYSERR_BADDEVICEID = 2,
-            MMSYSERR_NOTENABLED = 3,
-            MMSYSERR_ALLOCATED = 4,
-            MMSYSERR_INVALHANDLE = 5,
-            MMSYSERR_NODRIVER = 6,
-            MMSYSERR_NOMEM = 7,
-            MMSYSERR_NOTSUPPORTED = 8,
-            MMSYSERR_BADERRNUM = 9,
-            MMSYSERR_INVALFLAG = 10,
-            MMSYSERR_INVALPARAM = 11, //базова адреса буфера вирівняний з обсягом вибірки
-            MMSYSERR_HANDLEBUSY = 12,
-            MMSYSERR_INVALIDALIAS = 13,
-            MMSYSERR_BADDB = 14,
-            MMSYSERR_KEYNOTFOUND = 15,
-            MMSYSERR_READERROR = 16,
-            MMSYSERR_WRITEERROR = 17,
-            MMSYSERR_DELETEERROR = 18,
-            MMSYSERR_VALNOTFOUND = 19,
-            MMSYSERR_NODRIVERCB = 20,
-            WAVERR_BADFORMAT = 32,
-            WAVERR_STILLPLAYING = 33,
-            WAVERR_UNPREPARED = 34
-        }
-        #region waveIn
-        [DllImport("winmm.dll", SetLastError = true)]
-        private static extern int waveInGetNumDevs();
-        [DllImport("winmm.dll", EntryPoint = "waveInGetDevCaps")]
-        public static extern int waveInGetDevCaps(int uDeviceID, ref WaveInCaps lpCaps, int uSize);
-        [DllImport("winmm.dll", SetLastError = true)]
-        private static extern MMRESULT waveInOpen(ref IntPtr hWaveIn, uint deviceId, ref WAVEFORMAT wfx, IntPtr dwCallBack, uint dwInstance, WaveInOpenFlags dwFlags);
-        [DllImport("winmm.dll", SetLastError = true)]
-        private static extern MMRESULT waveInAddBuffer(IntPtr hWaveIn, ref WAVEHDR lpWaveHdr, uint cWaveHdrSize);
-        [DllImport("winmm.dll", SetLastError = true)]
-        private static extern MMRESULT waveInPrepareHeader(IntPtr hWaveIn, ref WAVEHDR lpWaveHdr, uint Size);
-        [DllImport("winmm.dll", SetLastError = true)]
-        private static extern MMRESULT waveInUnprepareHeader(IntPtr hWaveIn, ref WAVEHDR lpWaveHdr, uint Size);
-        [DllImport("winmm.dll", SetLastError = true)]
-        private static extern MMRESULT waveInStart(IntPtr hWaveIn);
-        [DllImport("winmm.dll", SetLastError = true)]
-        private static extern MMRESULT waveInClose(IntPtr hWaveIn);
-        #endregion
-        public RecordForm()
+        public RecordForm(Form1 angleForm)
         {
             InitializeComponent();
-            int waveInDevicesCount = waveInGetNumDevs();
+            this.angleForm=angleForm;
+            int waveInDevicesCount = WaveIn.DeviceCount;
             for (int uDeviceID = 0; uDeviceID < waveInDevicesCount; uDeviceID++)
             {
-                WaveInCaps waveInCaps = new WaveInCaps();
-                waveInGetDevCaps(uDeviceID, ref waveInCaps, Marshal.SizeOf(typeof(WaveInCaps)));
-                String szPname = new string(waveInCaps.szPname).Remove(new string(waveInCaps.szPname).IndexOf('\0')).Trim() + ")";
-                comboBox1.Items.Add(szPname);
+                WaveInCapabilities waveInCaps = WaveIn.GetCapabilities(uDeviceID);
+                String productName = waveInCaps.ProductName;
+                comboBox1.Items.Add(productName);
             }
              
         }
-        public class readSound
-        {
-            private const ushort WAVE_FORMAT_PCM = 0x0001;
-            private IntPtr hwWaveIn = IntPtr.Zero;
-            private IntPtr dwCallBack = IntPtr.Zero;
-            private GCHandle bufferPin;
-           volatile public byte[] buffer;
-            public double[] valueBufferL = new double[24000];
-            public double[] valueBufferR = new double[24000];
-            public void readMic(uint deviceId)
-            {
-                WAVEFORMAT waveFormat;
-                waveFormat = new WAVEFORMAT();
-                waveFormat.wFormatTag = WAVE_FORMAT_PCM;
-                waveFormat.nChannels = 2;
-                waveFormat.wBitsPerSample = 16;
-                waveFormat.nBlockAlign = (ushort)((waveFormat.nChannels * waveFormat.wBitsPerSample) / 8);
-                waveFormat.nSamplesPerSec = 44100;
-                waveFormat.nAvgBytesPerSec = waveFormat.nSamplesPerSec * waveFormat.nBlockAlign;
-                waveFormat.cbSize = 0;
-                buffer = new byte[waveFormat.nAvgBytesPerSec];
-                bufferPin = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-                WAVEHDR waveInHdr;
-                waveInHdr.lpData = bufferPin.AddrOfPinnedObject();
-                waveInHdr.dwBufferLength = waveFormat.nAvgBytesPerSec;
-                waveInHdr.dwFlags = 0;
-                waveInHdr.dwBytesRecorded = 0;
-                waveInHdr.dwLoops = 0;
-                waveInHdr.dwUser = IntPtr.Zero;
-                waveInHdr.lpNext = IntPtr.Zero;
-                waveInHdr.reserved = IntPtr.Zero;
-                MMRESULT res = waveInOpen(ref hwWaveIn, deviceId, ref waveFormat, dwCallBack, 0, WaveInOpenFlags.CALLBACK_NULL);
-                res = waveInPrepareHeader(hwWaveIn, ref waveInHdr, Convert.ToUInt32(Marshal.SizeOf(waveInHdr)));
-                res = waveInAddBuffer(hwWaveIn, ref waveInHdr, Convert.ToUInt32(Marshal.SizeOf(waveInHdr)));
-                res = waveInStart(hwWaveIn);
-                while (waveInUnprepareHeader(hwWaveIn, ref waveInHdr, Convert.ToUInt32(Marshal.SizeOf(waveInHdr))) == MMRESULT.WAVERR_STILLPLAYING) { }
-                res = waveInClose(hwWaveIn);
-            }
-        }
-
+        
         double ComputeCoeffd(double[] values1, double[] values2)
         {
             if (values1.Length != values2.Length)
@@ -198,102 +103,60 @@ namespace MicAngle
             }
             return (float)Math.Sqrt(sum / 44000);
         }
-        public readSound a = new readSound();
 
 
         private void button1_Click_1(object sender, EventArgs e)
         {
-            cntEvent.Wait();
-            chart1.ChartAreas[0].CursorX.IsUserEnabled = true;
-            chart1.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
-            chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
-            chart1.ChartAreas[0].AxisX.ScrollBar.IsPositionedInside = true;
-            chart1.Series[0].Points.Clear();
-            chart1.Series[1].Points.Clear();
-            int n = 0;
-            for (int i = 0; i < 4000; i++)
+            //  cntEvent.Wait();
+            if (comboBox1.SelectedIndex == -1) return ;
+            int deviceId = comboBox1.SelectedIndex;
+            //bufferedWaveProvider = new BufferedWaveProvider(new WaveFormat(44000, 1));
+            try
             {
-                short l = (short)((a.buffer[n + 1] << 8) | a.buffer[n + 0]);
-                short r = (short)((a.buffer[n + 3] << 8) | a.buffer[n + 2]);
-                chart1.Series[0].Points.AddXY(i, l);
-                chart1.Series[1].Points.AddXY(i, r);
-                n += 4;
+                MessageBox.Show("Start Recording");
+                waveIn = new WaveIn();
+                //Дефолтное устройство для записи (если оно имеется)
+                waveIn.DeviceNumber = deviceId;
+                //Прикрепляем к событию DataAvailable обработчик, возникающий при наличии записываемых данных
+                waveIn.DataAvailable += waveIn_DataAvailable;
+                //Прикрепляем обработчик завершения записи
+                waveIn.RecordingStopped += new EventHandler<StoppedEventArgs>(waveIn_RecordingStopped);
+                //Формат wav-файла - принимает параметры - частоту дискретизации и количество каналов(здесь mono)
+                waveIn.WaveFormat = new WaveFormat(SAMPLING_RATE, 1);
+                //Инициализируем объект WaveFileWriter
+                // writer = new WaveFileWriter(outputFilename, waveIn.WaveFormat);
+                //Начало записи
+                waveIn.StartRecording();
+                //soundDisplayTimer.Start();
             }
-            float[] sigL = new float[44100];
-            float[] sigR = new float[44100];
-            double[] sigLd = new double[44100];
-            double[] sigRd = new double[44100];
-            int j = 0;
-            for (int m = 0; m < (44100 * 4); m += 4)
-            {
-                sigL[j] = (float)((short)((a.buffer[m + 1] << 8) | a.buffer[m + 0]));
-                sigR[j] = (float)((short)((a.buffer[m + 3] << 8) | a.buffer[m + 2]));
-                sigLd[j] = (double)((short)((a.buffer[m + 1] << 8) | a.buffer[m + 0]));
-                sigRd[j] = (double)((short)((a.buffer[m + 3] << 8) | a.buffer[m + 2]));
-                j++;
-            }
-            chart2.ChartAreas[0].CursorX.IsUserEnabled = true;
-            chart2.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
-            chart2.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
-            chart2.ChartAreas[0].AxisX.ScrollBar.IsPositionedInside = true;
-            chart2.Series[0].Points.Clear();
-            chart3.ChartAreas[0].CursorX.IsUserEnabled = true;
-            chart3.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
-            chart3.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
-            chart3.ChartAreas[0].AxisX.ScrollBar.IsPositionedInside = true;
-            chart3.Series[0].Points.Clear();
-            float[] sigLb = new float[44000];
-            float[] sigRb = new float[44000];
-            double[] sigLbd = new double[44000];
-            double[] sigRbd = new double[44000];
-            Array.Copy(sigL, 49, sigLb, 0, 44000);
-            Array.Copy(sigLd, 49, sigLbd, 0, 44000);
-            for (int i = -39; i < 40; i++)
-            {
-                Array.Copy(sigR, 49 + i, sigRb, 0, 44000);
-                Array.Copy(sigRd, 49 + i, sigRbd, 0, 44000);
-                chart2.Series[0].Points.AddXY(i, ComputeCoeff(sigLb, sigRb));
-                chart3.Series[0].Points.AddXY(i, ComputeCoeffd(sigLbd, sigRbd));
-            }
+            catch (Exception ex)
+            { MessageBox.Show(ex.Message); }
         }
 
-        public T[,] getSignalFromMics<T>() where T : IConvertible
+        public int[,] getSignalFromMics(byte[] buffer,int channels,int bytesPerChanel) 
         {
            
             if (comboBox1.SelectedIndex == -1) return null;
-            cntEvent.Wait();
-            SharedRes.mtx.WaitOne();
-            T[,] signal = new T[2,44100];
+            //cntEvent.Wait();
+           // SharedRes.mtx.WaitOne();
+           
             int n = 0;
-            for (int i = 0; i < 44100/4; i++)
+            int[,] signal = new int[channels, buffer.Length];
+            for (int i = 0; i < buffer.Length / 4; i++)
             {
-                signal[0,i] = (T)(object)((a.buffer[n + 1] << 8) | a.buffer[n + 0]);
-                signal[1,i] = (T)(object)((a.buffer[n + 3] << 8) | a.buffer[n + 2]);
-                n += 4;
+                for (int j = 0; j < channels; j+=2) 
+                    for (int k=0; k < bytesPerChanel;k++)
+                signal[j, i] |= buffer[n + j+ k] << k*8;
+                n += bytesPerChanel * channels;//bytes
             }
-            SharedRes.mtx.ReleaseMutex();
+           // SharedRes.mtx.ReleaseMutex();
             return signal;
 
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            aMicId = Convert.ToUInt32(comboBox1.SelectedIndex);
-            if (soundRecorderThread!=null)
-            soundRecorderThread.Abort();
-            soundRecorderThread = new Thread(delegate () {
-                while (true)
-                {
-                    Console.WriteLine("RECORD THREAD");
-                    cntEvent.Reset();
-                    SharedRes.mtx.WaitOne();
-                    a.readMic(aMicId);
-                    cntEvent.Signal();
-                    SharedRes.mtx.ReleaseMutex();
-                   
-                }
-            });
-            soundRecorderThread.Start();
+         
         }
     }
     class SharedRes

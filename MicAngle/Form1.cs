@@ -22,12 +22,16 @@ namespace MicAngle
         public double resultAngle { get; set; }
         SignalsManager sm;
         int dataInputCounter=0;
+        public SignalsManager getSignalManager()
+        {
+            return sm;
+        }
         public Form1()
         {
             InitializeComponent();
             sm = new SignalsManager();
             mapForm = new MapForm(this,sm);
-            recordForm = new RecordForm();
+            recordForm = new RecordForm(this);
 
         }
         T[,] ResizeArray<T>(T[,] original, int rows, int cols)
@@ -40,25 +44,23 @@ namespace MicAngle
                     newArray[i, j] = original[i, j];
             return newArray;
         }
-
-        private void btnProcessAngle_Click(object sender, EventArgs e)
+        public void processAngle(int[,] signalFromRealMicrophones)
         {
             if (dataInputCounter < 1) return;
-          // SignalsManager sm = new SignalsManager();
-           // sm.Mn.Add(new Microphone(10, -10));
-           // sm.Mn.Add(new Microphone(10.47,-10));
-           // sm.Sn.Add(new SoundEmiter(-100,100,1,44100));
-          
+            // SignalsManager sm = new SignalsManager();
+            // sm.Mn.Add(new Microphone(10, -10));
+            // sm.Mn.Add(new Microphone(10.47,-10));
+            // sm.Sn.Add(new SoundEmiter(-100,100,1,44100));
+
 
 
             int[,] signalsArr;
 
             //for (int i = 0; i < signalsArr.Length;i++ )
             // signalsArr[i]=new int[signalValuesCount];
-           // const int SIGNAL_VALUES_TO_OUTPUT = 20;
+            // const int SIGNAL_VALUES_TO_OUTPUT = 20;
             int smnSizeMin = int.MaxValue;
             // Console.WriteLine("PROCESSING SIGNALS ON MICS...");
-            int[,] signalFromRealMicrophones = recordForm.getSignalFromMics<int>();
             if (signalFromRealMicrophones == null)
             {
                 int signalValuesCount =
@@ -85,20 +87,21 @@ namespace MicAngle
                 }
                 ResizeArray<int>(signalsArr, sm.Mn.Count, smnSizeMin);
             }
-            else {
+            else
+            {
                 signalsArr = signalFromRealMicrophones;
             }
             //Підганяємо масиви по масиву з мінімальною кількістю ел.
-           
-         //   Console.WriteLine("PROCESSING FINISHED.");
 
-            long[] maxes = new long[SignalsManager.SHIFT_COUNT*2];//*2 because need contains left and right shift
+            //   Console.WriteLine("PROCESSING FINISHED.");
+
+            long[] maxes = new long[SignalsManager.SHIFT_COUNT * 2];//*2 because need contains left and right shift
             bool success;
-            
-            resultAngle =  sm.interCorelationFunc(signalsArr, out success,out resultIsPositiveRotation, maxes);
+
+            resultAngle = sm.interCorelationFunc(signalsArr, out success, out resultIsPositiveRotation, maxes);
             if (!success)
             {
-                MessageBox.Show("Схоже що відстань між мікрофонами і джерелом звуку рівна нулю","Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
+               Console.WriteLine("Схоже що відстань між мікрофонами і джерелом звуку рівна нулю", "Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             this.chartMaximum.Series[0].Points.Clear();
@@ -114,17 +117,22 @@ namespace MicAngle
             long yMaxAbs = (Math.Abs(yMax) > Math.Abs(yMin)) ? yMax : yMin;
             for (int i = -SignalsManager.SHIFT_COUNT; i < SignalsManager.SHIFT_COUNT; i++)
             {
-                long value = maxes[SignalsManager.SHIFT_COUNT+i];
+                long value = maxes[SignalsManager.SHIFT_COUNT + i];
                 if (Math.Abs(value) == Math.Abs(yMaxAbs))
                     seriesOfMax.Points.AddXY(i, value);
                 else
-                series.Points.AddXY(i, value);
-               // Console.WriteLine("series max[ " + i + "]=" + maxes[i+ SHIFT_COUNT]);
+                    series.Points.AddXY(i, value);
+                // Console.WriteLine("series max[ " + i + "]=" + maxes[i+ SHIFT_COUNT]);
             }
             this.chartMaximum.ChartAreas[0].AxisY.Minimum = yMin;
             this.chartMaximum.ChartAreas[0].AxisY.Maximum = yMax;
-            lblResult.Text = ""+ resultAngle;
+            lblResult.Text = "" + resultAngle;
             mapForm.processMap();
+        }
+
+        private void btnProcessAngle_Click(object sender, EventArgs e)
+        {
+            processAngle(null);
         }
 
         private void btnInputData_Click(object sender, EventArgs e)

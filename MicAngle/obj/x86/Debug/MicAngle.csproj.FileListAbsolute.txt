@@ -57,3 +57,5 @@ F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.pdb
 F:\zigzag\Documents\MicAngleCS\MicAngle\obj\x86\Debug\MicAngle.RecordForm.resources
 F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\Newtonsoft.Json.dll
 F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\Newtonsoft.Json.xml
+F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\NAudio.dll
+F:\zigzag\Documents\MicAngleCS\MicAngle\bin\Debug\NAudio.xml
