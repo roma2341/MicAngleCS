@@ -47,9 +47,11 @@ namespace DigitalFilter
             }
                 for (int i = 0; i < filterIterations; i++)
                 {
-                parentForm.filterSignalAndShow(filterKoffs, filterOrder);
-                if (cbAutoApply.Checked) parentForm.assignFilteredSignalToCurrent();
+                parentForm.filterSignal(filterKoffs, filterOrder);
+                if(filterIterations>1) parentForm.assignFilteredSignalToCurrent();
             }
+            if (cbAutoApply.Checked) parentForm.assignFilteredSignalToCurrent();
+            parentForm.showFilteredSignal();
         }
 
         private void btnAssignFilteredSignal_Click(object sender, EventArgs e)

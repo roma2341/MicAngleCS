@@ -97,10 +97,22 @@ namespace DigitalFilter
             fillChartByValues<double, double>(signalChart, axisX, currentSignal);
             showSpecterOfSignal();
         }
+        public void showFilteredSignal()
+        {
+            double[] axisX = SignalManager.generateAxisX(sampleRate, timeMS);
+            fillChartByValues<double, double>(signalChart, axisX, filteredSignal);
+        }
         public void filterSignalAndShow(double[] signal,double[] filterKoffs, int filterOrder)
         {
+            filterSignal(signal,filterKoffs,filterOrder);
+            showFilteredSignal();
+            showSpecterOfSignal();
+        }
+        public void filterSignal(double[] signal, double[] filterKoffs, int filterOrder)
+        {
             DigitalFilter myFilter = null;
-            try {
+            try
+            {
                 myFilter = new DigitalFilter(filterKoffs, filterOrder);
             }
             catch (FilterErrorStateException filterException)
@@ -108,11 +120,12 @@ namespace DigitalFilter
                 MessageBox.Show("need more coefficients in terms of filter order");
                 return;
             }
-           
+
             filteredSignal = myFilter.filterSignal(currentSignal);
-            double[] axisX = SignalManager.generateAxisX(sampleRate, timeMS);
-            fillChartByValues<double, double>(signalChart, axisX, filteredSignal);
-            showSpecterOfSignal();
+        }
+        public void filterSignal( double[] filterKoffs, int filterOrder)
+        {
+            filterSignal(currentSignal, filterKoffs, filterOrder);
         }
         public void filterSignalAndShow(double[] filterKoffs,int filterOrder)
         {
