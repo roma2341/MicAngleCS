@@ -8,10 +8,10 @@ namespace DigitalFilter
 {
     class SignalManager
     {
-       public static short[] generateSinWave(int sampleRate,double amplitude, double frequency, int timeMS)
+       public static double[] generateSinWave(int sampleRate,double amplitude, double frequency, int timeMS)
         {
             int samplesCountInTimeInterval = sampleRate * timeMS / 1000;
-            short[] buffer = new short[samplesCountInTimeInterval];
+            double[] buffer = new double[samplesCountInTimeInterval];
             for (int i = 0; i < buffer.Length; i++)
             {
                 buffer[i] = (short)(amplitude * Math.Sin((2 * Math.PI * i * frequency) / sampleRate));

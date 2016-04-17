@@ -9,15 +9,22 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using AForge.Math;
+using DigitalFilter.Exceptions;
+
 namespace DigitalFilter
 {
     public partial class Form1 : Form
     {
-        const int sampleRate = 44100;
+        FilterForm filterForm;
+        const int sampleRate = 48000;
         const int timeMS = 10;
-        static short[] sinArr = SignalManager.generateSinWave(sampleRate, 128, 1000, timeMS);
+        const int AMPLITUDE = 128;
+        const int DEFAULT_FREQUENCY = 1000;
+        static double[] currentSignal;
+        double[] filteredSignal;
         public void fillChartByValues<T, M>(Chart target,T[] x_axis,M[] y_axis)
         {
+            target.Series.Clear();
             if (x_axis.Length != y_axis.Length)
                 throw new Exception("count of elements in x_axis must be equal to y_axis");
             Series series = target.Series.Add("signal");
@@ -84,19 +91,60 @@ namespace DigitalFilter
             }
 
         }
-        public Form1()
+        public void showCurrentSignal()
         {
-            InitializeComponent();
-           double[] axisX = SignalManager.generateAxisX(sampleRate, timeMS);
-            fillChartByValues<double,short>(signalChart,axisX, sinArr);
-            Complex[] complexSinArr = shortArrToComplex(sinArr);
+            double[] axisX = SignalManager.generateAxisX(sampleRate, timeMS);
+            fillChartByValues<double, double>(signalChart, axisX, currentSignal);
+            showSpecterOfSignal();
+        }
+        public void filterSignalAndShow(double[] signal,double[] filterKoffs, int filterOrder)
+        {
+            DigitalFilter myFilter = null;
+            try {
+                myFilter = new DigitalFilter(filterKoffs, filterOrder);
+            }
+            catch (FilterErrorStateException filterException)
+            {
+                MessageBox.Show("need more coefficients in terms of filter order");
+                return;
+            }
+           
+            filteredSignal = myFilter.filterSignal(currentSignal);
+            double[] axisX = SignalManager.generateAxisX(sampleRate, timeMS);
+            fillChartByValues<double, double>(signalChart, axisX, filteredSignal);
+            showSpecterOfSignal();
+        }
+        public void filterSignalAndShow(double[] filterKoffs,int filterOrder)
+        {
+            filterSignalAndShow(currentSignal, filterKoffs, filterOrder);
+        }
+        public void assignFilteredSignalToCurrent()
+        {
+            currentSignal = filteredSignal;
+        }
+        public void showSpecterOfSignal()
+        {
+            Complex[] complexSinArr = shortArrToComplex(currentSignal);
             complexSinArr = normalizeComplexArr(complexSinArr);
             FourierTransform.FFT(complexSinArr, FourierTransform.Direction.Forward);
             short[] fftResult = complexArrToNumber<short>(complexSinArr);
             double[] axisX2 = getIntervalArray<double>(0, fftResult.Length);
             fillChartByValues<double, short>(processedSignalChart, axisX2, fftResult);
-      
+        }
+        public Form1()
+        {
+            InitializeComponent();
+            resetSignal();
+            filterForm = new FilterForm(this);
+            filterForm.Show(this);
+
+            showCurrentSignal();
+
             //fillChartByValues<double, short>();
+        }
+        public void resetSignal()
+        {
+            currentSignal = SignalManager.generateSinWave(sampleRate, AMPLITUDE, DEFAULT_FREQUENCY, timeMS);
         }
     }
 }
