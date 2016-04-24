@@ -1,0 +1,23 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="mystyle.css">
+</head>
+<body>
+<textarea  id="arrayInput" class="data_input" onkeyup="onInputArrayChanged();"></textarea >
+<h3 id="resultText">Test</h3>
+</body>
+</html>
+
+<script type="text/javascript">
+function onInputArrayChanged() {
+var arr = document.getElementById('arrayInput').value;
+var numStrings = arr.split(' ');
+var result = 0;
+for (var i = 0; i < numStrings.length; i++){
+result += Number(numStrings[i]);
+console.log('result+='+ numStrings[i]);
+}
+console.log('result is:'+result);
+document.getElementById('resultText').textContent=result;
+}
+</script>

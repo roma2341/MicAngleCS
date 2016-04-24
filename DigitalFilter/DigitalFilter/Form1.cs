@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using AForge.Math;
 using DigitalFilter.Exceptions;
+using System.Globalization;
 
 namespace DigitalFilter
 {
@@ -17,11 +18,19 @@ namespace DigitalFilter
     {
         FilterForm filterForm;
         const int sampleRate = 48000;
-        const int timeMS = 10;
+        const int timeMS = 1000;
         const int AMPLITUDE = 128;
         const int DEFAULT_FREQUENCY = 1000;
         static double[] currentSignal;
         double[] filteredSignal;
+        public NumberFormatInfo CurrentNumberFormat { get; set; }
+        public void initializeFileFormat()
+        {
+            CurrentNumberFormat = new NumberFormatInfo();
+            //fmt.NegativeSign = "-";
+            CurrentNumberFormat.NumberDecimalSeparator = ".";
+            CurrentNumberFormat.NumberGroupSeparator = ",";
+        }
         public void fillChartByValues<T, M>(Chart target,T[] x_axis,M[] y_axis)
         {
             target.Series.Clear();
@@ -95,33 +104,45 @@ namespace DigitalFilter
         {
             double[] axisX = SignalManager.generateAxisX(sampleRate, timeMS);
             fillChartByValues<double, double>(signalChart, axisX, currentSignal);
-            showSpecterOfSignal();
+            showSpecterOfCurrentSignal();
         }
         public void showFilteredSignal()
         {
             double[] axisX = SignalManager.generateAxisX(sampleRate, timeMS);
             fillChartByValues<double, double>(signalChart, axisX, filteredSignal);
+            showSpecterOfFilteredSignal();
         }
         public void filterSignalAndShow(double[] signal,double[] filterKoffs, int filterOrder)
         {
             filterSignal(signal,filterKoffs,filterOrder);
             showFilteredSignal();
-            showSpecterOfSignal();
+            showSpecterOfCurrentSignal();
         }
         public void filterSignal(double[] signal, double[] filterKoffs, int filterOrder)
         {
             DigitalFilter myFilter = null;
             try
             {
-                myFilter = new DigitalFilter(filterKoffs, filterOrder);
+                myFilter = new DigitalFilter(CurrentNumberFormat, filterKoffs, filterOrder);
             }
             catch (FilterErrorStateException filterException)
             {
                 MessageBox.Show("need more coefficients in terms of filter order");
                 return;
             }
-
-            filteredSignal = myFilter.filterSignal(currentSignal);
+            switch (filterForm.currentFilterMode)
+            {
+                case DigitalFilter.FilterMode.Backward:
+                    filteredSignal = myFilter.filterSignalBackward(currentSignal);
+                    break;
+                case DigitalFilter.FilterMode.Forward:
+                    filteredSignal = myFilter.filterSignalForward(currentSignal);
+                    break;
+                case DigitalFilter.FilterMode.AllPass:
+                    filteredSignal = myFilter.filterSignalAllPass(currentSignal);
+                    break;
+            }
+        
         }
         public void filterSignal( double[] filterKoffs, int filterOrder)
         {
@@ -135,9 +156,18 @@ namespace DigitalFilter
         {
             currentSignal = filteredSignal;
         }
-        public void showSpecterOfSignal()
+        public void showSpecterOfCurrentSignal()
         {
             Complex[] complexSinArr = shortArrToComplex(currentSignal);
+            complexSinArr = normalizeComplexArr(complexSinArr);
+            FourierTransform.FFT(complexSinArr, FourierTransform.Direction.Forward);
+            short[] fftResult = complexArrToNumber<short>(complexSinArr);
+            double[] axisX2 = getIntervalArray<double>(0, fftResult.Length);
+            fillChartByValues<double, short>(processedSignalChart, axisX2, fftResult);
+        }
+        public void showSpecterOfFilteredSignal()
+        {
+            Complex[] complexSinArr = shortArrToComplex(filteredSignal);
             complexSinArr = normalizeComplexArr(complexSinArr);
             FourierTransform.FFT(complexSinArr, FourierTransform.Direction.Forward);
             short[] fftResult = complexArrToNumber<short>(complexSinArr);
@@ -147,10 +177,10 @@ namespace DigitalFilter
         public Form1()
         {
             InitializeComponent();
+            initializeFileFormat();
             resetSignal();
             filterForm = new FilterForm(this);
             filterForm.Show(this);
-
             showCurrentSignal();
 
             //fillChartByValues<double, short>();

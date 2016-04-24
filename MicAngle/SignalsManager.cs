@@ -169,20 +169,20 @@ namespace MicAngle
                     int maxIndex = 0;
                     long maxValue = 0;
             double cosA = 0, arcCosA = 0;
-            for (int k = SHIFT_COUNT; k < SHIFT_COUNT*2; k++)
+            for (int k = 0; k < SHIFT_COUNT; k++)
                     {
                // Console.WriteLine("k:"+k);
                     long korelKoff = 0;
                 //Вертаємо масив в початковий стан без зсувів
-                if (k==0 || k==SHIFT_COUNT) Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
+               // if (k==0 || k==SHIFT_COUNT) Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
 
                 // buf[0]=shiftRight(buf[0], delays[l]);
                 //  buf[1] = shiftRight(buf[1], delays[l]);
                 for (int i = 0; i < buf.GetLength(0); i++)
                         {
-                              if (k<SHIFT_COUNT)
+                           /*   if (k<SHIFT_COUNT)
                             shift(buf,i, -delays[i]);
-                            else
+                            else*/
                      shift(buf, i, delays[i]);
                         }
 
@@ -194,8 +194,8 @@ namespace MicAngle
                 //   int startIndex = delays.Max() * SHIFT_COUNT;
                 // int startIndex = 0;
                 //  int endIndex = buf.GetLength(1); //startIndex + elementsToSum;
-                int startIndex = 0;//buf.GetLength(1)/2-2000;
-                int endIndex = buf.GetLength(1)-1;//buf.GetLength(1) / 2 + 2000;
+                int startIndex = SHIFT_COUNT-1;//buf.GetLength(1)/2-2000;
+                int endIndex = buf.GetLength(1)-1- SHIFT_COUNT;//buf.GetLength(1) / 2 + 2000;
                 // if (k < 0) startIndex = -k - 1;
                 //if (k > 0)
                 // endIndex -= startIndex;
@@ -223,7 +223,7 @@ namespace MicAngle
                 {
                    Console.Out.WriteLine("max Long:"+long.MaxValue);
                             maxValue = korelKoff;
-                            maxIndex = (k-SHIFT_COUNT );
+                            maxIndex = (k );
                         }
                 Console.Out.WriteLine();
                     Console.Out.WriteLine("K:"+k+ " SUM:" + korelKoff +" MAX_SUM:" + maxValue +

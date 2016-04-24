@@ -37,6 +37,13 @@
             this.lblFilterStep = new System.Windows.Forms.Label();
             this.tbFilterIterationsCount = new System.Windows.Forms.TextBox();
             this.btnResetSignal = new System.Windows.Forms.Button();
+            this.lbFilters = new System.Windows.Forms.ListBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.groupBoxFilterMode = new System.Windows.Forms.GroupBox();
+            this.rbFilterBackward = new System.Windows.Forms.RadioButton();
+            this.rbFilterForward = new System.Windows.Forms.RadioButton();
+            this.rbAllPass = new System.Windows.Forms.RadioButton();
+            this.groupBoxFilterMode.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnDoFilter
@@ -123,11 +130,80 @@
             this.btnResetSignal.UseVisualStyleBackColor = true;
             this.btnResetSignal.Click += new System.EventHandler(this.btnResetSignal_Click);
             // 
+            // lbFilters
+            // 
+            this.lbFilters.FormattingEnabled = true;
+            this.lbFilters.Location = new System.Drawing.Point(383, 42);
+            this.lbFilters.Name = "lbFilters";
+            this.lbFilters.Size = new System.Drawing.Size(249, 199);
+            this.lbFilters.TabIndex = 9;
+            this.lbFilters.SelectedIndexChanged += new System.EventHandler(this.lbFilters_SelectedIndexChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(383, 15);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(34, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Filters";
+            // 
+            // groupBoxFilterMode
+            // 
+            this.groupBoxFilterMode.Controls.Add(this.rbAllPass);
+            this.groupBoxFilterMode.Controls.Add(this.rbFilterBackward);
+            this.groupBoxFilterMode.Controls.Add(this.rbFilterForward);
+            this.groupBoxFilterMode.Location = new System.Drawing.Point(208, 194);
+            this.groupBoxFilterMode.Name = "groupBoxFilterMode";
+            this.groupBoxFilterMode.Size = new System.Drawing.Size(106, 113);
+            this.groupBoxFilterMode.TabIndex = 11;
+            this.groupBoxFilterMode.TabStop = false;
+            this.groupBoxFilterMode.Text = "Filter Mode";
+            // 
+            // rbFilterBackward
+            // 
+            this.rbFilterBackward.AutoSize = true;
+            this.rbFilterBackward.Location = new System.Drawing.Point(6, 53);
+            this.rbFilterBackward.Name = "rbFilterBackward";
+            this.rbFilterBackward.Size = new System.Drawing.Size(73, 17);
+            this.rbFilterBackward.TabIndex = 13;
+            this.rbFilterBackward.Text = "Backward";
+            this.rbFilterBackward.UseVisualStyleBackColor = true;
+            this.rbFilterBackward.CheckedChanged += new System.EventHandler(this.rbFilter_CheckedChanged);
+            // 
+            // rbFilterForward
+            // 
+            this.rbFilterForward.AutoSize = true;
+            this.rbFilterForward.Checked = true;
+            this.rbFilterForward.Location = new System.Drawing.Point(6, 30);
+            this.rbFilterForward.Name = "rbFilterForward";
+            this.rbFilterForward.Size = new System.Drawing.Size(63, 17);
+            this.rbFilterForward.TabIndex = 12;
+            this.rbFilterForward.TabStop = true;
+            this.rbFilterForward.Text = "Forward";
+            this.rbFilterForward.UseVisualStyleBackColor = true;
+            this.rbFilterForward.CheckedChanged += new System.EventHandler(this.rbFilter_CheckedChanged);
+            // 
+            // rbAllPass
+            // 
+            this.rbAllPass.AutoSize = true;
+            this.rbAllPass.Location = new System.Drawing.Point(7, 76);
+            this.rbAllPass.Name = "rbAllPass";
+            this.rbAllPass.Size = new System.Drawing.Size(59, 17);
+            this.rbAllPass.TabIndex = 14;
+            this.rbAllPass.TabStop = true;
+            this.rbAllPass.Text = "AllPass";
+            this.rbAllPass.UseVisualStyleBackColor = true;
+            this.rbAllPass.CheckedChanged += new System.EventHandler(this.rbFilter_CheckedChanged);
+            // 
             // FilterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(367, 351);
+            this.ClientSize = new System.Drawing.Size(715, 351);
+            this.Controls.Add(this.groupBoxFilterMode);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.lbFilters);
             this.Controls.Add(this.btnResetSignal);
             this.Controls.Add(this.tbFilterIterationsCount);
             this.Controls.Add(this.lblFilterStep);
@@ -139,6 +215,8 @@
             this.Controls.Add(this.btnDoFilter);
             this.Name = "FilterForm";
             this.Text = "FilterForm";
+            this.groupBoxFilterMode.ResumeLayout(false);
+            this.groupBoxFilterMode.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -155,5 +233,11 @@
         private System.Windows.Forms.Label lblFilterStep;
         private System.Windows.Forms.TextBox tbFilterIterationsCount;
         private System.Windows.Forms.Button btnResetSignal;
+        private System.Windows.Forms.ListBox lbFilters;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.RadioButton rbFilterBackward;
+        private System.Windows.Forms.RadioButton rbFilterForward;
+        private System.Windows.Forms.GroupBox groupBoxFilterMode;
+        private System.Windows.Forms.RadioButton rbAllPass;
     }
 }
