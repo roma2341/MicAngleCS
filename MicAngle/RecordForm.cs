@@ -23,7 +23,7 @@ namespace MicAngle
         NAudio.Wave.AsioOut recAsio,recAsio2;
         NAudio.Wave.BufferedWaveProvider buffer;
         // CountdownEvent cntEvent = new CountdownEvent(1);
-        WaveIn waveIn;
+        WaveInEvent waveIn;
         Form1 angleForm;
         const int SAMPLING_RATE = 44100;
         bool isRecording = false;
@@ -48,12 +48,12 @@ namespace MicAngle
         }
         void waveIn_DataAvailable(object sender, WaveInEventArgs e)
         {
-             if (this.InvokeRequired)
+            /* if (this.InvokeRequired)
              {
                  this.BeginInvoke(new EventHandler<WaveInEventArgs>(waveIn_DataAvailable), sender, e);
                  return;
              }
-             else
+             else*/
             {
                 //Записываем данные из буфера в файл
                 // const int bytesInOnePortion = 4;
@@ -324,7 +324,7 @@ namespace MicAngle
                         MessageBox.Show("Start Recording");
 
                             Thread.CurrentThread.IsBackground = true;
-                            waveIn = new WaveIn();
+                            waveIn = new WaveInEvent();
                             //Дефолтное устройство для записи (если оно имеется)
                             waveIn.DeviceNumber = deviceId;
                             //Прикрепляем к событию DataAvailable обработчик, возникающий при наличии записываемых данных
