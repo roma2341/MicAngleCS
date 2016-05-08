@@ -13,6 +13,7 @@ namespace MicAngle
 	public static double V =300;
    public List<SoundEmiter> Sn { get; set; }
      public List<Microphone> Mn { get; set; }
+        public int Channels { get; set; }
 
 	public SignalsManager(){
 		Sn = new List<SoundEmiter>();
@@ -120,15 +121,20 @@ namespace MicAngle
 	 public double  interCorelationFunc(int[,] buf,out bool success,out bool positiveRotation,long[] maxes=null){
             //  const int MIC_COUNT = 2;
             Console.WriteLine("******INTERCORELATION_FUNCTION********");
+            string str = "";
             for (int i = 0; i < buf.GetLength(0); i++)
             {
                 for (int j = 0; j < buf.GetLength(1); j++)
                 {
                     Console.Write(buf[i, j] + " ");
-                    if (j >= 20) break;
+                    str += buf[i, j] + " ";
+                    if (j >= 100) break;
                 }
+                str += Environment.NewLine;
                 Console.WriteLine();
             }
+            str += "****************************************";
+            
             Console.WriteLine("***************************************");
             success = true;
             positiveRotation = true;
@@ -310,6 +316,20 @@ namespace MicAngle
 			//Звук(x:0;y:10;А:10)
 			
 		}
+       public void getChannelsFromString(String str)
+        {
+            String micPattern = @"[cC][hH][aA][nN]{1,2}[eE][lL][sS]\(([123456789]{1})\)";
+            Regex newReg = new Regex(micPattern);
+            MatchCollection matches = newReg.Matches(str);
+            bool isCorrect = false;
+
+            foreach (Match m in matches)
+            {
+                Channels =  Int32.Parse(m.Groups[1].Value);
+                isCorrect = true;
+            }
+            if (!isCorrect) Console.Out.WriteLine("Невірні данні");
+        }
         
         public void addSoundEmiterFromString(String testString)
 	{	

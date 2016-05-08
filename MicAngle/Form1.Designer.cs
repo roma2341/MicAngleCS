@@ -66,7 +66,7 @@
             this.rtbSettings.TabIndex = 2;
             this.rtbSettings.Text = "//На карті світу, мікрофони біля гуртожитку 5=) \nЗ(X:5479843,48118407;y:3300192,0" +
     "3251104;A:1,0;F:16000)\nМ(X:5479893,48118407;y:3300292,03251104)\nМ(X:5479893,7811" +
-    "8407;y:3300292,03251104)";
+    "8407;y:3300292,03251104)\nchannels(2)";
             this.rtbSettings.TextChanged += new System.EventHandler(this.rtbSettings_TextChanged);
             // 
             // btnInputData
