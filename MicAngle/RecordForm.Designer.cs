@@ -28,49 +28,53 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.chart3 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.button1 = new System.Windows.Forms.Button();
-            this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.chartSignal = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.comboAsioDrivers = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rbAsio = new System.Windows.Forms.RadioButton();
             this.rbWaveIn = new System.Windows.Forms.RadioButton();
-            this.comboWaveInDevices = new System.Windows.Forms.ComboBox();
+            this.rbAsio = new System.Windows.Forms.RadioButton();
+            this.comboWaveInDeviceA = new System.Windows.Forms.ComboBox();
+            this.rtbSignal = new System.Windows.Forms.RichTextBox();
+            this.btnSignalToChart = new System.Windows.Forms.Button();
+            this.comboWaveInDeviceB = new System.Windows.Forms.ComboBox();
+            this.btnTextInputToChart = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chart3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartSignal)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // chart3
             // 
             this.chart3.AccessibleName = "";
-            chartArea1.Name = "ChartArea1";
-            this.chart3.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart3.Legends.Add(legend1);
+            chartArea3.Name = "ChartArea1";
+            this.chart3.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.chart3.Legends.Add(legend3);
             this.chart3.Location = new System.Drawing.Point(21, 422);
             this.chart3.Name = "chart3";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
-            series1.Legend = "Legend1";
-            series1.Name = "Кореляція";
-            this.chart3.Series.Add(series1);
-            this.chart3.Size = new System.Drawing.Size(671, 183);
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Spline;
+            series6.Legend = "Legend1";
+            series6.Name = "Кореляція";
+            this.chart3.Series.Add(series6);
+            this.chart3.Size = new System.Drawing.Size(380, 183);
             this.chart3.TabIndex = 10;
             this.chart3.Text = "chart3";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(608, 611);
+            this.button1.Location = new System.Drawing.Point(497, 611);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 8;
@@ -78,40 +82,40 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
-            // chart1
+            // chartSignal
             // 
-            chartArea2.CursorX.AutoScroll = false;
-            chartArea2.CursorX.IsUserEnabled = true;
-            chartArea2.CursorX.IsUserSelectionEnabled = true;
-            chartArea2.Name = "ChartArea1";
-            this.chart1.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chart1.Legends.Add(legend2);
-            this.chart1.Location = new System.Drawing.Point(12, 40);
-            this.chart1.Name = "chart1";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Legend = "Legend1";
-            series2.Name = "firstLeft";
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Legend = "Legend1";
-            series3.Name = "firstRight";
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series4.Legend = "Legend1";
-            series4.Name = "secondLeft";
-            series5.ChartArea = "ChartArea1";
-            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series5.Legend = "Legend1";
-            series5.Name = "secondRight";
-            this.chart1.Series.Add(series2);
-            this.chart1.Series.Add(series3);
-            this.chart1.Series.Add(series4);
-            this.chart1.Series.Add(series5);
-            this.chart1.Size = new System.Drawing.Size(869, 369);
-            this.chart1.TabIndex = 7;
-            this.chart1.Text = "chart1";
+            chartArea4.CursorX.AutoScroll = false;
+            chartArea4.CursorX.IsUserEnabled = true;
+            chartArea4.CursorX.IsUserSelectionEnabled = true;
+            chartArea4.Name = "ChartArea1";
+            this.chartSignal.ChartAreas.Add(chartArea4);
+            legend4.Name = "Legend1";
+            this.chartSignal.Legends.Add(legend4);
+            this.chartSignal.Location = new System.Drawing.Point(12, 40);
+            this.chartSignal.Name = "chartSignal";
+            series7.ChartArea = "ChartArea1";
+            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series7.Legend = "Legend1";
+            series7.Name = "firstLeft";
+            series8.ChartArea = "ChartArea1";
+            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series8.Legend = "Legend1";
+            series8.Name = "firstRight";
+            series9.ChartArea = "ChartArea1";
+            series9.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series9.Legend = "Legend1";
+            series9.Name = "secondLeft";
+            series10.ChartArea = "ChartArea1";
+            series10.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series10.Legend = "Legend1";
+            series10.Name = "secondRight";
+            this.chartSignal.Series.Add(series7);
+            this.chartSignal.Series.Add(series8);
+            this.chartSignal.Series.Add(series9);
+            this.chartSignal.Series.Add(series10);
+            this.chartSignal.Size = new System.Drawing.Size(869, 369);
+            this.chartSignal.TabIndex = 7;
+            this.chartSignal.Text = "chart1";
             // 
             // comboAsioDrivers
             // 
@@ -133,6 +137,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "groupBox1";
             // 
+            // rbWaveIn
+            // 
+            this.rbWaveIn.AutoSize = true;
+            this.rbWaveIn.Location = new System.Drawing.Point(36, 9);
+            this.rbWaveIn.Name = "rbWaveIn";
+            this.rbWaveIn.Size = new System.Drawing.Size(14, 13);
+            this.rbWaveIn.TabIndex = 1;
+            this.rbWaveIn.UseVisualStyleBackColor = true;
+            // 
             // rbAsio
             // 
             this.rbAsio.AutoSize = true;
@@ -144,38 +157,70 @@
             this.rbAsio.TabStop = true;
             this.rbAsio.UseVisualStyleBackColor = true;
             // 
-            // rbWaveIn
+            // comboWaveInDeviceA
             // 
-            this.rbWaveIn.AutoSize = true;
-            this.rbWaveIn.Location = new System.Drawing.Point(36, 9);
-            this.rbWaveIn.Name = "rbWaveIn";
-            this.rbWaveIn.Size = new System.Drawing.Size(14, 13);
-            this.rbWaveIn.TabIndex = 1;
-            this.rbWaveIn.UseVisualStyleBackColor = true;
+            this.comboWaveInDeviceA.FormattingEnabled = true;
+            this.comboWaveInDeviceA.Location = new System.Drawing.Point(366, 13);
+            this.comboWaveInDeviceA.Name = "comboWaveInDeviceA";
+            this.comboWaveInDeviceA.Size = new System.Drawing.Size(249, 21);
+            this.comboWaveInDeviceA.TabIndex = 12;
             // 
-            // comboWaveInDevices
+            // rtbSignal
             // 
-            this.comboWaveInDevices.FormattingEnabled = true;
-            this.comboWaveInDevices.Location = new System.Drawing.Point(366, 13);
-            this.comboWaveInDevices.Name = "comboWaveInDevices";
-            this.comboWaveInDevices.Size = new System.Drawing.Size(272, 21);
-            this.comboWaveInDevices.TabIndex = 12;
+            this.rtbSignal.Location = new System.Drawing.Point(423, 422);
+            this.rtbSignal.Name = "rtbSignal";
+            this.rtbSignal.Size = new System.Drawing.Size(428, 183);
+            this.rtbSignal.TabIndex = 13;
+            this.rtbSignal.Text = "";
+            this.rtbSignal.WordWrap = false;
+            // 
+            // btnSignalToChart
+            // 
+            this.btnSignalToChart.Location = new System.Drawing.Point(724, 611);
+            this.btnSignalToChart.Name = "btnSignalToChart";
+            this.btnSignalToChart.Size = new System.Drawing.Size(139, 23);
+            this.btnSignalToChart.TabIndex = 14;
+            this.btnSignalToChart.Text = "Відобразити сигнал";
+            this.btnSignalToChart.UseVisualStyleBackColor = true;
+            this.btnSignalToChart.Click += new System.EventHandler(this.btnSignalToChart_Click);
+            // 
+            // comboWaveInDeviceB
+            // 
+            this.comboWaveInDeviceB.FormattingEnabled = true;
+            this.comboWaveInDeviceB.Location = new System.Drawing.Point(632, 12);
+            this.comboWaveInDeviceB.Name = "comboWaveInDeviceB";
+            this.comboWaveInDeviceB.Size = new System.Drawing.Size(249, 21);
+            this.comboWaveInDeviceB.TabIndex = 15;
+            // 
+            // btnTextInputToChart
+            // 
+            this.btnTextInputToChart.Location = new System.Drawing.Point(590, 611);
+            this.btnTextInputToChart.Name = "btnTextInputToChart";
+            this.btnTextInputToChart.Size = new System.Drawing.Size(128, 23);
+            this.btnTextInputToChart.TabIndex = 16;
+            this.btnTextInputToChart.Text = "Текст на графік";
+            this.btnTextInputToChart.UseVisualStyleBackColor = true;
+            this.btnTextInputToChart.Click += new System.EventHandler(this.btnTextInputToChart_Click);
             // 
             // RecordForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(893, 641);
-            this.Controls.Add(this.comboWaveInDevices);
+            this.Controls.Add(this.btnTextInputToChart);
+            this.Controls.Add(this.comboWaveInDeviceB);
+            this.Controls.Add(this.btnSignalToChart);
+            this.Controls.Add(this.rtbSignal);
+            this.Controls.Add(this.comboWaveInDeviceA);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.chart3);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.chart1);
+            this.Controls.Add(this.chartSignal);
             this.Controls.Add(this.comboAsioDrivers);
             this.Name = "RecordForm";
             this.Text = "RecordForm";
             ((System.ComponentModel.ISupportInitialize)(this.chart3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartSignal)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -186,11 +231,15 @@
 
         private System.Windows.Forms.DataVisualization.Charting.Chart chart3;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartSignal;
         private System.Windows.Forms.ComboBox comboAsioDrivers;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton rbWaveIn;
         private System.Windows.Forms.RadioButton rbAsio;
-        private System.Windows.Forms.ComboBox comboWaveInDevices;
+        private System.Windows.Forms.ComboBox comboWaveInDeviceA;
+        private System.Windows.Forms.RichTextBox rtbSignal;
+        private System.Windows.Forms.Button btnSignalToChart;
+        private System.Windows.Forms.ComboBox comboWaveInDeviceB;
+        private System.Windows.Forms.Button btnTextInputToChart;
     }
 }
