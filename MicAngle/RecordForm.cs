@@ -11,6 +11,7 @@ using System.Collections;
 using System.IO;
 using System.Threading;
 using NAudio.Wave;
+using System.Diagnostics;
 
 namespace MicAngle
 {
@@ -19,12 +20,15 @@ namespace MicAngle
 
     public partial class RecordForm : Form
     {
+        Stopwatch stopwatch;
         int INPUTS_COUNT = 2;
         String fileContentStrAsioA, fileContentStrAsioB;
-        DateTime waveInStartTimeA, waveInStartTimeB;
+        long  waveInStartTimeA=0, waveInStartTimeB=0;
+        bool waveInCapturedA = false, waveInCapturedB = false;
         //ASIO
         NAudio.Wave.AsioOut recAsio, recAsio2;
         NAudio.Wave.BufferedWaveProvider buffer;
+
         // CountdownEvent cntEvent = new CountdownEvent(1);
         WaveInEvent waveInA,waveInB;
         Form1 angleForm;
@@ -36,9 +40,9 @@ namespace MicAngle
 
 
         //List<int[,]> signalFromMicrophones;
-        List<byte[]> signalFromMicrophonesA;
-        List<byte[]> signalFromMicrophonesB;
-        int signalABytes = 0, signalBBytes = 0;
+        byte[] signalFromMicrophonesA;
+        byte[] signalFromMicrophonesB;
+       // int signalABytes = 0, signalBBytes = 0;
 
         //Класс для записи в файл
         //BufferedWaveProvider bufferedWaveProvider = null;
@@ -101,7 +105,8 @@ namespace MicAngle
 
         void StopRecording()
         {
-            MessageBox.Show("StopRecording");
+            const int BYTE_IN_SAMPLE = 2;
+            //MessageBox.Show("StopRecording");
             if (rbWaveIn.Checked)
             {
                 waveInA.StopRecording();
@@ -113,14 +118,33 @@ namespace MicAngle
                 recAsio2.Stop();
             }
             //stringDataToChart(fileContentStrAsioA + '\n' + fileContentStrAsioB);
-            int bytesCount = (signalABytes > signalBBytes) ? signalABytes : signalBBytes;
-            micsSignal = pasteTogetherSignals(signalFromMicrophonesA, signalFromMicrophonesB, INPUTS_COUNT, bytesCount);
+            int signalABytes = signalFromMicrophonesA.Length;
+            int signalBBytes = signalFromMicrophonesB.Length;
+            int channels = angleForm.getSignalManager().Channels;
+            Console.WriteLine("waveInStartTimeA:" + waveInStartTimeA);
+            Console.WriteLine("waveInStartTimeB:" + waveInStartTimeB);
+            long delta = waveInStartTimeB - waveInStartTimeA;
+            Console.WriteLine("Delta:" + delta);
+            int delay = MyUtils.differenceInTimeToDelay(delta) * BYTE_IN_SAMPLE* channels;
+            Console.WriteLine("Delay:" + delay);
+            //Взагалі-то для позитивного значення має зсув вправо бути... але покищо так
+            if (delay > 0) signalFromMicrophonesB = MyUtils.shiftRight(signalFromMicrophonesB, delay);
+            else signalFromMicrophonesB = MyUtils.shiftLeft(signalFromMicrophonesB, -delay);
+            micsSignal = MyUtils.convertBytesToMicrophonesSignalArray(signalFromMicrophonesA, signalFromMicrophonesB, channels, BYTE_IN_SAMPLE);
+            signalDataToChart(micsSignal);
             rtbSignal.Text = arrayToString(micsSignal, 100000);
         }
         void waveIn_DataAvailableA(object sender, WaveInEventArgs e)
         {
-            signalABytes += e.Buffer.Length;
-            signalFromMicrophonesA.Add(e.Buffer);
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new EventHandler<WaveInEventArgs>(waveIn_DataAvailableA), sender, e);
+                return;
+            }
+            if (waveInCapturedA) return;
+            signalFromMicrophonesA = e.Buffer;
+            waveInStartTimeA = (long)(stopwatch.Elapsed.TotalMilliseconds * 1000000);
+            waveInCapturedA = true;
             /* if (this.InvokeRequired)
              {
                  this.BeginInvoke(new EventHandler<WaveInEventArgs>(waveIn_DataAvailable), sender, e);
@@ -146,9 +170,15 @@ namespace MicAngle
         }
         void waveIn_DataAvailableB(object sender, WaveInEventArgs e)
         {
-            signalBBytes += e.Buffer.Length;
-            signalFromMicrophonesB.Add(e.Buffer);
-
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new EventHandler<WaveInEventArgs>(waveIn_DataAvailableB), sender, e);
+                return;
+            }
+            if (waveInCapturedB) return;
+            signalFromMicrophonesB = e.Buffer;
+            waveInStartTimeB = (long)(stopwatch.Elapsed.TotalMilliseconds * 1000000);
+            waveInCapturedB = true;
             //angleForm.processAngle(signalFromMics);               
             // Thread.Sleep(4000);
             // bufferedWaveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
@@ -414,7 +444,7 @@ namespace MicAngle
                 Marshal.Copy(e.InputBuffers[i], buf, 0, micBufferLength);
             }
 
-            signalFromMicrophonesA.Add(buf);
+            //signalFromMicrophonesA.Add(buf);
 
             e.WrittenToOutputBuffers = true;
 
@@ -449,7 +479,7 @@ namespace MicAngle
                 Marshal.Copy(e.InputBuffers[i], buf, 0, micBufferLength);
             }
 
-            signalFromMicrophonesB.Add(buf);
+           // signalFromMicrophonesB.Add(buf);
             //buffer.AddSamples(buf, 0, buf.Length);
             // string[] seriesNames = { "firstLeft", "firstRight", "secondLeft", "secondRight" };
             //clear series
@@ -487,6 +517,7 @@ namespace MicAngle
                 waveInA.Dispose();
                 waveInA = null;
             }
+            waveInCapturedA = false;
         }
         private void waveIn_RecordingStoppedB(object sender, EventArgs e)
         {
@@ -500,6 +531,7 @@ namespace MicAngle
                 waveInB = null;
                 //  bufferedWaveProvider.ClearBuffer();
             }
+            waveInCapturedB = false;
         }
         public String arrayToString(int[,] arr,int limitWidth)
         {
@@ -621,14 +653,12 @@ namespace MicAngle
                 //bufferedWaveProvider = new BufferedWaveProvider(new WaveFormat(44000, 1));
                 try
                 {
-                    signalFromMicrophonesA = new List<byte[]>();
-                    signalFromMicrophonesB = new List<byte[]>();
-                    signalABytes = 0;
-                    signalBBytes = 0;
+                    signalFromMicrophonesA = null;
+                    signalFromMicrophonesB = null;
 
                     if (rbWaveIn.Checked)
                     {
-                        MessageBox.Show("Start Recording");
+                      //  MessageBox.Show("Start Recording");
 
                             Thread.CurrentThread.IsBackground = true;
                             waveInA = new WaveInEvent();
@@ -645,11 +675,13 @@ namespace MicAngle
                         //Формат wav-файла - принимает параметры - частоту дискретизации и количество каналов(здесь mono)
                         waveInA.WaveFormat = new WaveFormat(SAMPLING_RATE, angleForm.getSignalManager().Channels);
                         waveInB.WaveFormat = new WaveFormat(SAMPLING_RATE, angleForm.getSignalManager().Channels);
-                        waveInA.BufferMilliseconds = 60;
-                        waveInB.BufferMilliseconds = 60;
+                        waveInA.BufferMilliseconds = 100;
+                        waveInB.BufferMilliseconds = 100;
                         //Инициализируем объект WaveFileWriter
                         // writer = new WaveFileWriter(outputFilename, waveIn.WaveFormat);
                         //Начало записи
+                        stopwatch = new Stopwatch();
+                        stopwatch.Start();
                         waveInA.StartRecording();
                         waveInB.StartRecording();
 
