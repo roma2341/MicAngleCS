@@ -142,6 +142,7 @@ namespace MicAngle
             sm.addSoundEmiterFromString(rtbSettings.Text);
             sm.addMicrophoneFromString(rtbSettings.Text);
             sm.getChannelsFromString(rtbSettings.Text);
+            sm.getChannelsOffset(rtbSettings.Text);
             dataInputCounter++;
         }
 

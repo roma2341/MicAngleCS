@@ -21,6 +21,7 @@ namespace MicAngle
     public partial class RecordForm : Form
     {
         Stopwatch stopwatch;
+        const int ASIO_CHANELS = 8;
         int INPUTS_COUNT = 2;
         String fileContentStrAsioA, fileContentStrAsioB;
         long  waveInStartTimeA=0, waveInStartTimeB=0;
@@ -33,12 +34,16 @@ namespace MicAngle
         WaveInEvent waveInA,waveInB;
         Form1 angleForm;
         const int SAMPLING_RATE = 44100;
+        const int BYTES_PER_SAMPLE = 2;
         bool isRecording = false;
         int asioInvocesCount1 = 0;
         int asioInvocesCount2 = 0;
         int[,] micsSignal;
 
-
+        List<byte[]>[] AsioData;
+        List<float[]> aggregatedAsio; //LRLRLRLR;
+        int aggregatedAsioCount = 0;
+        int[] asioTotalBytesCount;
         //List<int[,]> signalFromMicrophones;
         byte[] signalFromMicrophonesA;
         byte[] signalFromMicrophonesB;
@@ -111,28 +116,30 @@ namespace MicAngle
             {
                 waveInA.StopRecording();
                 waveInB.StopRecording();
+
+                int signalABytes = signalFromMicrophonesA.Length;
+                int signalBBytes = signalFromMicrophonesB.Length;
+                int channels = angleForm.getSignalManager().Channels;
+                Console.WriteLine("waveInStartTimeA:" + waveInStartTimeA);
+                Console.WriteLine("waveInStartTimeB:" + waveInStartTimeB);
+                long delta = waveInStartTimeB - waveInStartTimeA;
+                Console.WriteLine("Delta:" + delta);
+                int delay = MyUtils.differenceInTimeToDelay(delta) * BYTE_IN_SAMPLE * channels;
+                Console.WriteLine("Delay:" + delay);
+                //Взагалі-то для позитивного значення має зсув вправо бути... але покищо так
+                if (delay > 0) signalFromMicrophonesB = MyUtils.shiftRight(signalFromMicrophonesB, delay);
+                else signalFromMicrophonesB = MyUtils.shiftLeft(signalFromMicrophonesB, -delay);
+                micsSignal = MyUtils.convertBytesToMicrophonesSignalArray(signalFromMicrophonesA, signalFromMicrophonesB, channels, BYTE_IN_SAMPLE);
+                signalDataToChart(micsSignal);
+                rtbSignal.Text = arrayToString(micsSignal, 100000);
             }
             else
             {
                 recAsio.Stop();
-                recAsio2.Stop();
+                //recAsio2.Stop();
             }
             //stringDataToChart(fileContentStrAsioA + '\n' + fileContentStrAsioB);
-            int signalABytes = signalFromMicrophonesA.Length;
-            int signalBBytes = signalFromMicrophonesB.Length;
-            int channels = angleForm.getSignalManager().Channels;
-            Console.WriteLine("waveInStartTimeA:" + waveInStartTimeA);
-            Console.WriteLine("waveInStartTimeB:" + waveInStartTimeB);
-            long delta = waveInStartTimeB - waveInStartTimeA;
-            Console.WriteLine("Delta:" + delta);
-            int delay = MyUtils.differenceInTimeToDelay(delta) * BYTE_IN_SAMPLE* channels;
-            Console.WriteLine("Delay:" + delay);
-            //Взагалі-то для позитивного значення має зсув вправо бути... але покищо так
-            if (delay > 0) signalFromMicrophonesB = MyUtils.shiftRight(signalFromMicrophonesB, delay);
-            else signalFromMicrophonesB = MyUtils.shiftLeft(signalFromMicrophonesB, -delay);
-            micsSignal = MyUtils.convertBytesToMicrophonesSignalArray(signalFromMicrophonesA, signalFromMicrophonesB, channels, BYTE_IN_SAMPLE);
-            signalDataToChart(micsSignal);
-            rtbSignal.Text = arrayToString(micsSignal, 100000);
+          
         }
         void waveIn_DataAvailableA(object sender, WaveInEventArgs e)
         {
@@ -236,12 +243,11 @@ namespace MicAngle
 
         public int [,] pasteTogetherSignals(List<byte[]> signalA, List<byte[]> signalB,int inputsCount,int bytesPerBuffer)
         {
-            const int SAMPLE_SIZE_BYTES = 2;
             
             int channels = angleForm.getSignalManager().Channels;
             int samplesPerBuffer = bytesPerBuffer / (channels* inputsCount);
             int micSamplesCount = samplesPerBuffer;
-            int micBufferLength = micSamplesCount * SAMPLE_SIZE_BYTES * channels;
+            int micBufferLength = micSamplesCount * bytesPerBuffer * channels;
             //int[,] signalFromMics = new int[e.InputBuffers.Length* channels, micSamplesCount];
             int[,] signalFromMics = new int[inputsCount * channels, micSamplesCount];
             int sampleOffset = 0;
@@ -257,14 +263,14 @@ namespace MicAngle
                  */
                 int index = 0;
              
-                int localSamplesCount = signalA[i].Length / (SAMPLE_SIZE_BYTES * channels);
+                int localSamplesCount = signalA[i].Length / (bytesPerBuffer * channels);
                 for (int j = 0; j < localSamplesCount; j++)
                 {
                     for (int k = 0; k < channels; k++)
                     {
                         short sample = BitConverter.ToInt16(signalA[i], index); // INDEX OUT OF BOUNDS EXCEPTION HERE, Good Night)
                         signalFromMics[k, sampleOffset+j] = sample;
-                        index += SAMPLE_SIZE_BYTES;
+                        index += bytesPerBuffer;
                     }
                     
                 }
@@ -283,14 +289,14 @@ namespace MicAngle
                  */
                 int index = 0;
                 int MICROPHONE_OFFEST = 2;
-                int localSamplesCount = signalB[i].Length / (SAMPLE_SIZE_BYTES * channels);
+                int localSamplesCount = signalB[i].Length / (bytesPerBuffer * channels);
                 for (int j = 0; j < localSamplesCount; j++)
                 {
                     for (int k = 0; k < channels; k++)
                     {
                         short sample = BitConverter.ToInt16(signalB[i], index); // INDEX OUT OF BOUNDS EXCEPTION HERE, Good Night)
                         signalFromMics[MICROPHONE_OFFEST+k, sampleOffset + j] = sample;
-                        index += SAMPLE_SIZE_BYTES;
+                        index += bytesPerBuffer;
                     }
 
                 }
@@ -360,6 +366,12 @@ namespace MicAngle
             }
         void waveIn_DataAvailableAsioTestA(object sender, AsioAudioAvailableEventArgs e)
         {
+            e.AsioSampleType.ToString();
+            int samplesCount = e.SamplesPerBuffer * 4;
+            float[] interlivedAsioSamples = new float[samplesCount];
+            e.GetAsInterleavedSamples(interlivedAsioSamples);
+            aggregatedAsio.Add(interlivedAsioSamples);
+            aggregatedAsioCount += samplesCount;
             /*if (this.InvokeRequired)
             {
                 this.BeginInvoke(new EventHandler<AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestA), sender, e);
@@ -375,13 +387,13 @@ namespace MicAngle
             {
                 asioInvocesCount1 = 0;
             }*/
-            const int SAMPLE_SIZE_BYTES = 3;
+            const int SAMPLE_SIZE_BYTES = 2;//WARNING 3 MUST ME HERE I THINK
             int channels = angleForm.getSignalManager().Channels;
-            int micSamplesCount = e.SamplesPerBuffer;
-            int micBufferLength = micSamplesCount * SAMPLE_SIZE_BYTES*channels;
+            int micSamplesCount = e.SamplesPerBuffer * SAMPLE_SIZE_BYTES;
+            int micBufferLength = micSamplesCount ;
             //int[,] signalFromMics = new int[e.InputBuffers.Length* channels, micSamplesCount];
             byte[] buf = new byte[micBufferLength];
-            // Console.WriteLine("e.InputBuffers.Length:" + e.InputBuffers.Length);
+             Console.WriteLine("e.InputBuffers.Length:" + e.InputBuffers.Length);
             // int micIndex = 0;
             // fileContentStrAsioA = "";
             /*for (int i = 0; i < e.InputBuffers.Length; i++)
@@ -441,13 +453,71 @@ namespace MicAngle
               System.IO.File.WriteAllText("inputSignal.txt", fileContentStrAsioA); */
             for (int i = 0; i < e.InputBuffers.Length; i++)
             {
+                int firstMicIndex = angleForm.getSignalManager().ChannelOffset;//2
+                int lastMicIndex = firstMicIndex + channels-1;//5
                 Marshal.Copy(e.InputBuffers[i], buf, 0, micBufferLength);
+                if (i >= firstMicIndex && i <= lastMicIndex) {
+                    Marshal.Copy(e.InputBuffers[i], buf, 0, micBufferLength);
+                    AsioData[i - firstMicIndex].Add(buf);
+                    asioTotalBytesCount[i - firstMicIndex] += buf.Length;
+                        }
             }
 
             //signalFromMicrophonesA.Add(buf);
 
             e.WrittenToOutputBuffers = true;
 
+        }
+        /// <summary>
+        /// Для 8канального віртуального мікрофону
+        /// </summary>
+        int[,] processMultipleChannels(List<byte[]>[] source, int sampleBytes,bool isLSB)
+        {
+            //TEST ARRAY
+          /*   List<byte[]>[] source = new List<byte[]>[2];
+            for (int i=0; i < source.Length; i++)
+            {
+                source[i] = new List<byte[]>();
+            }
+            byte[] testByteArrayA= { 1, 0, 1, 0, 1, 0 };
+            byte[] testByteArrayB = { 1, 1, 1, 1 };
+            source[0].Add(testByteArrayA);
+            source[0].Add(testByteArrayA);
+            source[1].Add(testByteArrayB);
+            source[1].Add(testByteArrayB); */
+
+
+            int width = asioTotalBytesCount[0] / sampleBytes;
+            int[,] result = new int[source.GetLength(0), width]; // 3 bytes because 24 bits/sample
+            for (int micIndex = 0; micIndex < source.Length; micIndex++)
+            {
+                int index = 0;
+                for (int windowIndex = 0; windowIndex < source[micIndex].Count; windowIndex++)
+                {
+                    for (int startSampleByteIndex = 0; startSampleByteIndex < source[micIndex][windowIndex].Length; startSampleByteIndex+=sampleBytes)
+                    {
+                        for (int byteOffset = 0; byteOffset < sampleBytes; byteOffset++)
+                        {
+                            if (isLSB)//Якщо старший байт зліва
+                            {
+                                int topOffset = sampleBytes - 1;
+                                if (byteOffset == 0)
+                                    result[micIndex, index / sampleBytes] = source[micIndex][windowIndex][startSampleByteIndex] << 8 * (topOffset-byteOffset);
+                                else result[micIndex, index / sampleBytes] |= (source[micIndex][windowIndex][startSampleByteIndex + byteOffset] << 8 * (topOffset - byteOffset));
+                            }
+                            else
+                            {
+                                if (byteOffset == 0)
+                                    result[micIndex, index / sampleBytes] = source[micIndex][windowIndex][startSampleByteIndex];
+                                else result[micIndex, index / sampleBytes] |= (source[micIndex][windowIndex][startSampleByteIndex + byteOffset] << 8 * byteOffset); //| (source[micIndex][windowIndex][byteN+2] << 16);
+                            }
+                            }
+                            index += sampleBytes;
+                    }
+                }
+
+            }
+            return result;
         }
         void waveIn_DataAvailableAsioTestB(object sender, AsioAudioAvailableEventArgs e)
         {
@@ -548,19 +618,50 @@ namespace MicAngle
             }
             return resultStrBuilder.ToString();
         }
+        private int[,] aggregatedArraysToSeparated(List<float[]> arrs,int totalArrayElmCount, int channels)
+        {
+            float[] source = new float[totalArrayElmCount];
+            int[,] result = new int[channels, totalArrayElmCount / channels];
+            int index = 0;
+            foreach (float[] singleArr in arrs)
+            {
+                foreach (float val in singleArr)
+                {
+                    source[index++] = val;
+                }
+            }
+            index = 0; 
+            for (int i = 0; i < source.Length; i += channels)
+            {
+                for (int j = 0; j < channels; j++)
+                {
+                    result[j, index] = (int)(source[i + j]*10000);
+                }
+                index++;
+            }
+
+            return result;
+           
+        }
         private void asio_RecordingStoppedA(object sender, EventArgs e)
         {
-           /* if (this.InvokeRequired)
+            if (this.InvokeRequired)
             {
-                this.BeginInvoke(new EventHandler(waveIn_RecordingStopped), sender, e);
+                this.BeginInvoke(new EventHandler(asio_RecordingStoppedA), sender, e);
             }
-            else*/
+            else
             {
                
                 recAsio.Dispose();
                 recAsio = null;
                 //micsSignal = unitePartialMeasurement(signalFromMicrophonesA);
+
+                // int[,] result = processMultipleChannels(AsioData,BYTES_PER_SAMPLE,true);
+                int[,] result = aggregatedArraysToSeparated(aggregatedAsio, aggregatedAsioCount, angleForm.getSignalManager().Channels);
+                //aggregatedAsio
                 int LIMIT = 100000;
+                micsSignal = result;
+                rtbSignal.Text = arrayToString(result,100000);
                 //rtbSignal.Text = arrayToString(micsSignal, LIMIT);
                 //angleForm.processAngle(micsSignal);
                 //  bufferedWaveProvider.ClearBuffer();
@@ -690,6 +791,17 @@ namespace MicAngle
                     {
                         ///ASIO
                         ///
+                        AsioData = new List<byte[]>[4];
+                       aggregatedAsio = new List<float[]>(); //LRLRLRLR;
+                        aggregatedAsioCount = 0;
+
+                        asioTotalBytesCount = new int[4];
+                        for (int i = 0; i < AsioData.Length; i++)
+                        {
+                            AsioData[i] = new List<byte[]>();
+                            asioTotalBytesCount[i] = 0;
+                        }
+                       
 
                         recAsio = new NAudio.Wave.AsioOut(driverId);
                        
@@ -708,11 +820,12 @@ namespace MicAngle
                         Console.WriteLine("|||||||||||||||||||||||||||||||||||||||||||||");
                         //recAsio2 = new NAudio.Wave.AsioOut(driverId);
                         //recAsio2.ChannelOffset = 1;
-                        NAudio.Wave.WaveFormat formato = new NAudio.Wave.WaveFormat();
+                        int channels = angleForm.getSignalManager().Channels;
+                        NAudio.Wave.WaveFormat formato = new NAudio.Wave.WaveFormat(SAMPLING_RATE, channels);
                        buffer = new NAudio.Wave.BufferedWaveProvider(formato);
                         recAsio.AudioAvailable += new EventHandler<NAudio.Wave.AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestA);
                         //recAsio2.AudioAvailable += new EventHandler<NAudio.Wave.AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestB);
-                        int channels = angleForm.getSignalManager().Channels;
+                      
                         recAsio.InitRecordAndPlayback(null, channels, SAMPLING_RATE); //rec channel = 1
                                                                                       // recAsio2.InitRecordAndPlayback(null, angleForm.getSignalManager().Mn.Count, SAMPLING_RATE); //rec channel = 1
                         recAsio.PlaybackStopped += new EventHandler<StoppedEventArgs>(asio_RecordingStoppedA);

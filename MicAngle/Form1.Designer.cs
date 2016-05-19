@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
@@ -64,9 +65,7 @@
             this.rtbSettings.Name = "rtbSettings";
             this.rtbSettings.Size = new System.Drawing.Size(409, 83);
             this.rtbSettings.TabIndex = 2;
-            this.rtbSettings.Text = "//На карті світу, мікрофони біля гуртожитку 5=) \nЗ(X:5479843,48118407;y:3300192,0" +
-    "3251104;A:1,0;F:16000)\nМ(X:5479893,48118407;y:3300292,03251104)\nМ(X:5479893,7811" +
-    "8407;y:3300292,03251104)\nchannels(2)";
+            this.rtbSettings.Text = resources.GetString("rtbSettings.Text");
             this.rtbSettings.TextChanged += new System.EventHandler(this.rtbSettings_TextChanged);
             // 
             // btnInputData
