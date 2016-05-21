@@ -94,9 +94,13 @@ namespace MicAngle
             int LIMIT = 10000;
             ///
             int width = (LIMIT < data.GetLength(1)) ? LIMIT : data.GetLength(1);
-            for (int i = 0; i < data.GetLength(0); i++)
+            for (int i = 0; i <chartSignal.Series.Count; i++)
             {
                 chartSignal.Series[i].Points.Clear();
+            }
+                for (int i = 0; i < data.GetLength(0); i++)
+            {
+               
                 for (int j = 0; j < width; j+=CHART_STEP)
                 {
                     if (i > data.GetLength(0)) return;
@@ -366,8 +370,8 @@ namespace MicAngle
             }
         void waveIn_DataAvailableAsioTestA(object sender, AsioAudioAvailableEventArgs e)
         {
-            e.AsioSampleType.ToString();
-            int samplesCount = e.SamplesPerBuffer * 4;
+            Console.WriteLine("AsioSampleType:"+e.AsioSampleType.ToString());
+            int samplesCount = e.SamplesPerBuffer * 4 * 2;
             float[] interlivedAsioSamples = new float[samplesCount];
             e.GetAsInterleavedSamples(interlivedAsioSamples);
             aggregatedAsio.Add(interlivedAsioSamples);
@@ -635,7 +639,7 @@ namespace MicAngle
             {
                 for (int j = 0; j < channels; j++)
                 {
-                    result[j, index] = (int)(source[i + j]*10000);
+                    result[j, index] = (int)(source[i + j]* short.MaxValue);
                 }
                 index++;
             }
@@ -743,6 +747,7 @@ namespace MicAngle
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+            int channels = angleForm.getSignalManager().Channels;
             //  cntEvent.Wait();
             if (!isRecording)
             {
@@ -791,11 +796,11 @@ namespace MicAngle
                     {
                         ///ASIO
                         ///
-                        AsioData = new List<byte[]>[4];
+                        AsioData = new List<byte[]>[channels];
                        aggregatedAsio = new List<float[]>(); //LRLRLRLR;
                         aggregatedAsioCount = 0;
 
-                        asioTotalBytesCount = new int[4];
+                        asioTotalBytesCount = new int[channels];
                         for (int i = 0; i < AsioData.Length; i++)
                         {
                             AsioData[i] = new List<byte[]>();
@@ -820,7 +825,6 @@ namespace MicAngle
                         Console.WriteLine("|||||||||||||||||||||||||||||||||||||||||||||");
                         //recAsio2 = new NAudio.Wave.AsioOut(driverId);
                         //recAsio2.ChannelOffset = 1;
-                        int channels = angleForm.getSignalManager().Channels;
                         NAudio.Wave.WaveFormat formato = new NAudio.Wave.WaveFormat(SAMPLING_RATE, channels);
                        buffer = new NAudio.Wave.BufferedWaveProvider(formato);
                         recAsio.AudioAvailable += new EventHandler<NAudio.Wave.AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestA);
