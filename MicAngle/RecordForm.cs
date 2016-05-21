@@ -34,7 +34,7 @@ namespace MicAngle
         WaveInEvent waveInA,waveInB;
         Form1 angleForm;
         const int SAMPLING_RATE = 44100;
-        const int BYTES_PER_SAMPLE = 2;
+        const int BYTES_PER_SAMPLE = 4;
         bool isRecording = false;
         int asioInvocesCount1 = 0;
         int asioInvocesCount2 = 0;
@@ -94,7 +94,7 @@ namespace MicAngle
             int LIMIT = 10000;
             ///
             int width = (LIMIT < data.GetLength(1)) ? LIMIT : data.GetLength(1);
-            for (int i = 0; i <chartSignal.Series.Count; i++)
+            for (int i = 0; i < chartSignal.Series.Count; i++)
             {
                 chartSignal.Series[i].Points.Clear();
             }
@@ -391,7 +391,7 @@ namespace MicAngle
             {
                 asioInvocesCount1 = 0;
             }*/
-            const int SAMPLE_SIZE_BYTES = 2;//WARNING 3 MUST ME HERE I THINK
+            const int SAMPLE_SIZE_BYTES = 4;//WARNING 3 MUST ME HERE I THINK
             int channels = angleForm.getSignalManager().Channels;
             int micSamplesCount = e.SamplesPerBuffer * SAMPLE_SIZE_BYTES;
             int micBufferLength = micSamplesCount ;
@@ -641,9 +641,12 @@ namespace MicAngle
                 {
                     result[j, index] = (int)(source[i + j]* short.MaxValue);
                 }
+               // result[0, index] = ((int)(source[i] * Int32.MaxValue));
+               // result[1, index] = ((int)(source[i] * Int32.MaxValue));
                 index++;
             }
-
+            SignalsManager.shiftLeft(result, 0, 18);
+            SignalsManager.shiftLeft(result, 1, 18);
             return result;
            
         }
@@ -662,6 +665,7 @@ namespace MicAngle
 
                 // int[,] result = processMultipleChannels(AsioData,BYTES_PER_SAMPLE,true);
                 int[,] result = aggregatedArraysToSeparated(aggregatedAsio, aggregatedAsioCount, angleForm.getSignalManager().Channels);
+                Console.WriteLine("Arrays aggregated( height:" + result.GetLength(0) + "width: " + result.GetLength(1));
                 //aggregatedAsio
                 int LIMIT = 100000;
                 micsSignal = result;

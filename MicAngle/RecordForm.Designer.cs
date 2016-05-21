@@ -103,12 +103,12 @@
             series2.Legend = "Legend1";
             series2.Name = "firstLeft";
             series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
             series3.Color = System.Drawing.Color.Lime;
             series3.Legend = "Legend1";
             series3.Name = "firstRight";
             series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Point;
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
             series4.Color = System.Drawing.Color.Red;
             series4.Legend = "Legend1";
             series4.Name = "secondLeft";
