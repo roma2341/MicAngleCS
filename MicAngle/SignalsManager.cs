@@ -15,13 +15,14 @@ namespace MicAngle
      public List<Microphone> Mn { get; set; }
         public int Channels { get; set; }
         public int ChannelOffset { get; set; }
-        
+        public int[] MicrophonesShift { get; set; }
 
     public SignalsManager(){
 		Sn = new List<SoundEmiter>();
 		Mn = new List<Microphone>();
             ChannelOffset = 0;
             Channels = 2;
+            MicrophonesShift = new int[]{0,0};
         }
         public void clear()
         {
@@ -347,6 +348,18 @@ namespace MicAngle
                 isCorrect = true;
             }
             if (!isCorrect) Console.Out.WriteLine("Невірні данні");
+        }
+        public void getMicrophonesShift(String str)
+        {
+            String micPattern = @"[sS][hH][iI][fF][tT]\((-?\d+(?:[,]-?\d+)*)\)";
+            //shift(num,num,num)
+            Regex newReg = new Regex(micPattern);
+            MatchCollection matches = newReg.Matches(str);
+            if (matches.Count < 1) return;
+            Match m = matches[0];
+            String shiftsString = m.Groups[1].Value;
+            MicrophonesShift =  MyUtils.parseArray(shiftsString);
+
         }
         public void addSoundEmiterFromString(String testString)
 	{	

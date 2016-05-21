@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MicAngle
 {
@@ -52,6 +53,21 @@ namespace MicAngle
             }
             return result;
         }
+        public static int[] parseArray(String str)
+        {
+            String micPattern = @"[-]?[0-9]+";
+            Regex newReg = new Regex(micPattern);
+            MatchCollection matches = newReg.Matches(str);
+            bool isCorrect = false;
+            int[] result = new int[matches.Count];
+            int index = 0;
+            foreach (Match m in matches)
+            {
+                result[index++] = Int32.Parse(m.Groups[0].Value);
+            }
+            return result;
+        }
+
 
     }
 }

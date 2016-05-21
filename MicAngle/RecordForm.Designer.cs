@@ -238,7 +238,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(893, 641);
+            this.ClientSize = new System.Drawing.Size(893, 651);
             this.Controls.Add(this.btnTextInputToChart);
             this.Controls.Add(this.comboWaveInDeviceB);
             this.Controls.Add(this.btnSignalToChart);
