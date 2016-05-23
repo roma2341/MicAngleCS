@@ -38,7 +38,7 @@ namespace MicAngle
         bool isRecording = false;
         int asioInvocesCount1 = 0;
         int asioInvocesCount2 = 0;
-        int[,] micsSignal;
+        public int[,] MicsSignal;
 
         List<byte[]>[] AsioData;
         List<float[]> aggregatedAsio; //LRLRLRLR;
@@ -133,9 +133,9 @@ namespace MicAngle
                 //Взагалі-то для позитивного значення має зсув вправо бути... але покищо так
                 if (delay > 0) signalFromMicrophonesB = MyUtils.shiftRight(signalFromMicrophonesB, delay);
                 else signalFromMicrophonesB = MyUtils.shiftLeft(signalFromMicrophonesB, -delay);
-                micsSignal = MyUtils.convertBytesToMicrophonesSignalArray(signalFromMicrophonesA, signalFromMicrophonesB, channels, BYTE_IN_SAMPLE);
-                signalDataToChart(micsSignal);
-                rtbSignal.Text = arrayToString(micsSignal, 100000);
+                MicsSignal = MyUtils.convertBytesToMicrophonesSignalArray(signalFromMicrophonesA, signalFromMicrophonesB, channels, BYTE_IN_SAMPLE);
+                signalDataToChart(MicsSignal);
+                rtbSignal.Text = arrayToString(MicsSignal, 100000);
             }
             else
             {
@@ -371,7 +371,7 @@ namespace MicAngle
         void waveIn_DataAvailableAsioTestA(object sender, AsioAudioAvailableEventArgs e)
         {
             Console.WriteLine("AsioSampleType:"+e.AsioSampleType.ToString());
-            int samplesCount = e.SamplesPerBuffer * 4 * 2;
+            int samplesCount = e.SamplesPerBuffer*angleForm.getSignalManager().Channels;
             float[] interlivedAsioSamples = new float[samplesCount];
             e.GetAsInterleavedSamples(interlivedAsioSamples);
             aggregatedAsio.Add(interlivedAsioSamples);
@@ -455,7 +455,7 @@ namespace MicAngle
                   Console.WriteLine();
               }
               System.IO.File.WriteAllText("inputSignal.txt", fileContentStrAsioA); */
-            for (int i = 0; i < e.InputBuffers.Length; i++)
+           /* for (int i = 0; i < e.InputBuffers.Length; i++)
             {
                 int firstMicIndex = angleForm.getSignalManager().ChannelOffset;//2
                 int lastMicIndex = firstMicIndex + channels-1;//5
@@ -465,7 +465,7 @@ namespace MicAngle
                     AsioData[i - firstMicIndex].Add(buf);
                     asioTotalBytesCount[i - firstMicIndex] += buf.Length;
                         }
-            }
+            }*/
 
             //signalFromMicrophonesA.Add(buf);
 
@@ -645,8 +645,8 @@ namespace MicAngle
                // result[1, index] = ((int)(source[i] * Int32.MaxValue));
                 index++;
             }
-            SignalsManager.shiftLeft(result, 0, 18);
-            SignalsManager.shiftLeft(result, 1, 18);
+            SignalsManager.shiftLeft(result, 0, angleForm.getSignalManager().MicrophonesShift[0]);
+            SignalsManager.shiftLeft(result, 1, angleForm.getSignalManager().MicrophonesShift[0]);
             return result;
            
         }
@@ -658,22 +658,22 @@ namespace MicAngle
             }
             else
             {
-               
                 recAsio.Dispose();
                 recAsio = null;
                 //micsSignal = unitePartialMeasurement(signalFromMicrophonesA);
-
                 // int[,] result = processMultipleChannels(AsioData,BYTES_PER_SAMPLE,true);
                 int[,] result = aggregatedArraysToSeparated(aggregatedAsio, aggregatedAsioCount, angleForm.getSignalManager().Channels);
+                MicsSignal = result;
                 Console.WriteLine("Arrays aggregated( height:" + result.GetLength(0) + "width: " + result.GetLength(1));
                 //aggregatedAsio
                 int LIMIT = 100000;
-                micsSignal = result;
+                MicsSignal = result;
                 rtbSignal.Text = arrayToString(result,100000);
                 //rtbSignal.Text = arrayToString(micsSignal, LIMIT);
                 //angleForm.processAngle(micsSignal);
                 //  bufferedWaveProvider.ClearBuffer();
             }
+            GC.Collect();
         }
         public RecordForm(Form1 angleForm)
         {
@@ -859,8 +859,8 @@ namespace MicAngle
 
         private void btnSignalToChart_Click(object sender, EventArgs e)
         {
-            if (micsSignal!=null)
-            signalDataToChart(micsSignal);
+            if (MicsSignal!=null)
+            signalDataToChart(MicsSignal);
             else MessageBox.Show("Signal data is empty!");
         }
 
