@@ -132,7 +132,7 @@ namespace MicAngle
 
         private void btnProcessAngle_Click(object sender, EventArgs e)
         {
-            processAngle(null);
+            processAngle(recordForm.MicsSignal);
         }
 
         private void btnInputData_Click(object sender, EventArgs e)

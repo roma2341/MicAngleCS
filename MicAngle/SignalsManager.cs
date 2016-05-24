@@ -205,8 +205,8 @@ namespace MicAngle
                 //   int startIndex = delays.Max() * SHIFT_COUNT;
                 // int startIndex = 0;
                 //  int endIndex = buf.GetLength(1); //startIndex + elementsToSum;
-                int startIndex = SHIFT_COUNT-1;//buf.GetLength(1)/2-2000;
-                int endIndex = buf.GetLength(1)-1- SHIFT_COUNT;//buf.GetLength(1) / 2 + 2000;
+                int startIndex = 2000;//SHIFT_COUNT-1;//buf.GetLength(1)/2-2000;
+                int endIndex = buf.GetLength(1) - 2000;//buf.GetLength(1)-1- SHIFT_COUNT;//buf.GetLength(1) / 2 + 2000;
                 // if (k < 0) startIndex = -k - 1;
                 //if (k > 0)
                 // endIndex -= startIndex;
