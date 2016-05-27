@@ -125,6 +125,7 @@ samplingRate(44100)
 М(X:5479893,78118407;y:3300292,03251104)
 channels(2)
 channelOffset(0)
-shift(0,0,0,0)</value>
+shift(0,0,0,0)
+delays(0,1,0,0)</value>
   </data>
 </root>

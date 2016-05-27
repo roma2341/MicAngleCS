@@ -17,6 +17,7 @@ namespace MicAngle
         public int Channels { get; set; }
         public int ChannelOffset { get; set; }
         public int[] MicrophonesShift { get; set; }
+        public int[] MicrophonesDelay { get; set; }
 
     public SignalsManager(){
 		Sn = new List<SoundEmiter>();
@@ -263,7 +264,7 @@ namespace MicAngle
                     for (int i = 0; i < Mn.Count; i++)
                         {
                         summOfDifferentSignalValues *= buf[i,j];
-                       // Console.WriteLine("buf[" + i + "," + j + "]="+ buf[i, j]);
+
                         }
                     //summ += (long)Math.Sqrt((double)Math.Abs(summOfDifferentSignalValues));
                     korelKoff += Math.Abs(summOfDifferentSignalValues);
@@ -276,7 +277,6 @@ namespace MicAngle
                  if (Math.Abs(korelKoff) > Math.Abs(maxValue))
                 //if (summ > maxValue)
                 {
-                   //Console.Out.WriteLine("max Long:"+long.MaxValue);
                    maxValue = korelKoff;
                    maxIndex = k ;
                   
@@ -395,6 +395,19 @@ namespace MicAngle
             MicrophonesShift =  MyUtils.parseArray(shiftsString);
 
         }
+        public void getMicrophonesDelays(String str)
+        {
+            String micPattern = @"[dD][eE][lL][aA][yY][sS]\((-?\d+(?:[,]-?\d+)*)\)";
+            //shift(num,num,num)
+            Regex newReg = new Regex(micPattern);
+            MatchCollection matches = newReg.Matches(str);
+            if (matches.Count < 1) return;
+            Match m = matches[0];
+            String shiftsString = m.Groups[1].Value;
+            MicrophonesDelay= MyUtils.parseArray(shiftsString);
+
+        }
+
         public void addSoundEmiterFromString(String testString)
 	{
             //String micPattern = new String("^Звук[(]x:\\d+;y:\\d+;A:\\d+[)]$");

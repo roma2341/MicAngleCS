@@ -14,7 +14,7 @@ namespace MicAngle
     public partial class Form1 : Form
     {
         RecordForm recordForm;
-        const double SOUND_EMITER_LISTEN_TIME = 20;
+        const double SOUND_EMITER_LISTEN_TIME = 5;
         MapForm mapForm;
         bool mapShowed = false;
         bool recordFormShowed = false;
@@ -32,6 +32,7 @@ namespace MicAngle
             sm = new SignalsManager();
             mapForm = new MapForm(this,sm);
             recordForm = new RecordForm(this);
+            initSignalManager();
 
         }
         T[,] ResizeArray<T>(T[,] original, int rows, int cols)
@@ -99,7 +100,7 @@ namespace MicAngle
             long[] maxesLeft = new long[sm.ShiftCount];
             long[] maxesRight = new long[sm.ShiftCount];
             bool success;
-            int[] delayForFirstMicrophonePair = { 0, 1 };
+            int[] delayForFirstMicrophonePair = sm.MicrophonesDelay;
             long leftShiftMaximumValue = 0, rightShiftMaximumValue = 0;
             double  rightShiftAngle = sm.interCorelationFunc(signalsArr, out success, delayForFirstMicrophonePair, true, out rightShiftMaximumValue, maxesRight);
             double  leftShiftAngle = sm.interCorelationFunc(signalsArr, out success, delayForFirstMicrophonePair, false, out leftShiftMaximumValue, maxesLeft);
@@ -125,14 +126,13 @@ namespace MicAngle
             long yMin = (maxesRight.Min() < maxesLeft.Min()) ? maxesRight.Min() : maxesLeft.Min();
             long yMax = (maxesRight.Max() > maxesLeft.Max()) ? maxesRight.Max() : maxesLeft.Max();
             long yMaxAbs = (Math.Abs(yMax) > Math.Abs(yMin)) ? yMax : yMin;
-            for (int i = 1; i <= lastShiftIndex; i++)
+            for (int i = lastShiftIndex; i >= 0; i--)
             {
                 long value = maxesLeft[i];
-                Console.WriteLine(String.Format("x:{0} y:{1}", -i, value));
                 if (Math.Abs(value) >= Math.Abs(yMaxAbs))
                     seriesOfMax.Points.AddXY(-i, value);
                 else
-                    series.Points.AddXY(-i, value);
+                    series.Points.AddXY( -i, value);
                 // Console.WriteLine("series max[ " + i + "]=" + maxes[i+ SHIFT_COUNT]);
             }
 
@@ -157,8 +157,7 @@ namespace MicAngle
         {
             processAngle(recordForm.MicsSignal);
         }
-
-        private void btnInputData_Click(object sender, EventArgs e)
+        private void initSignalManager()
         {
             if (rtbSettings.Text.Length < 1) return;
             sm.clear();
@@ -169,7 +168,13 @@ namespace MicAngle
             sm.getChannelsOffset(rtbSettings.Text);
             sm.getMicrophonesShift(rtbSettings.Text);
             sm.initMaxMicDelay();
+            sm.getMicrophonesDelays(rtbSettings.Text);
             dataInputCounter++;
+        }
+
+        private void btnInputData_Click(object sender, EventArgs e)
+        {
+            initSignalManager();
         }
 
         private void btnToggleMap_Click(object sender, EventArgs e)

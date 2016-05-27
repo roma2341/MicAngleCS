@@ -25,8 +25,8 @@ namespace MicAngle
 		int k;
             double distanceFromSoundEmiterToMic = SignalsManager.getDistance(x, y, Mn.X, Mn.Y);
             
-            k =(int) (distanceFromSoundEmiterToMic * samplingRate/SignalsManager.V);
-            System.Console.WriteLine("generated signal shift(k):"+k +" and distance:"+ distanceFromSoundEmiterToMic);
+            k =(int) (distanceFromSoundEmiterToMic * (double)samplingRate/(double)SignalsManager.V);
+           Console.WriteLine("generated signal shift(k):"+k +" and distance:"+ distanceFromSoundEmiterToMic);
             if (signal.Length - k <= 0)
             {
                 status = false;
