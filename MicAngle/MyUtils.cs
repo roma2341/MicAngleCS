@@ -31,23 +31,23 @@ namespace MicAngle
         {
             return (int)(difference * 44100 / 1000000000);
         }
-        public static byte[] shiftRight(byte[] source, int n)
+        public static T[] shiftRight<T>(T[] source, int n)
         {
-            byte[] result = new byte[source.Length];
+            T[] result = new T[source.Length];
             for (int j = source.Length - 1; j >= 0; j--)
             {
-                if (j - n < 0) result[j] = 0;
+                if (j - n < 0) result[j] = default(T);
                 else
                     result[j] = source[j - n];
             }
             return result;
         }
-        public static byte[] shiftLeft(byte[] source, int n)
+        public static T[] shiftLeft<T>(T[] source, int n)
         {
-            byte[] result = new byte[source.Length];
+            T[] result = new T[source.Length];
             for (int j = 0; j < source.Length; j++)
             {
-                if (j + n >= source.Length) result[j] = 0;
+                if (j + n >= source.Length) result[j] = default(T);
                 else
                     result[j] = source[j + n];
             }

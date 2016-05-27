@@ -8,9 +8,10 @@ namespace MicAngle
 {
     public class SignalsManager
     {
-        public const int SHIFT_COUNT = 48;
-        static short MAX_SHORT = 255;//short.MaxValue;//32767
-	public static double V =300;
+        public int ShiftCount { get; set; }
+        static short MAX_SHORT = 32767;//short.MaxValue;//32767
+        public int SamplingRate { get; set; }
+	public static double V = 300;
    public List<SoundEmiter> Sn { get; set; }
      public List<Microphone> Mn { get; set; }
         public int Channels { get; set; }
@@ -24,6 +25,28 @@ namespace MicAngle
             Channels = 2;
             MicrophonesShift = new int[]{0,0};
         }
+        public double getMaxMicsDelayTime(double distance)
+        {
+            return distance / V ;
+        }
+        public int convertTimeToSamplesCount(double seconds)
+        {
+            return (int)Math.Ceiling(seconds * SamplingRate + 0.51);
+        }
+        public int getMaxMicsDelaySamples(double distance)
+        {
+            double timeDelay = getMaxMicsDelayTime(distance);
+            int samplesDelay = convertTimeToSamplesCount(timeDelay);
+            return samplesDelay;
+        }
+        public void initMaxMicDelay()
+        {
+            int firstMicrophoneIndex = 0;
+            int lastMicrophoneIndex = Mn.Count - 1;
+            double L = SignalsManager.getDistance(Mn[firstMicrophoneIndex].X, Mn[firstMicrophoneIndex].Y, Mn[lastMicrophoneIndex].X, Mn[lastMicrophoneIndex].Y);
+            ShiftCount = getMaxMicsDelaySamples(L);
+        }
+       
         public void clear()
         {
             Sn.Clear();
@@ -33,7 +56,7 @@ namespace MicAngle
 		int signal = (int) (A * Math.Sin(2.0*Math.PI*t*F/samplingRate)*(double)MAX_SHORT+A/2);
 		return signal;
 	}
-    public static void shiftRight(int[,] source,int dimensionI,int n)
+    public static void shiftMultidimensionalRight(int[,] source,int dimensionI,int n)
     {
             // int []result = new int[source.Length];
 
@@ -45,10 +68,9 @@ namespace MicAngle
         }
             //  return result;
         }
-        public static void shiftLeft(int[,] source, int dimensionI, int n)
+        public static void shiftMultidimensionalLeft(int[,] source, int dimensionI, int n)
         {
             // int []result = new int[source.Length];
-           // Console.WriteLine("SHIFT LEFT TEST...");
            // for (int i = 0; i < 10; i++)
             //    Console.Write(source[dimensionI, i]+" ");
            
@@ -62,14 +84,13 @@ namespace MicAngle
             }
             //for (int i = 0; i < 10; i++)
                // Console.Write(source[dimensionI, i] + " ");
-            //Console.WriteLine("\nSHIFT LEFT TEST END.");
             //  return result;
         }
-        public static void shift(int[,] source, int dimensionI, int n)
+        public static void shiftMultidimensional(int[,] source, int dimensionI, int n)
         {
             if (n == 0) return;
-            if (n >= 0) shiftRight(source, dimensionI, n);
-            else shiftLeft(source, dimensionI, -n);
+            if (n >= 0) shiftMultidimensionalRight(source, dimensionI, n);
+            else shiftMultidimensionalLeft(source, dimensionI, -n);
         }
         public static int[] shiftRight(int[] source, int n)
         {
@@ -123,8 +144,26 @@ namespace MicAngle
     return result;
 }
        //I THINK BUG HERE we need to sum all values not only midle
-	 public double  interCorelationFunc(int[,] buf,out bool success,out bool positiveRotation,long[] maxes=null){
-            //  const int MIC_COUNT = 2;
+	 public double  interCorelationFunc(int[,] buf,out bool success, int[] delays,bool isPositiveRotation,out long maxValue, long[] maxes = null)
+        {
+
+           /* int[] originalValues = new int[buf_.GetLength(1)];
+
+            Random rnd = new Random();
+            for (int i = 0; i < originalValues.Length; i++)
+            {
+                originalValues[i] = rnd.Next(1,short.MaxValue);
+            }
+           int[] shiftedValues = MyUtils.shiftLeft(originalValues,44);
+
+
+            int [,]buf = new int[2,originalValues.Length];
+            for (int i = 0; i < originalValues.Length; i++)
+            {
+                buf[0, i] = originalValues[i];
+                buf[1, i] = shiftedValues[i];
+            }*/
+            //  const int MIC_COUNT = 2; 
             Console.WriteLine("******INTERCORELATION_FUNCTION********");
             string str = "";
             for (int i = 0; i < buf.GetLength(0); i++)
@@ -142,9 +181,7 @@ namespace MicAngle
             
             Console.WriteLine("***************************************");
             success = true;
-            positiveRotation = true;
          double result = 0;
-			int[] delays = new int[]{0,1,2,4};
 
             /*
             *Визначаєм затримку для повороту планки, але покищо працює лише статично заданий варіант
@@ -178,24 +215,31 @@ namespace MicAngle
                // {
                    // delays = new int[]{0,1,2,4};
                     int maxIndex = 0;
-                    long maxValue = 0;
+                     maxValue = 0;
             double cosA = 0, arcCosA = 0;
-            for (int k = 0; k < SHIFT_COUNT; k++)
+            int startK = 0;
+            int endK = ShiftCount - 1;
+            for (int k = startK; k <= endK; k++)
                     {
-               // Console.WriteLine("k:"+k);
                     long korelKoff = 0;
                 //Вертаємо масив в початковий стан без зсувів
-               // if (k==0 || k==SHIFT_COUNT) Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
+                // if (k==0 || k==SHIFT_COUNT) Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
 
                 // buf[0]=shiftRight(buf[0], delays[l]);
                 //  buf[1] = shiftRight(buf[1], delays[l]);
-                for (int i = 0; i < buf.GetLength(0); i++)
-                        {
-                           /*   if (k<SHIFT_COUNT)
-                            shift(buf,i, -delays[i]);
-                            else*/
-                     shift(buf, i, delays[i]);
-                        }
+                if (k != 0)//Не зсуваємо на першій ітерації
+
+                {
+                    for (int i = 0; i < buf.GetLength(0); i++)
+                    {
+                        /*   if (k<SHIFT_COUNT)
+                         shift(buf,i, -delays[i]);
+                         else*/
+                        if (isPositiveRotation) shiftMultidimensional(buf, i, delays[i]);
+                        else shiftMultidimensional(buf, i, -delays[i]);
+
+                    }
+                }
 
                 //  long[] SM = new long[buf.GetLength(1)];
 
@@ -205,8 +249,8 @@ namespace MicAngle
                 //   int startIndex = delays.Max() * SHIFT_COUNT;
                 // int startIndex = 0;
                 //  int endIndex = buf.GetLength(1); //startIndex + elementsToSum;
-                int startIndex = 2000;//SHIFT_COUNT-1;//buf.GetLength(1)/2-2000;
-                int endIndex = buf.GetLength(1) - 2000;//buf.GetLength(1)-1- SHIFT_COUNT;//buf.GetLength(1) / 2 + 2000;
+                int startIndex = ShiftCount;//buf.GetLength(1)/2-2000;
+                int endIndex = buf.GetLength(1)-1-ShiftCount;//buf.GetLength(1)-1- SHIFT_COUNT;//buf.GetLength(1) / 2 + 2000;
                 // if (k < 0) startIndex = -k - 1;
                 //if (k > 0)
                 // endIndex -= startIndex;
@@ -221,10 +265,10 @@ namespace MicAngle
                         summOfDifferentSignalValues *= buf[i,j];
                        // Console.WriteLine("buf[" + i + "," + j + "]="+ buf[i, j]);
                         }
-                   // Console.WriteLine("summOfDifferentSignalValues:"+ summOfDifferentSignalValues);
                     //summ += (long)Math.Sqrt((double)Math.Abs(summOfDifferentSignalValues));
                     korelKoff += Math.Abs(summOfDifferentSignalValues);
                     }
+                korelKoff /= (endIndex - startIndex);
                // korelKoff /= buf.GetLength(1);
                   //long absSumm = Math.Abs(summ);
                   //summ = (long)Math.Sqrt(absSumm);
@@ -232,48 +276,38 @@ namespace MicAngle
                  if (Math.Abs(korelKoff) > Math.Abs(maxValue))
                 //if (summ > maxValue)
                 {
-                   Console.Out.WriteLine("max Long:"+long.MaxValue);
-                            maxValue = korelKoff;
-                            maxIndex = (k );
+                   //Console.Out.WriteLine("max Long:"+long.MaxValue);
+                   maxValue = korelKoff;
+                   maxIndex = k ;
+                  
                         }
-                Console.Out.WriteLine();
-                    Console.Out.WriteLine("K:"+k+ " SUM:" + korelKoff +" MAX_SUM:" + maxValue +
-                " MAX_INDEX:" + maxIndex);
+               // Console.Out.WriteLine();
+                 //   Console.Out.WriteLine("K:"+k+ " SUM:" + korelKoff +" MAX_SUM:" + maxValue +
+               // " MAX_INDEX:" + maxIndex);
                 int firstMicrophoneIndex = 0;
                 int lastMicrophoneIndex = Mn.Count-1;
                 double L = SignalsManager.getDistance(Mn[firstMicrophoneIndex].X, Mn[firstMicrophoneIndex].Y, Mn[lastMicrophoneIndex].X, Mn[lastMicrophoneIndex].Y);
-                if (L==0)
-                {
-                    /*success = false;
-                    Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
-                    return 0;*/
-                    L=1;
-                }
+
                 // Console.WriteLine("L:" + L);
-              
-                if (maxIndex >= 0)
-                {
-                    cosA = V * (double)maxIndex / (L * (double)Sn[0].samplingRate);
+                
+                /*if (isPositiveRotation)
+                {*/
+                    cosA = V * (double)maxIndex / (L * (double)SamplingRate);
                     arcCosA = Math.Acos(cosA);
                     result = arcCosA * 180 / Math.PI;
-                    positiveRotation = true;
-                }
+                /*}
                 else
                 {
-                    cosA = V * (double)maxIndex / (L * (double)Sn[0].samplingRate);
+                    cosA = V * (double)-maxIndex / (L * (double)SamplingRate);
                     arcCosA = Math.Acos(cosA);
-                    result = -arcCosA * 180 / Math.PI;
-                    positiveRotation = false;
-                }
+                    result = 380-arcCosA * 180 / Math.PI;
+                }*/
                 
-               
-
-               // Console.Out.WriteLine("maxIndex:" + maxIndex + "cos:" + cosA + " Alpha:" + result);
                 //System.out.println("summ:"+summ);
             }
             if (cosA > 1)
                 success = false;
-            
+
 
 
 
@@ -287,8 +321,8 @@ namespace MicAngle
             }*/
             Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
 
-            
-			return result;
+
+            return result;
 			}
 	 
 	public static double getDistance(double x1, double y1,double x2,double y2)
@@ -362,30 +396,40 @@ namespace MicAngle
 
         }
         public void addSoundEmiterFromString(String testString)
-	{	
-		//String micPattern = new String("^Звук[(]x:\\d+;y:\\d+;A:\\d+[)]$");
-		//String testString = new String("Звук(x:0;y:10;А:10)");
-		 // String micPattern = new String("З[(][x,X]:(-?([0-9]+.)?[0-9]+);[y,Y]:(-?([0-9]+.)?[0-9]+);[a,A]:(-?([0-9]+.)?[0-9]+)[)]");
-        String micPattern = "З[(][x,X]:(-?([0-9]+.)?[0-9]+);[y,Y]:(-?([0-9]+.)?[0-9]+);[a,A]:(-?([0-9]+.)?[0-9]+);"
-                                                                                                   + "[f,F]:(-?([0-9]+.)?[0-9]+)[)]";
+	{
+            //String micPattern = new String("^Звук[(]x:\\d+;y:\\d+;A:\\d+[)]$");
+            //String testString = new String("Звук(x:0;y:10;А:10)");
+            // String micPattern = new String("З[(][x,X]:(-?([0-9]+.)?[0-9]+);[y,Y]:(-?([0-9]+.)?[0-9]+);[a,A]:(-?([0-9]+.)?[0-9]+)[)]");
+            String micPattern = "З[(][x,X]:(-?([0-9]+.)?[0-9]+);[y,Y]:(-?([0-9]+.)?[0-9]+);[a,A]:(-?([0-9]+.)?[0-9]+)[)]";                                                                          
             Regex newReg = new Regex(micPattern);
 			MatchCollection  matches = newReg.Matches(testString);
 		bool isCorrect=false;
 		double x=0,y,a;
-		int f;
 		foreach(Match m in matches)
 		{
 			isCorrect=true;
 			x = Double.Parse(m.Groups[1].Value);
 			y = Double.Parse(m.Groups[3].Value);
 			 a = double.Parse(m.Groups[5].Value);
-			 f = int.Parse(m.Groups[7].Value);
-			 Sn.Add(new SoundEmiter(x,y,a,f));
+			 Sn.Add(new SoundEmiter(x,y,a));
 		}
 		if (!isCorrect)Console.Out.WriteLine("Невірні данні");
 		//Звук(x:0;y:10;А:10)
 		
 	}
+        public void addSamplingRateFromString(String testString)
+        {
+            String micPattern = "[sS][aA][mM][pP][lL][iI][nN][gG][rR][aA][tT][eE][(]([0-9]+)[)]";
+            Regex newReg = new Regex(micPattern);
+            MatchCollection matches = newReg.Matches(testString);
+            bool isCorrect = false;
+            foreach (Match m in matches)
+            {
+                isCorrect = true;
+                SamplingRate = int.Parse(m.Groups[1].Value);
+            }
+            if (!isCorrect) Console.Out.WriteLine("Невірні данні");
+        }
 
 
 

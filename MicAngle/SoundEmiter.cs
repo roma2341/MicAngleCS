@@ -8,20 +8,18 @@ namespace MicAngle
 {
     public class SoundEmiter
     {
-        public SoundEmiter(double x, double y, double A, int samplingRate)
+        public SoundEmiter(double x, double y, double A)
         {
             this.x = x;
             this.y = y;
             this.A = A;
-            this.samplingRate = samplingRate;
         }
        public double x {get;set;}
          public double y {get;set;}
          public double A {get;set;}
-       public int samplingRate {get;set;}
       public  int[] signal {get; set;}
 
-        public int[] generateSignal(Microphone Mn, out bool status)
+        public int[] generateSignal(Microphone Mn, out bool status,int samplingRate)
 	{
 		
 		int k;

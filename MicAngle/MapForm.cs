@@ -70,7 +70,7 @@ namespace MicAngle
             GMarkerGoogle marker = new GMarkerGoogle(new PointLatLng(-25.966688, 32.580528),
               GMarkerGoogleType.green);
             mapControl.Overlays.Clear();
-            markersOverlay.Markers.Add(marker);
+           markersOverlay.Markers.Add(marker);
             mapControl.Overlays.Add(markersOverlay);
             mapControl.Position = new PointLatLng(coord.X, coord.Y);
 
@@ -133,7 +133,7 @@ namespace MicAngle
             PointLatLng soundLocation = new PointLatLng(signalsManger.Sn[0].GeoPosition.X,
                 signalsManger.Sn[0].GeoPosition.Y);
             GMarkerGoogle markerOfSoundEmiter = new GMarkerGoogle(soundLocation,
-                GMarkerGoogleType.red_dot);
+                GMarkerGoogleType.blue_pushpin);
             markersOverlay.Markers.Add(markerOfSoundEmiter);
 
 
@@ -169,11 +169,14 @@ namespace MicAngle
             if (testAngle != 0) angle = testAngle;
             PointLatLng mainMicPos = signalsManger.Mn.First().GeoPosition; //signalsManger.Mn[0].GeoPosition
             PointLatLng secondMicPos = signalsManger.Mn.Last().GeoPosition;//fiction zero
-            PointLatLng directionPos;
+            PointLatLng directionPos,alternativeDirectionPos;
+
+           
             if (parent.resultIsPositiveRotation)
                 directionPos = rotate(mainMicPos, secondMicPos, -angle);
             else
                 directionPos = rotate(mainMicPos, secondMicPos, angle);
+            alternativeDirectionPos = rotate(mainMicPos, secondMicPos,360- angle);
             /* PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
                  directionPos.Lng - secondMicPos.Lng);*/
 
@@ -198,11 +201,13 @@ namespace MicAngle
                 vectorFormOfDirection.Lng + secondMicPos.Lng);*/
            // secondMicPos = Geometry.multiplyVector(secondMicPos, mainMicPos, 1000000);
             directionPos = Geometry.multiplyVector(directionPos, secondMicPos, 100000);
+            alternativeDirectionPos = Geometry.multiplyVector(alternativeDirectionPos, secondMicPos, 100000);
             //Будем повертати головний мікрофон відносно іншого, щоб отримати позицію звідки йде звук
 
-           // polygonPoints.Add(mainMicPos);
+            // polygonPoints.Add(mainMicPos);
             polygonPoints.Add(secondMicPos);
             polygonPoints.Add(directionPos);
+            polygonPoints.Add(alternativeDirectionPos);
             //direction poly
             GMapPolygon directionPolygon = new GMapPolygon(polygonPoints, "mypolygon");
             directionPolygon.Fill = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(50, System.Drawing.Color.Red));
@@ -210,10 +215,11 @@ namespace MicAngle
             markersOverlay.Polygons.Add(directionPolygon);
 
 
-            mapControl.Overlays.Add(markersOverlay);        
+            mapControl.Overlays.Add(markersOverlay);
 
             //set position must be called last because otherwise map won't be redrawed
-            mapControl.Position = new PointLatLng(geoCoordOfMicrophone.Lat, geoCoordOfMicrophone.Lng);
+                mapControl.Position = geoCoordOfMicrophone;
+
             // mapControl.ReloadMap();
 
 

@@ -14,7 +14,7 @@ namespace MicAngle
     public partial class Form1 : Form
     {
         RecordForm recordForm;
-        const double SOUND_EMITER_LISTEN_TIME = 10;
+        const double SOUND_EMITER_LISTEN_TIME = 20;
         MapForm mapForm;
         bool mapShowed = false;
         bool recordFormShowed = false;
@@ -64,12 +64,12 @@ namespace MicAngle
             if (signalFromRealMicrophones == null)
             {
                 int signalValuesCount =
-              sm.Sn[0].processEmiterArr(SOUND_EMITER_LISTEN_TIME, sm.Sn[0].samplingRate, (int)SignalsManager.V);
+              sm.Sn[0].processEmiterArr(SOUND_EMITER_LISTEN_TIME, sm.SamplingRate, (int)SignalsManager.V);
                 signalsArr = new int[sm.Mn.Count, signalValuesCount];
                 for (int i = 0; i < sm.Mn.Count; i++)
                 {
                     bool generationSuccess;
-                    int[] arr = sm.Sn[0].generateSignal(sm.Mn[i], out generationSuccess);
+                    int[] arr = sm.Sn[0].generateSignal(sm.Mn[i], out generationSuccess,sm.SamplingRate);
                     if (!generationSuccess)
                     {
                         MessageBox.Show("Помилкові данні, не вдалось згенерувати масив звуку", "Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -94,11 +94,19 @@ namespace MicAngle
             //Підганяємо масиви по масиву з мінімальною кількістю ел.
 
             //   Console.WriteLine("PROCESSING FINISHED.");
+            const int NO_SHIFT_DATA_COUNT = 1; // +1 to total shift count, because wee need
 
-            long[] maxes = new long[SignalsManager.SHIFT_COUNT];//*2 because need contains left and right shift
+            long[] maxesLeft = new long[sm.ShiftCount];
+            long[] maxesRight = new long[sm.ShiftCount];
             bool success;
-
-            resultAngle = sm.interCorelationFunc(signalsArr, out success, out resultIsPositiveRotation, maxes);
+            int[] delayForFirstMicrophonePair = { 0, 1 };
+            long leftShiftMaximumValue = 0, rightShiftMaximumValue = 0;
+            double  rightShiftAngle = sm.interCorelationFunc(signalsArr, out success, delayForFirstMicrophonePair, true, out rightShiftMaximumValue, maxesRight);
+            double  leftShiftAngle = sm.interCorelationFunc(signalsArr, out success, delayForFirstMicrophonePair, false, out leftShiftMaximumValue, maxesLeft);
+            rightShiftMaximumValue = Math.Abs(rightShiftMaximumValue);
+            leftShiftMaximumValue = Math.Abs(leftShiftMaximumValue);
+            
+            resultAngle = (rightShiftMaximumValue > leftShiftMaximumValue) ? rightShiftAngle : 360-leftShiftAngle;
             if (!success)
             {
                Console.WriteLine("Схоже що відстань між мікрофонами і джерелом звуку рівна нулю", "Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -108,22 +116,37 @@ namespace MicAngle
             this.chartMaximum.Series[1].Points.Clear();
             Series series = this.chartMaximum.Series[0];//.Add("Intercorelation function\n value");
             Series seriesOfMax = this.chartMaximum.Series[1];//.Add("Intercorelation function\n value");
-            this.chartMaximum.ChartAreas[0].AxisX.Maximum = SignalsManager.SHIFT_COUNT;
-            this.chartMaximum.ChartAreas[0].AxisX.Minimum = 0;
+            int firstShiftIndex = 0;
+            int lastShiftIndex = sm.ShiftCount-1;
+            this.chartMaximum.ChartAreas[0].AxisX.Maximum = lastShiftIndex;
+            this.chartMaximum.ChartAreas[0].AxisX.Minimum = -lastShiftIndex;
             this.chartMaximum.ChartAreas[0].AxisX.Interval = 1;
             series.Color = Color.Blue;
-            long yMin = maxes.Min();
-            long yMax = maxes.Max();
+            long yMin = (maxesRight.Min() < maxesLeft.Min()) ? maxesRight.Min() : maxesLeft.Min();
+            long yMax = (maxesRight.Max() > maxesLeft.Max()) ? maxesRight.Max() : maxesLeft.Max();
             long yMaxAbs = (Math.Abs(yMax) > Math.Abs(yMin)) ? yMax : yMin;
-            for (int i = 0; i < SignalsManager.SHIFT_COUNT; i++)
+            for (int i = 1; i <= lastShiftIndex; i++)
             {
-                long value = maxes[i];
-                if (Math.Abs(value) == Math.Abs(yMaxAbs))
+                long value = maxesLeft[i];
+                Console.WriteLine(String.Format("x:{0} y:{1}", -i, value));
+                if (Math.Abs(value) >= Math.Abs(yMaxAbs))
+                    seriesOfMax.Points.AddXY(-i, value);
+                else
+                    series.Points.AddXY(-i, value);
+                // Console.WriteLine("series max[ " + i + "]=" + maxes[i+ SHIFT_COUNT]);
+            }
+
+            for (int i = 0; i <= lastShiftIndex; i++)
+            {
+                long value = maxesRight[i];
+                Console.WriteLine(String.Format("x:{0} y:{1}", i, value));
+                if (Math.Abs(value) >= Math.Abs(yMaxAbs))
                     seriesOfMax.Points.AddXY(i, value);
                 else
                     series.Points.AddXY(i, value);
                 // Console.WriteLine("series max[ " + i + "]=" + maxes[i+ SHIFT_COUNT]);
             }
+
             this.chartMaximum.ChartAreas[0].AxisY.Minimum = yMin;
             this.chartMaximum.ChartAreas[0].AxisY.Maximum = yMax;
             lblResult.Text = "" + resultAngle;
@@ -139,11 +162,13 @@ namespace MicAngle
         {
             if (rtbSettings.Text.Length < 1) return;
             sm.clear();
+            sm.addSamplingRateFromString(rtbSettings.Text);
             sm.addSoundEmiterFromString(rtbSettings.Text);
             sm.addMicrophoneFromString(rtbSettings.Text);
             sm.getChannelsFromString(rtbSettings.Text);
             sm.getChannelsOffset(rtbSettings.Text);
             sm.getMicrophonesShift(rtbSettings.Text);
+            sm.initMaxMicDelay();
             dataInputCounter++;
         }
 

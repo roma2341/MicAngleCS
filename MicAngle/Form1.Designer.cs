@@ -63,7 +63,7 @@
             this.rtbSettings.Dock = System.Windows.Forms.DockStyle.Left;
             this.rtbSettings.Location = new System.Drawing.Point(0, 0);
             this.rtbSettings.Name = "rtbSettings";
-            this.rtbSettings.Size = new System.Drawing.Size(409, 83);
+            this.rtbSettings.Size = new System.Drawing.Size(409, 154);
             this.rtbSettings.TabIndex = 2;
             this.rtbSettings.Text = resources.GetString("rtbSettings.Text");
             this.rtbSettings.TextChanged += new System.EventHandler(this.rtbSettings_TextChanged);
@@ -107,7 +107,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.btnProcessAngle);
             this.splitContainer1.Panel2.Controls.Add(this.btnInputData);
             this.splitContainer1.Size = new System.Drawing.Size(952, 564);
-            this.splitContainer1.SplitterDistance = 477;
+            this.splitContainer1.SplitterDistance = 406;
             this.splitContainer1.TabIndex = 5;
             // 
             // chartMaximum
@@ -140,7 +140,7 @@
             series2.YValuesPerPoint = 2;
             this.chartMaximum.Series.Add(series1);
             this.chartMaximum.Series.Add(series2);
-            this.chartMaximum.Size = new System.Drawing.Size(952, 477);
+            this.chartMaximum.Size = new System.Drawing.Size(952, 406);
             this.chartMaximum.TabIndex = 1;
             this.chartMaximum.Text = "chart1";
             // 

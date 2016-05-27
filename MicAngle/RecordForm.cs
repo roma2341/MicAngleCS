@@ -33,7 +33,6 @@ namespace MicAngle
         // CountdownEvent cntEvent = new CountdownEvent(1);
         WaveInEvent waveInA,waveInB;
         Form1 angleForm;
-        const int SAMPLING_RATE = 44100;
         const int BYTES_PER_SAMPLE = 4;
         bool isRecording = false;
         int asioInvocesCount1 = 0;
@@ -645,8 +644,8 @@ namespace MicAngle
                // result[1, index] = ((int)(source[i] * Int32.MaxValue));
                 index++;
             }
-            SignalsManager.shift(result, 0, angleForm.getSignalManager().MicrophonesShift[0]);
-            SignalsManager.shift(result, 1, angleForm.getSignalManager().MicrophonesShift[0]);
+            SignalsManager.shiftMultidimensional(result, 0, angleForm.getSignalManager().MicrophonesShift[0]);
+            SignalsManager.shiftMultidimensional(result, 1, angleForm.getSignalManager().MicrophonesShift[0]);
             return result;
            
         }
@@ -783,8 +782,8 @@ namespace MicAngle
                         waveInA.RecordingStopped += new EventHandler<StoppedEventArgs>(waveIn_RecordingStoppedA);
                         waveInB.RecordingStopped += new EventHandler<StoppedEventArgs>(waveIn_RecordingStoppedB);
                         //Формат wav-файла - принимает параметры - частоту дискретизации и количество каналов(здесь mono)
-                        waveInA.WaveFormat = new WaveFormat(SAMPLING_RATE, angleForm.getSignalManager().Channels);
-                        waveInB.WaveFormat = new WaveFormat(SAMPLING_RATE, angleForm.getSignalManager().Channels);
+                        waveInA.WaveFormat = new WaveFormat(angleForm.getSignalManager().SamplingRate, angleForm.getSignalManager().Channels);
+                        waveInB.WaveFormat = new WaveFormat(angleForm.getSignalManager().SamplingRate, angleForm.getSignalManager().Channels);
                         waveInA.BufferMilliseconds = 100;
                         waveInB.BufferMilliseconds = 100;
                         //Инициализируем объект WaveFileWriter
@@ -829,12 +828,12 @@ namespace MicAngle
                         Console.WriteLine("|||||||||||||||||||||||||||||||||||||||||||||");
                         //recAsio2 = new NAudio.Wave.AsioOut(driverId);
                         //recAsio2.ChannelOffset = 1;
-                        NAudio.Wave.WaveFormat formato = new NAudio.Wave.WaveFormat(SAMPLING_RATE, channels);
+                        NAudio.Wave.WaveFormat formato = new NAudio.Wave.WaveFormat(angleForm.getSignalManager().SamplingRate, channels);
                        buffer = new NAudio.Wave.BufferedWaveProvider(formato);
                         recAsio.AudioAvailable += new EventHandler<NAudio.Wave.AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestA);
                         //recAsio2.AudioAvailable += new EventHandler<NAudio.Wave.AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestB);
                       
-                        recAsio.InitRecordAndPlayback(null, channels, SAMPLING_RATE); //rec channel = 1
+                        recAsio.InitRecordAndPlayback(null, channels, angleForm.getSignalManager().SamplingRate); //rec channel = 1
                                                                                       // recAsio2.InitRecordAndPlayback(null, angleForm.getSignalManager().Mn.Count, SAMPLING_RATE); //rec channel = 1
                         recAsio.PlaybackStopped += new EventHandler<StoppedEventArgs>(asio_RecordingStoppedA);
                         recAsio.Play();
