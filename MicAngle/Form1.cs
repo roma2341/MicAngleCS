@@ -20,6 +20,8 @@ namespace MicAngle
         bool recordFormShowed = false;
         public double resultAngle { get; set; }
         SignalsManager sm;
+        long[,] correlationDetailsPositive;
+        long[,] correlationDetailsNegative;
         int dataInputCounter=0;
         public SignalsManager getSignalManager()
         {
@@ -92,7 +94,7 @@ namespace MicAngle
                 signalsArr = signalFromRealMicrophones;
             }
             bool success = true;
-            CorrelationStatistic[] microphoneProcessingStatistic = sm.getMaxCrossCorrelationFromMicSignals(signalsArr,out success, sm.MicrophonesDelay);
+            CorrelationStatistic[] microphoneProcessingStatistic = sm.getMaxCrossCorrelationFromMicSignals(signalsArr,out success, sm.MicrophonesDelay,out correlationDetailsNegative, out correlationDetailsPositive);
             Console.WriteLine("Processing statistic:");
             double[] angles = correlationStatisticToAngles(microphoneProcessingStatistic);
             for (int i = 0; i < microphoneProcessingStatistic.Length; i++)
@@ -101,7 +103,7 @@ namespace MicAngle
                 Console.WriteLine(statistic.ToString());
                 Console.WriteLine("angle:" + angles[i]);
             }
-            
+            displayCorrelationStatistic();
 
             //sm.getAngleFromDelay()
 
@@ -149,6 +151,48 @@ namespace MicAngle
         private void btnProcessAngle_Click(object sender, EventArgs e)
         {
             processAngle(recordForm.MicsSignal);
+        }
+        private void displayCorrelationStatistic()
+        {
+            string serieNameTemplate = "Мікрофони0-{0}";
+            chartMaximum.Series.Clear();
+            long[] maximumsValue = new long[correlationDetailsPositive.GetLength(0)];
+            long[] maximumsIndex = new long[correlationDetailsPositive.GetLength(0)];
+            for (int i = 1; i < correlationDetailsPositive.GetLength(0); i++)
+            {
+                Series currentSerie = (new Series(String.Format(serieNameTemplate, i)));
+                chartMaximum.Series.Add(currentSerie);
+                currentSerie.ChartType = SeriesChartType.Line;
+                for (int j = correlationDetailsNegative.GetLength(1)-1; j >= 0 ; j--)
+                {                   
+                    currentSerie.Points.AddXY(-j, correlationDetailsNegative[i, j]);
+                    if (correlationDetailsNegative[i, j]> maximumsValue[i])
+                    {
+                        maximumsValue[i] = correlationDetailsNegative[i,j];
+                        maximumsIndex[i] = -j;
+                    }
+                }
+                for (int j = 1; j < correlationDetailsPositive.GetLength(1); j++)
+                {
+                    currentSerie.Points.AddXY(j, correlationDetailsPositive[i, j]);
+                    if (correlationDetailsPositive[i, j] > maximumsValue[i])
+                    {
+                        maximumsValue[i] = correlationDetailsPositive[i, j];
+                        maximumsIndex[i] = j;
+                    }
+                }
+            }
+            Series seriesOfMaximum = new Series("Максимуми");
+            seriesOfMaximum.ChartType = SeriesChartType.Point;
+            for (int i = 0; i < maximumsValue.Length; i++)
+            {
+                DataPoint dataPoint = new DataPoint(maximumsIndex[i], maximumsValue[i]);
+                dataPoint.Label = ""+maximumsValue[i];
+            seriesOfMaximum.Points.Add(dataPoint);
+
+            }
+            chartMaximum.Series.Add(seriesOfMaximum);
+
         }
         private void initSignalManager()
         {

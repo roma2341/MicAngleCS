@@ -173,7 +173,7 @@ namespace MicAngle
         }
 
 
-        public CorrelationStatistic[] getMaxCrossCorrelationFromMicSignals(int[,] buf,out bool success, int[] delays)
+        public CorrelationStatistic[] getMaxCrossCorrelationFromMicSignals(int[,] buf, out bool success, int[] delays, out long[,] correlationDetailsNegative, out long[,] correlationDetailsPositive)
         {
             //TEST - replacing original signal by random values and moving it to another array with shift to check if 
             //my alhorithm working correctly
@@ -197,6 +197,9 @@ namespace MicAngle
 
             success = true;
             int correlationStatisticSize = (buf.GetLength(0) - 1) ;//TODO
+            int MAXIMAL_SHIFT_TO_SAVE = 100;
+            correlationDetailsPositive = new long[buf.GetLength(0), MAXIMAL_SHIFT_TO_SAVE];
+            correlationDetailsNegative = new long[buf.GetLength(0), MAXIMAL_SHIFT_TO_SAVE];
             CorrelationStatistic[] maxCorrelationValues = new CorrelationStatistic[correlationStatisticSize];//N-1 where N is microphones count;
             for (int i = 1; i < buf.GetLength(0); i++)
             {
@@ -210,7 +213,10 @@ namespace MicAngle
                     int actualShift = j * shiftStep;
                     long correlation1 = getCrossCorrelation(buf, 0, i,0,actualShift, shiftStep* maxShiftsCount);
                     long correlation2 = getCrossCorrelation(buf, 0, i, 0, -actualShift, shiftStep * maxShiftsCount);
-
+                    if (j < MAXIMAL_SHIFT_TO_SAVE) { 
+                    correlationDetailsPositive[i, j] = correlation1;
+                    correlationDetailsNegative[i, j] = correlation2;
+                    }
 
                     if (correlation1 >= correlation2)
                     {
@@ -245,7 +251,7 @@ namespace MicAngle
             double cosA = V * delay / (lengthBetweenMics * SamplingRate);
             double arcCosA = Math.Acos(cosA);
             double angle =  arcCosA * 180 / Math.PI;
-           // if (delay < 0) angle = 360-angle;
+         //   if (delay < 0) angle = 360-angle;
             return angle;
         }
 	 
