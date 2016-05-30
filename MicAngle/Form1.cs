@@ -18,7 +18,6 @@ namespace MicAngle
         MapForm mapForm;
         bool mapShowed = false;
         bool recordFormShowed = false;
-       public bool resultIsPositiveRotation;
         public double resultAngle { get; set; }
         SignalsManager sm;
         int dataInputCounter=0;
@@ -92,65 +91,59 @@ namespace MicAngle
             {
                 signalsArr = signalFromRealMicrophones;
             }
-            //Підганяємо масиви по масиву з мінімальною кількістю ел.
-
-            //   Console.WriteLine("PROCESSING FINISHED.");
-            const int NO_SHIFT_DATA_COUNT = 1; // +1 to total shift count, because wee need
-
-            long[] maxesLeft = new long[sm.ShiftCount];
-            long[] maxesRight = new long[sm.ShiftCount];
-            bool success;
-            int[] delayForFirstMicrophonePair = sm.MicrophonesDelay;
-            long leftShiftMaximumValue = 0, rightShiftMaximumValue = 0;
-            double  rightShiftAngle = sm.interCorelationFunc(signalsArr, out success, delayForFirstMicrophonePair, true, out rightShiftMaximumValue, maxesRight);
-            double  leftShiftAngle = sm.interCorelationFunc(signalsArr, out success, delayForFirstMicrophonePair, false, out leftShiftMaximumValue, maxesLeft);
-            rightShiftMaximumValue = Math.Abs(rightShiftMaximumValue);
-            leftShiftMaximumValue = Math.Abs(leftShiftMaximumValue);
+            bool success = true;
+            CorrelationStatistic[] microphoneProcessingStatistic = sm.getMaxCrossCorrelationFromMicSignals(signalsArr,out success, sm.MicrophonesDelay);
+            Console.WriteLine("Processing statistic:");
+            double[] angles = correlationStatisticToAngles(microphoneProcessingStatistic);
+            for (int i = 0; i < microphoneProcessingStatistic.Length; i++)
+            {
+                CorrelationStatistic statistic = microphoneProcessingStatistic[i];
+                Console.WriteLine(statistic.ToString());
+                Console.WriteLine("angle:" + angles[i]);
+            }
             
-            resultAngle = (rightShiftMaximumValue > leftShiftMaximumValue) ? rightShiftAngle : 360-leftShiftAngle;
-            if (!success)
-            {
-               Console.WriteLine("Схоже що відстань між мікрофонами і джерелом звуку рівна нулю", "Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-            this.chartMaximum.Series[0].Points.Clear();
-            this.chartMaximum.Series[1].Points.Clear();
-            Series series = this.chartMaximum.Series[0];//.Add("Intercorelation function\n value");
-            Series seriesOfMax = this.chartMaximum.Series[1];//.Add("Intercorelation function\n value");
-            int firstShiftIndex = 0;
-            int lastShiftIndex = sm.ShiftCount-1;
-            this.chartMaximum.ChartAreas[0].AxisX.Maximum = lastShiftIndex;
-            this.chartMaximum.ChartAreas[0].AxisX.Minimum = -lastShiftIndex;
-            this.chartMaximum.ChartAreas[0].AxisX.Interval = 1;
-            series.Color = Color.Blue;
-            long yMin = (maxesRight.Min() < maxesLeft.Min()) ? maxesRight.Min() : maxesLeft.Min();
-            long yMax = (maxesRight.Max() > maxesLeft.Max()) ? maxesRight.Max() : maxesLeft.Max();
-            long yMaxAbs = (Math.Abs(yMax) > Math.Abs(yMin)) ? yMax : yMin;
-            for (int i = lastShiftIndex; i >= 0; i--)
-            {
-                long value = maxesLeft[i];
-                if (Math.Abs(value) >= Math.Abs(yMaxAbs))
-                    seriesOfMax.Points.AddXY(-i, value);
-                else
-                    series.Points.AddXY( -i, value);
-                // Console.WriteLine("series max[ " + i + "]=" + maxes[i+ SHIFT_COUNT]);
-            }
 
-            for (int i = 0; i <= lastShiftIndex; i++)
-            {
-                long value = maxesRight[i];
-                Console.WriteLine(String.Format("x:{0} y:{1}", i, value));
-                if (Math.Abs(value) >= Math.Abs(yMaxAbs))
-                    seriesOfMax.Points.AddXY(i, value);
-                else
-                    series.Points.AddXY(i, value);
-                // Console.WriteLine("series max[ " + i + "]=" + maxes[i+ SHIFT_COUNT]);
-            }
+            //sm.getAngleFromDelay()
 
-            this.chartMaximum.ChartAreas[0].AxisY.Minimum = yMin;
-            this.chartMaximum.ChartAreas[0].AxisY.Maximum = yMax;
-            lblResult.Text = "" + resultAngle;
-            mapForm.processMap();
+            /*
+                        this.chartMaximum.Series[0].Points.Clear();
+                        this.chartMaximum.Series[1].Points.Clear();
+                        Series series = this.chartMaximum.Series[0];//.Add("Intercorelation function\n value");
+                        Series seriesOfMax = this.chartMaximum.Series[1];//.Add("Intercorelation function\n value");
+                        int firstShiftIndex = 0;
+                        int lastShiftIndex = sm.ShiftCount-1;
+                        this.chartMaximum.ChartAreas[0].AxisX.Maximum = lastShiftIndex;
+                        this.chartMaximum.ChartAreas[0].AxisX.Minimum = -lastShiftIndex;
+                        this.chartMaximum.ChartAreas[0].AxisX.Interval = 1;
+                        series.Color = Color.Blue;
+                        long yMin = (maxesRight.Min() < maxesLeft.Min()) ? maxesRight.Min() : maxesLeft.Min();
+                        long yMax = (maxesRight.Max() > maxesLeft.Max()) ? maxesRight.Max() : maxesLeft.Max();
+                        long yMaxAbs = (Math.Abs(yMax) > Math.Abs(yMin)) ? yMax : yMin;
+                        for (int i = lastShiftIndex; i >= 0; i--)
+                        {
+                            long value = maxesLeft[i];
+                            if (Math.Abs(value) >= Math.Abs(yMaxAbs))
+                                seriesOfMax.Points.AddXY(-i, value);
+                            else
+                                series.Points.AddXY( -i, value);
+                            // Console.WriteLine("series max[ " + i + "]=" + maxes[i+ SHIFT_COUNT]);
+                        }
+
+
+                        this.chartMaximum.ChartAreas[0].AxisY.Minimum = yMin;
+                        this.chartMaximum.ChartAreas[0].AxisY.Maximum = yMax;
+                        lblResult.Text = "" + resultAngle;
+                        */
+                        mapForm.processMap(angles);
+        }
+        public double[] correlationStatisticToAngles(CorrelationStatistic[] statisticArr)
+        {
+            double[] angles = new double[statisticArr.Length];
+            for (int i = 0; i < statisticArr.Length; i++)
+            {
+                angles[i] = sm.getAngleFromDelay(statisticArr[i].maxShift, statisticArr[i].micsDistance);
+            }
+            return angles;
         }
 
         private void btnProcessAngle_Click(object sender, EventArgs e)
@@ -167,7 +160,6 @@ namespace MicAngle
             sm.getChannelsFromString(rtbSettings.Text);
             sm.getChannelsOffset(rtbSettings.Text);
             sm.getMicrophonesShift(rtbSettings.Text);
-            sm.initMaxMicDelay();
             sm.getMicrophonesDelays(rtbSettings.Text);
             dataInputCounter++;
         }

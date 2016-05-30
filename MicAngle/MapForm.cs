@@ -117,29 +117,10 @@ namespace MicAngle
                 coordTypeMode = CoordTypeMode.COORD_MODE_GEO;
             }
         }
-        public void processMap()
+        public void drawMicrophones(GMapOverlay markersOverlay)
         {
-            if (tbTestAngle.TextLength > 0) testAngle = int.Parse(tbTestAngle.Text);
-            if (signalsManger.Mn.Count == 0) return;
-
-            PointLatLng geoCoordOfMicrophone = signalsManger.Mn[0].GeoPosition;
-
-            //map.Center = new Google.Maps.Location("1600 Amphitheatre Parkay Mountain View, CA 94043");
-
-            mapControl.Overlays.Clear();
-            GMapOverlay markersOverlay = new GMapOverlay("markers");
-           
-
-            PointLatLng soundLocation = new PointLatLng(signalsManger.Sn[0].GeoPosition.X,
-                signalsManger.Sn[0].GeoPosition.Y);
-            GMarkerGoogle markerOfSoundEmiter = new GMarkerGoogle(soundLocation,
-                GMarkerGoogleType.blue_pushpin);
-            markersOverlay.Markers.Add(markerOfSoundEmiter);
-
-
-
             int markersCount = 0;
-            for(int i = 0; i < signalsManger.Mn.Count();i++)
+            for (int i = 0; i < signalsManger.Mn.Count(); i++)
             {
                 Microphone mic = signalsManger.Mn[i];
                 PointLatLng micLocation = new PointLatLng(mic.GeoPosition.Lat, mic.GeoPosition.Lng);
@@ -165,54 +146,98 @@ namespace MicAngle
                 markersOverlay.Markers.Add(marker);
                 markersCount++;
             }
-            double angle = parent.resultAngle;
-            if (testAngle != 0) angle = testAngle;
-            PointLatLng mainMicPos = signalsManger.Mn.First().GeoPosition; //signalsManger.Mn[0].GeoPosition
-            PointLatLng secondMicPos = signalsManger.Mn.Last().GeoPosition;//fiction zero
-            PointLatLng directionPos,alternativeDirectionPos;
+        }
+        public void drawSoundEmiter(GMapOverlay markersOverlay)
+        {
+            PointLatLng soundLocation = new PointLatLng(signalsManger.Sn[0].GeoPosition.X,
+                signalsManger.Sn[0].GeoPosition.Y);
+            GMarkerGoogle markerOfSoundEmiter = new GMarkerGoogle(soundLocation,
+                GMarkerGoogleType.blue_pushpin);
+            markersOverlay.Markers.Add(markerOfSoundEmiter);
+        }
+        public void drawAngles(GMapOverlay markersOverlay,double[] angles)
+        {
+            int colorPolygonCount = 0;
+            for (int i = 0; i < angles.Length; i++)
+            {
+                double angle = angles[i];
+                if (testAngle != 0) angle = testAngle;
+                PointLatLng mainMicPos = signalsManger.Mn[0].GeoPosition; //signalsManger.Mn[0].GeoPosition
+                PointLatLng secondMicPos = signalsManger.Mn[i+1].GeoPosition;//fiction zero
+                PointLatLng directionPos, alternativeDirectionPos;
 
-           
-            if (parent.resultIsPositiveRotation)
-                directionPos = rotate(mainMicPos, secondMicPos, -angle);
-            else
-                directionPos = rotate(mainMicPos, secondMicPos, angle);
-            alternativeDirectionPos = rotate(mainMicPos, secondMicPos,360- angle);
-            /* PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
-                 directionPos.Lng - secondMicPos.Lng);*/
 
-            List<PointLatLng> polygonPoints = new List<PointLatLng>();
+                    directionPos = rotate( secondMicPos, mainMicPos, angle);
+                //else
+                   // directionPos = rotate(mainMicPos, secondMicPos, angle);
+                alternativeDirectionPos = rotate(mainMicPos, secondMicPos, 360-angle);
+                /* PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
+                     directionPos.Lng - secondMicPos.Lng);*/
 
-            
-            //Доводим вказівник на джерело звуку до меж екрану
-            double arrowVectorSizeWidth = mapControl.FromLocalToLatLng(mapControl.Width, 0).Lat;
-            double arrowVectorSizeHeight = mapControl.FromLocalToLatLng(0, mapControl.Height).Lng;
-            //Довжина вектору
-            double arrowVectorSize = Math.Abs((arrowVectorSizeWidth > arrowVectorSizeHeight) ? arrowVectorSizeWidth : arrowVectorSizeHeight);
-            //Приводимо вектор до одиничної форми
-            /* if (vectorFormOfDirection.Lat!=0)
-             vectorFormOfDirection.Lat /= Math.Abs(vectorFormOfDirection.Lat);
-             if (vectorFormOfDirection.Lng != 0)
-                 vectorFormOfDirection.Lng /= Math.Abs(vectorFormOfDirection.Lng);*/
-            //Саме виконуєм доводку вказівника до меж екрану.
-            // vectorFormOfDirection.Lat *= 10000;
-            // vectorFormOfDirection.Lng *= 10000;
-            
-            /*directionPos = new PointLatLng(vectorFormOfDirection.Lat + secondMicPos.Lat,
-                vectorFormOfDirection.Lng + secondMicPos.Lng);*/
-           // secondMicPos = Geometry.multiplyVector(secondMicPos, mainMicPos, 1000000);
-            directionPos = Geometry.multiplyVector(directionPos, secondMicPos, 100000);
-            alternativeDirectionPos = Geometry.multiplyVector(alternativeDirectionPos, secondMicPos, 100000);
-            //Будем повертати головний мікрофон відносно іншого, щоб отримати позицію звідки йде звук
+                List<PointLatLng> polygonPoints = new List<PointLatLng>();
 
-            // polygonPoints.Add(mainMicPos);
-            polygonPoints.Add(secondMicPos);
-            polygonPoints.Add(directionPos);
-            polygonPoints.Add(alternativeDirectionPos);
-            //direction poly
-            GMapPolygon directionPolygon = new GMapPolygon(polygonPoints, "mypolygon");
-            directionPolygon.Fill = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(50, System.Drawing.Color.Red));
-            directionPolygon.Stroke = new System.Drawing.Pen(System.Drawing.Color.Red, 1);
-            markersOverlay.Polygons.Add(directionPolygon);
+
+                //Доводим вказівник на джерело звуку до меж екрану
+                double arrowVectorSizeWidth = mapControl.FromLocalToLatLng(mapControl.Width, 0).Lat;
+                double arrowVectorSizeHeight = mapControl.FromLocalToLatLng(0, mapControl.Height).Lng;
+                //Довжина вектору
+                double arrowVectorSize = Math.Abs((arrowVectorSizeWidth > arrowVectorSizeHeight) ? arrowVectorSizeWidth : arrowVectorSizeHeight);
+                //Приводимо вектор до одиничної форми
+                /* if (vectorFormOfDirection.Lat!=0)
+                 vectorFormOfDirection.Lat /= Math.Abs(vectorFormOfDirection.Lat);
+                 if (vectorFormOfDirection.Lng != 0)
+                     vectorFormOfDirection.Lng /= Math.Abs(vectorFormOfDirection.Lng);*/
+                //Саме виконуєм доводку вказівника до меж екрану.
+                // vectorFormOfDirection.Lat *= 10000;
+                // vectorFormOfDirection.Lng *= 10000;
+
+                /*directionPos = new PointLatLng(vectorFormOfDirection.Lat + secondMicPos.Lat,
+                    vectorFormOfDirection.Lng + secondMicPos.Lng);*/
+                // secondMicPos = Geometry.multiplyVector(secondMicPos, mainMicPos, 1000000);
+                directionPos = Geometry.multiplyVector(directionPos, secondMicPos, 100000);
+                alternativeDirectionPos = Geometry.multiplyVector(alternativeDirectionPos, secondMicPos, 100000);
+                //Будем повертати головний мікрофон відносно іншого, щоб отримати позицію звідки йде звук
+
+                // polygonPoints.Add(mainMicPos);
+                polygonPoints.Add(secondMicPos);
+                //polygonPoints.Add(directionPos);
+                polygonPoints.Add(alternativeDirectionPos);
+                //direction poly
+                GMapPolygon directionPolygon = new GMapPolygon(polygonPoints, "mypolygon");
+                directionPolygon.Fill = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(10, System.Drawing.Color.Red));
+                System.Drawing.Color color;
+                switch (colorPolygonCount)
+                {
+                    case 0: color = System.Drawing.Color.Red;
+                        break;
+                    case 1: color = System.Drawing.Color.Green;
+                        break;
+                    case 2: color = System.Drawing.Color.Blue;
+                        break;
+                    default:
+                     color = System.Drawing.Color.Yellow;
+                        break;
+                }
+                directionPolygon.Stroke = new System.Drawing.Pen(color, 1);
+                markersOverlay.Polygons.Add(directionPolygon);
+                colorPolygonCount++;
+            }
+        }
+        public void processMap(double[] angles=null)
+        {
+            if (tbTestAngle.TextLength > 0) testAngle = int.Parse(tbTestAngle.Text);
+            if (signalsManger.Mn.Count == 0) return;
+
+            PointLatLng geoCoordOfMicrophone = signalsManger.Mn[0].GeoPosition;
+
+            //map.Center = new Google.Maps.Location("1600 Amphitheatre Parkay Mountain View, CA 94043");
+
+            mapControl.Overlays.Clear();
+            GMapOverlay markersOverlay = new GMapOverlay("markers");
+            drawSoundEmiter(markersOverlay);
+            drawMicrophones(markersOverlay);
+            if (angles!=null)drawAngles(markersOverlay,angles);
+          
 
 
             mapControl.Overlays.Add(markersOverlay);
