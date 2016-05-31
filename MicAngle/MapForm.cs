@@ -167,10 +167,10 @@ namespace MicAngle
                 PointLatLng directionPos, alternativeDirectionPos;
 
 
-                    directionPos = rotate( secondMicPos, mainMicPos, angle);
+                    directionPos = rotate(mainMicPos, secondMicPos, angle);
                 //else
                    // directionPos = rotate(mainMicPos, secondMicPos, angle);
-                alternativeDirectionPos = rotate(mainMicPos, secondMicPos, 360-angle);
+                //alternativeDirectionPos = rotate(mainMicPos, secondMicPos, 360-angle);
                 /* PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
                      directionPos.Lng - secondMicPos.Lng);*/
 
@@ -195,13 +195,13 @@ namespace MicAngle
                     vectorFormOfDirection.Lng + secondMicPos.Lng);*/
                 // secondMicPos = Geometry.multiplyVector(secondMicPos, mainMicPos, 1000000);
                 directionPos = Geometry.multiplyVector(directionPos, secondMicPos, 100000);
-                alternativeDirectionPos = Geometry.multiplyVector(alternativeDirectionPos, secondMicPos, 100000);
+               // alternativeDirectionPos = Geometry.multiplyVector(alternativeDirectionPos, secondMicPos, 100000);
                 //Будем повертати головний мікрофон відносно іншого, щоб отримати позицію звідки йде звук
 
-                // polygonPoints.Add(mainMicPos);
+               //  polygonPoints.Add(mainMicPos);
                 polygonPoints.Add(secondMicPos);
-                //polygonPoints.Add(directionPos);
-                polygonPoints.Add(alternativeDirectionPos);
+                polygonPoints.Add(directionPos);
+               // polygonPoints.Add(alternativeDirectionPos);
                 //direction poly
                 GMapPolygon directionPolygon = new GMapPolygon(polygonPoints, "mypolygon");
                 directionPolygon.Fill = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(10, System.Drawing.Color.Red));
@@ -270,29 +270,29 @@ namespace MicAngle
         }
         public PointLatLng rotate(PointLatLng point, PointLatLng center,double angle )
         {
-           double angleRadians = angle*Math.PI / 180;
+            double angleRadians = angle * (Math.PI / 180);
             double s = Math.Sin(angleRadians);
             double c = Math.Cos(angleRadians);
             Point decardPoint = GlobalMercator.LatLonToMeters(point.Lat, point.Lng);
             Point decardCenter = GlobalMercator.LatLonToMeters(center.Lat, center.Lng);
-
             // translate point back to origin:
-           decardPoint.X -= decardCenter.X;
-           decardPoint.Y -= decardCenter.Y;
+            decardPoint.X -= decardCenter.X;
+            decardPoint.Y -= decardCenter.Y;
             //point.Lat -= center.Lat;
-           // point.Lng -= center.Lng;
+            // point.Lng -= center.Lng;
 
             // rotate point
             double xnew = decardPoint.X * c - decardPoint.Y * s;
             double ynew = decardPoint.X * s + decardPoint.Y * c;
-
+            //double xnew = decardPoint.Y * c - decardPoint.X * s;
+            //double ynew = decardPoint.Y * s + decardPoint.X * c;
 
             // translate point back:
             // point.Lat = xnew + center.Lat;
             // point.Lng = ynew + center.Lng;
             decardPoint.X = xnew + decardCenter.X;
             decardPoint.Y = ynew + decardCenter.Y;
-           Point resultPoint = GlobalMercator.MetersToLatLon(decardPoint);
+            Point resultPoint = GlobalMercator.MetersToLatLon(decardPoint);
             PointLatLng resultLatLng = new PointLatLng();
             resultLatLng.Lat = resultPoint.X;
             resultLatLng.Lng = resultPoint.Y;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace MicAngle
 {
@@ -26,6 +27,13 @@ namespace MicAngle
                 }
             return signalFromMics;
 
+        }
+        public static double angleBetweenThreePoints(Point A, Point B, Point C)
+        {
+                var AB = Math.Sqrt(Math.Pow(B.X - A.X, 2) + Math.Pow(B.Y - A.Y, 2));
+                var BC = Math.Sqrt(Math.Pow(B.X - C.X, 2) + Math.Pow(B.Y - C.Y, 2));
+                var AC = Math.Sqrt(Math.Pow(C.X - A.X, 2) + Math.Pow(C.Y - A.Y, 2));
+                return Math.Acos((BC * BC + AB * AB - AC * AC) / (2 * BC * AB)) * (180 / Math.PI);
         }
         public static int differenceInTimeToDelay(long difference)
         {

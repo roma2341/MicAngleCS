@@ -97,11 +97,12 @@ namespace MicAngle
             CorrelationStatistic[] microphoneProcessingStatistic = sm.getMaxCrossCorrelationFromMicSignals(signalsArr,out success, sm.MicrophonesDelay,out correlationDetailsNegative, out correlationDetailsPositive);
             Console.WriteLine("Processing statistic:");
             double[] angles = correlationStatisticToAngles(microphoneProcessingStatistic);
+            double[] realAngles = sm.getRealAngles();
             for (int i = 0; i < microphoneProcessingStatistic.Length; i++)
             {
                 CorrelationStatistic statistic = microphoneProcessingStatistic[i];
                 Console.WriteLine(statistic.ToString());
-                Console.WriteLine("angle:" + angles[i]);
+                Console.WriteLine("angle:" + angles[i] + " real angle:"+ realAngles[i]);
             }
             displayCorrelationStatistic();
 

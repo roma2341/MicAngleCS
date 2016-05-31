@@ -254,6 +254,15 @@ namespace MicAngle
          //   if (delay < 0) angle = 360-angle;
             return angle;
         }
+        public double[] getRealAngles()
+        {
+            double[] angles = new double[Mn.Count-1];
+            for (int i=0; i < angles.Length; i++)
+            {
+                angles[i] = MyUtils.angleBetweenThreePoints(Mn[0].Position, Mn[i+1].Position, Sn[0].Position);
+            }
+            return angles;
+        }
 	 
 	public static double getDistance(double x1, double y1,double x2,double y2)
 	{
