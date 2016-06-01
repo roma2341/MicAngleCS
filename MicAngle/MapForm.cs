@@ -276,22 +276,20 @@ namespace MicAngle
             Point decardPoint = GlobalMercator.LatLonToMeters(point.Lat, point.Lng);
             Point decardCenter = GlobalMercator.LatLonToMeters(center.Lat, center.Lng);
             // translate point back to origin:
-            decardPoint.X -= decardCenter.X;
-            decardPoint.Y -= decardCenter.Y;
             //point.Lat -= center.Lat;
             // point.Lng -= center.Lng;
 
             // rotate point
-            double xnew = decardPoint.X * c - decardPoint.Y * s;
-            double ynew = decardPoint.X * s + decardPoint.Y * c;
+            double xnew = (decardPoint.X - decardCenter.X) * c - (decardPoint.Y - decardCenter.Y) * s+ decardCenter.X;
+            double ynew = (decardPoint.X - decardCenter.X) * s + (decardPoint.Y - decardCenter.Y) * c+ decardCenter.Y;
             //double xnew = decardPoint.Y * c - decardPoint.X * s;
             //double ynew = decardPoint.Y * s + decardPoint.X * c;
 
             // translate point back:
             // point.Lat = xnew + center.Lat;
             // point.Lng = ynew + center.Lng;
-            decardPoint.X = xnew + decardCenter.X;
-            decardPoint.Y = ynew + decardCenter.Y;
+            decardPoint.X = xnew;
+            decardPoint.Y = ynew;
             Point resultPoint = GlobalMercator.MetersToLatLon(decardPoint);
             PointLatLng resultLatLng = new PointLatLng();
             resultLatLng.Lat = resultPoint.X;

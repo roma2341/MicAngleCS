@@ -672,7 +672,6 @@ namespace MicAngle
                 //angleForm.processAngle(micsSignal);
                 //  bufferedWaveProvider.ClearBuffer();
             }
-            GC.Collect();
         }
         public RecordForm(Form1 angleForm)
         {
