@@ -39,16 +39,20 @@
             this.chartMaximum = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.btnToggleRecordForm = new System.Windows.Forms.Button();
             this.btnToggleMap = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.rbMicPares = new System.Windows.Forms.RadioButton();
+            this.rbMicRow = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chartMaximum)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnProcessAngle
             // 
-            this.btnProcessAngle.Location = new System.Drawing.Point(512, 19);
+            this.btnProcessAngle.Location = new System.Drawing.Point(518, 29);
             this.btnProcessAngle.Name = "btnProcessAngle";
             this.btnProcessAngle.Size = new System.Drawing.Size(101, 23);
             this.btnProcessAngle.TabIndex = 0;
@@ -68,7 +72,7 @@
             // 
             // btnInputData
             // 
-            this.btnInputData.Location = new System.Drawing.Point(431, 19);
+            this.btnInputData.Location = new System.Drawing.Point(437, 29);
             this.btnInputData.Name = "btnInputData";
             this.btnInputData.Size = new System.Drawing.Size(75, 23);
             this.btnInputData.TabIndex = 3;
@@ -79,7 +83,7 @@
             // lblResult
             // 
             this.lblResult.AutoSize = true;
-            this.lblResult.Location = new System.Drawing.Point(619, 24);
+            this.lblResult.Location = new System.Drawing.Point(625, 29);
             this.lblResult.Name = "lblResult";
             this.lblResult.Size = new System.Drawing.Size(13, 13);
             this.lblResult.TabIndex = 4;
@@ -98,6 +102,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
             this.splitContainer1.Panel2.Controls.Add(this.btnToggleRecordForm);
             this.splitContainer1.Panel2.Controls.Add(this.btnToggleMap);
             this.splitContainer1.Panel2.Controls.Add(this.rtbSettings);
@@ -129,7 +134,7 @@
             // 
             // btnToggleRecordForm
             // 
-            this.btnToggleRecordForm.Location = new System.Drawing.Point(513, 49);
+            this.btnToggleRecordForm.Location = new System.Drawing.Point(519, 59);
             this.btnToggleRecordForm.Name = "btnToggleRecordForm";
             this.btnToggleRecordForm.Size = new System.Drawing.Size(100, 23);
             this.btnToggleRecordForm.TabIndex = 6;
@@ -139,13 +144,46 @@
             // 
             // btnToggleMap
             // 
-            this.btnToggleMap.Location = new System.Drawing.Point(431, 49);
+            this.btnToggleMap.Location = new System.Drawing.Point(437, 59);
             this.btnToggleMap.Name = "btnToggleMap";
             this.btnToggleMap.Size = new System.Drawing.Size(75, 23);
             this.btnToggleMap.TabIndex = 5;
             this.btnToggleMap.Text = "Показати карту";
             this.btnToggleMap.UseVisualStyleBackColor = true;
             this.btnToggleMap.Click += new System.EventHandler(this.btnToggleMap_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.rbMicRow);
+            this.groupBox1.Controls.Add(this.rbMicPares);
+            this.groupBox1.Location = new System.Drawing.Point(651, 24);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(127, 73);
+            this.groupBox1.TabIndex = 7;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Спосіб визначення";
+            // 
+            // rbMicPares
+            // 
+            this.rbMicPares.AutoSize = true;
+            this.rbMicPares.Location = new System.Drawing.Point(7, 25);
+            this.rbMicPares.Name = "rbMicPares";
+            this.rbMicPares.Size = new System.Drawing.Size(110, 17);
+            this.rbMicPares.TabIndex = 0;
+            this.rbMicPares.Text = "Пари мікрофонів";
+            this.rbMicPares.UseVisualStyleBackColor = true;
+            // 
+            // rbMicRow
+            // 
+            this.rbMicRow.AutoSize = true;
+            this.rbMicRow.Checked = true;
+            this.rbMicRow.Location = new System.Drawing.Point(7, 49);
+            this.rbMicRow.Name = "rbMicRow";
+            this.rbMicRow.Size = new System.Drawing.Size(103, 17);
+            this.rbMicRow.TabIndex = 1;
+            this.rbMicRow.TabStop = true;
+            this.rbMicRow.Text = "Ряд мікрофонів";
+            this.rbMicRow.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -161,6 +199,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.chartMaximum)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -175,6 +215,9 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chartMaximum;
         private System.Windows.Forms.Button btnToggleMap;
         private System.Windows.Forms.Button btnToggleRecordForm;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton rbMicRow;
+        private System.Windows.Forms.RadioButton rbMicPares;
     }
 }
 
