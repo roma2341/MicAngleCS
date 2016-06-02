@@ -170,7 +170,7 @@ namespace MicAngle
                     directionPos = rotate(mainMicPos, secondMicPos, angle);
                 //else
                    // directionPos = rotate(mainMicPos, secondMicPos, angle);
-                //alternativeDirectionPos = rotate(mainMicPos, secondMicPos, 360-angle);
+                alternativeDirectionPos = rotate(mainMicPos, secondMicPos, 360-angle);
                 /* PointLatLng vectorFormOfDirection = new PointLatLng(directionPos.Lat - secondMicPos.Lat,
                      directionPos.Lng - secondMicPos.Lng);*/
 
@@ -195,13 +195,13 @@ namespace MicAngle
                     vectorFormOfDirection.Lng + secondMicPos.Lng);*/
                 // secondMicPos = Geometry.multiplyVector(secondMicPos, mainMicPos, 1000000);
                 directionPos = Geometry.multiplyVector(directionPos, secondMicPos, 100000);
-               // alternativeDirectionPos = Geometry.multiplyVector(alternativeDirectionPos, secondMicPos, 100000);
+                alternativeDirectionPos = Geometry.multiplyVector(alternativeDirectionPos, secondMicPos, 100000);
                 //Будем повертати головний мікрофон відносно іншого, щоб отримати позицію звідки йде звук
 
                //  polygonPoints.Add(mainMicPos);
                 polygonPoints.Add(secondMicPos);
                 polygonPoints.Add(directionPos);
-               // polygonPoints.Add(alternativeDirectionPos);
+                polygonPoints.Add(alternativeDirectionPos);
                 //direction poly
                 GMapPolygon directionPolygon = new GMapPolygon(polygonPoints, "mypolygon");
                 directionPolygon.Fill = new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(10, System.Drawing.Color.Red));

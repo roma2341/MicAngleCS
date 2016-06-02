@@ -334,6 +334,37 @@ namespace MicAngle
             MicrophonesShift =  MyUtils.parseArray(shiftsString);
 
         }
+        public int[,] alignAndCombineSignalData(int[,] source,int micDataIndex, int spareMicDataIndex )
+        {
+            int[,] resultArray = new int[source.GetLength(0) - 1, source.GetLength(1)];
+            int micIndex = 0;
+
+            long maxCorrelation = 0;
+            int maxIndex = 0;
+            for (int i = 0; i < 45; i++)
+            {
+               long correlation =  getCrossCorrelation(source, spareMicDataIndex, micDataIndex, 0, i, 45);
+                if (correlation > maxCorrelation)
+                {
+                    maxCorrelation = correlation;
+                    maxIndex = i;
+                }
+            }
+
+            for (int i=0; i < source.GetLength(0); i++)
+            {
+                if (i == spareMicDataIndex) continue;
+                for (int j = 0; j < source.GetLength(0); j++)
+                {
+                    resultArray[micIndex,j] = source[i,j];
+                }
+                micIndex++;
+
+
+            }
+            shiftMultidimensional(resultArray, micDataIndex, maxIndex);
+            return resultArray;
+        }
         public void getMicrophonesDelays(String str)
         {
             String micPattern = @"[dD][eE][lL][aA][yY][sS]\((-?\d+(?:[,]-?\d+)*)\)";
