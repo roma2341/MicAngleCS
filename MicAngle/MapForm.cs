@@ -283,8 +283,10 @@ namespace MicAngle
                 for (int i = 0; i < angles.Length; i++)
                 {
                     var secondMicPos = signalsManger.Mn[i + 1].Position;
+                    if (parent.rbMicRow.Checked)
+                        secondMicPos = signalsManger.Mn[1].Position;
                     System.Windows.Point soundSourcePos = MyUtils.rotate(signalsManger.Mn[0].Position, secondMicPos, angles[i]);
-                    System.Windows.Point alternativeSoundSourcePos = MyUtils.rotate(signalsManger.Mn[0].Position, secondMicPos, -angles[i]);
+                    System.Windows.Point alternativeSoundSourcePos = MyUtils.rotate(signalsManger.Mn[0].Position, secondMicPos, 360-angles[i]);
                     double realAngle = MyUtils.angleBetweenThreePoints(signalsManger.Mn[0].Position, secondMicPos, signalsManger.Sn[0].Position);
                     System.Console.WriteLine("angle:" + angles[i] + " real angle:" + realAngle);
                 

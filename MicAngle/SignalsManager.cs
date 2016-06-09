@@ -157,13 +157,13 @@ namespace MicAngle
             if (startIndex > endIndex) MyUtils.Swap<int>(ref startIndex,ref endIndex);
             for (int i = startIndex; i <= endIndex; i++)
                 {
-               int elementOfFirstArrayIndex = i - Math.Abs(firstShift); //minus sign because of shift right if positive
+               int elementOfFirstArrayIndex = i - firstShift; //minus sign because of shift right if positive
                 int elementOfFirstArray = 0;
                 if (elementOfFirstArrayIndex < 0 || elementOfFirstArrayIndex > source.GetLength(1)-1) elementOfFirstArray = emptyElement;
                 else
                 elementOfFirstArray = source[indexOfFirstArray, elementOfFirstArrayIndex];
 
-                int elementOfSecondArrayIndex = i - Math.Abs(secondShift);
+                int elementOfSecondArrayIndex = i - secondShift;
                 int elementOfSecondArray = 0;
                 if (elementOfSecondArrayIndex < 0 || elementOfSecondArrayIndex > source.GetLength(1)-1) elementOfSecondArray = emptyElement;
                 else
@@ -442,7 +442,7 @@ namespace MicAngle
             double cosA = V * delay / (lengthBetweenMics * SamplingRate);
             double arcCosA = Math.Acos(cosA);
             double angle =  arcCosA * 180 / Math.PI;
-         //   if (delay < 0) angle = 360-angle;
+            //if (delay < 0)angle = 180-angle;
             return angle;
         }
         public double[] getRealAngles()

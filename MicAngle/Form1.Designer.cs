@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.btnProcessAngle = new System.Windows.Forms.Button();
             this.rtbSettings = new System.Windows.Forms.RichTextBox();
             this.btnInputData = new System.Windows.Forms.Button();
@@ -115,17 +115,17 @@
             // 
             // chartMaximum
             // 
-            chartArea2.Area3DStyle.IsRightAngleAxes = false;
-            chartArea2.AxisX.Title = "Номер зсуву";
-            chartArea2.AxisY.Title = "Сумма сигналів";
-            chartArea2.BackColor = System.Drawing.Color.Transparent;
-            chartArea2.BackSecondaryColor = System.Drawing.Color.Azure;
-            chartArea2.CursorX.IsUserSelectionEnabled = true;
-            chartArea2.Name = "ChartArea1";
-            this.chartMaximum.ChartAreas.Add(chartArea2);
+            chartArea3.Area3DStyle.IsRightAngleAxes = false;
+            chartArea3.AxisX.Title = "Номер зсуву";
+            chartArea3.AxisY.Title = "Сумма сигналів";
+            chartArea3.BackColor = System.Drawing.Color.Transparent;
+            chartArea3.BackSecondaryColor = System.Drawing.Color.Azure;
+            chartArea3.CursorX.IsUserSelectionEnabled = true;
+            chartArea3.Name = "ChartArea1";
+            this.chartMaximum.ChartAreas.Add(chartArea3);
             this.chartMaximum.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.chartMaximum.Legends.Add(legend2);
+            legend3.Name = "Legend1";
+            this.chartMaximum.Legends.Add(legend3);
             this.chartMaximum.Location = new System.Drawing.Point(0, 0);
             this.chartMaximum.Name = "chartMaximum";
             this.chartMaximum.Size = new System.Drawing.Size(952, 406);
@@ -216,8 +216,8 @@
         private System.Windows.Forms.Button btnToggleMap;
         private System.Windows.Forms.Button btnToggleRecordForm;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.RadioButton rbMicRow;
         private System.Windows.Forms.RadioButton rbMicPares;
+        public System.Windows.Forms.RadioButton rbMicRow;
     }
 }
 

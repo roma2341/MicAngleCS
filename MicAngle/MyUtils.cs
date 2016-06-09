@@ -46,9 +46,10 @@ namespace MicAngle
             // translate point back:
             // point.Lat = xnew + center.Lat;
             // point.Lng = ynew + center.Lng;
-            point.X = xnew;
-            point.Y = ynew;
-            return point;
+            Point newPt = new Point();
+            newPt.X = xnew;
+            newPt.Y = ynew;
+            return newPt;
         }
         public static Point rotateAnticlockwise(Point point, Point center, double angle)
         {
