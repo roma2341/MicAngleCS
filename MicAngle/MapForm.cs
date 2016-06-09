@@ -257,12 +257,15 @@ namespace MicAngle
             var MicColors = new Color[] { Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Violet };
             var SoundSourceColors = new Color[] { Color.Black,Color.DarkRed };
             System.Drawing.Pen blackPen = new System.Drawing.Pen(System.Drawing.Color.Black, 1);
-          using (var graphics = System.Drawing.Graphics.FromImage(mapImage))
+            System.Drawing.Pen dashedBluePen = new System.Drawing.Pen(System.Drawing.Color.Blue, 1);
+            dashedBluePen.DashPattern = new float[]{ 5, 2, 15, 4 };
+            System.Drawing.Pen greenPen = new System.Drawing.Pen(System.Drawing.Color.Green, 1);
+            using (var graphics = System.Drawing.Graphics.FromImage(mapImage))
           {
                 GraphicsContainer containerState = graphics.BeginContainer();
                 // Flip the Y-Axis
                 graphics.ScaleTransform(1.0F, -1.0F);
-                graphics.TranslateTransform(0, -(float)pictureBoxMap.Size.Height);
+                graphics.TranslateTransform((float)pictureBoxMap.Size.Width/2, -(float)pictureBoxMap.Size.Height/2);
                 graphics.DrawLine(blackPen, 0, 0, pictureBoxMap.Size.Width, 0);
                 graphics.DrawLine(blackPen, 0, 0,  0, pictureBoxMap.Size.Height);
                 for (int i = 0; i < signalsManger.Mn.Count; i++)
@@ -277,6 +280,20 @@ namespace MicAngle
                     System.Drawing.Brush soundSourceBrush = new System.Drawing.SolidBrush(SoundSourceColors[i]);
                     graphics.FillCircle(soundSourceBrush, signalsManger.Sn[i].Position.X, signalsManger.Sn[i].Position.Y, 3);
                 }
+                for (int i = 0; i < angles.Length; i++)
+                {
+                    var secondMicPos = signalsManger.Mn[i + 1].Position;
+                    System.Windows.Point soundSourcePos = MyUtils.rotate(signalsManger.Mn[0].Position, secondMicPos, angles[i]);
+                    System.Windows.Point alternativeSoundSourcePos = MyUtils.rotate(signalsManger.Mn[0].Position, secondMicPos, -angles[i]);
+                    double realAngle = MyUtils.angleBetweenThreePoints(signalsManger.Mn[0].Position, secondMicPos, signalsManger.Sn[0].Position);
+                    System.Console.WriteLine("angle:" + angles[i] + " real angle:" + realAngle);
+                
+                    soundSourcePos = Geometry.multiplyVector(soundSourcePos, secondMicPos, 1000);
+                    alternativeSoundSourcePos = Geometry.multiplyVector(alternativeSoundSourcePos, secondMicPos, 1000);
+                    graphics.DrawLine(greenPen, (float)secondMicPos.X, (float)secondMicPos.Y, (float)soundSourcePos.X, (float)soundSourcePos.Y);
+                    graphics.DrawLine(dashedBluePen, (float)secondMicPos.X, (float)secondMicPos.Y, (float)soundSourcePos.X, (float)alternativeSoundSourcePos.Y);
+                }
+
                 graphics.EndContainer(containerState);
             }
             pictureBoxMap.Image = mapImage;

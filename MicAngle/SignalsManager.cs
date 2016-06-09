@@ -316,10 +316,9 @@ namespace MicAngle
 
                 }
                 // Console.Out.WriteLine();
-                //   Console.Out.WriteLine("K:"+k+ " SUM:" + korelKoff +" MAX_SUM:" + maxValue +
-                // " MAX_INDEX:" + maxIndex);
+
                 int firstMicrophoneIndex = 0;
-                int lastMicrophoneIndex = Mn.Count - 1;
+                int lastMicrophoneIndex = 1;
                 double L = SignalsManager.getDistance(Mn[firstMicrophoneIndex].X, Mn[firstMicrophoneIndex].Y, Mn[lastMicrophoneIndex].X, Mn[lastMicrophoneIndex].Y);
 
                 // Console.WriteLine("L:" + L);
@@ -341,7 +340,8 @@ namespace MicAngle
             }
             if (cosA > 1)
                 success = false;
-
+            Console.Out.WriteLine(" MAX_SUM:" + maxValue +
+" MAX_INDEX:" + maxIndex);
 
 
 

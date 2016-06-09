@@ -153,8 +153,9 @@ namespace MicAngle
             // sm.Mn.Add(new Microphone(10, -10));
             // sm.Mn.Add(new Microphone(10.47,-10));
             // sm.Sn.Add(new SoundEmiter(-100,100,1,44100));
-            const int MAX_SHIFT_COUNT = 45;
-
+            double distanceTemp = 0;
+             int MAX_SHIFT_COUNT = sm.getMaxMicDelay(0, 1, out distanceTemp);
+            Console.WriteLine("MAX_SHIFT_COUNT:" + MAX_SHIFT_COUNT);
 
             int[,] signalsArr;
 
@@ -225,8 +226,8 @@ namespace MicAngle
             if (sm.ConjuctedChannelsIndexes != null && sm.ConjuctedChannelsIndexes.Length > 1) 
             signalsArr = sm.alignAndCombineSignalData(signalsArr, sm.ConjuctedChannelsIndexes[0], sm.ConjuctedChannelsIndexes[1], MAX_SHIFT_COUNT);
             //Підганяємо масиви по масиву з мінімальною кількістю ел.
-            Console.WriteLine("Aligned array");
-            Console.WriteLine(MyUtils.arrayToString(signalsArr, 100));
+           // Console.WriteLine("Aligned array");
+           // Console.WriteLine(MyUtils.arrayToString(signalsArr, 100));
             //   Console.WriteLine("PROCESSING FINISHED.");
             const int NO_SHIFT_DATA_COUNT = 1; // +1 to total shift count, because wee need
             
@@ -237,10 +238,12 @@ namespace MicAngle
             long leftShiftMaximumValue = 0, rightShiftMaximumValue = 0;
             double rightShiftAngle = sm.interCorelationFunc(signalsArr, out success, delayForFirstMicrophonePair, true, MAX_SHIFT_COUNT, out rightShiftMaximumValue, maxesRight);
             double leftShiftAngle = sm.interCorelationFunc(signalsArr, out success, delayForFirstMicrophonePair, false, MAX_SHIFT_COUNT, out leftShiftMaximumValue, maxesLeft);
+            Console.WriteLine("rightShiftAngle:" + rightShiftAngle);
+            Console.WriteLine("leftShiftAngle:" + leftShiftAngle);
             rightShiftMaximumValue = Math.Abs(rightShiftMaximumValue);
             leftShiftMaximumValue = Math.Abs(leftShiftMaximumValue);
 
-            resultAngle = (rightShiftMaximumValue > leftShiftMaximumValue) ? rightShiftAngle : 360 - leftShiftAngle;
+            resultAngle = (rightShiftMaximumValue > leftShiftMaximumValue) ? rightShiftAngle : 180 - leftShiftAngle;
             if (!success)
             {
                 Console.WriteLine("Схоже що відстань між мікрофонами і джерелом звуку рівна нулю", "Помилка моделювання", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -278,7 +281,7 @@ namespace MicAngle
             for (int i = 0; i <= lastShiftIndex; i++)
             {
                 long value = maxesRight[i];
-                Console.WriteLine(String.Format("x:{0} y:{1}", i, value));
+              //  Console.WriteLine(String.Format("x:{0} y:{1}", i, value));
                 if (Math.Abs(value) >= Math.Abs(yMaxAbs))
                     seriesOfMax.Points.AddXY(i, value);
                 else

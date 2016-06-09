@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.btnProcessAngle = new System.Windows.Forms.Button();
             this.rtbSettings = new System.Windows.Forms.RichTextBox();
             this.btnInputData = new System.Windows.Forms.Button();
@@ -66,8 +66,8 @@
             this.rtbSettings.Name = "rtbSettings";
             this.rtbSettings.Size = new System.Drawing.Size(409, 154);
             this.rtbSettings.TabIndex = 2;
-            this.rtbSettings.Text = "samplingRate(44100)\nЗ(X:10;y:10;A:1,0)\nМ(X:0;y:0)\nМ(X:0,15;y:2)\nchannels(2)\nchann" +
-    "elOffset(0)\nshift(0,0,0,0)\ndelays(0,1,0,0)";
+            this.rtbSettings.Text = "samplingRate(44100)\nЗ(X:0;y:10;A:1,0)\nМ(X:0;y:0)\nМ(X:0,3;y:0)\nchannels(2)\nchannel" +
+    "Offset(0)\nshift(0,0,0,0)\ndelays(0,1,0,0)";
             this.rtbSettings.TextChanged += new System.EventHandler(this.rtbSettings_TextChanged);
             // 
             // btnInputData
@@ -115,17 +115,17 @@
             // 
             // chartMaximum
             // 
-            chartArea1.Area3DStyle.IsRightAngleAxes = false;
-            chartArea1.AxisX.Title = "Номер зсуву";
-            chartArea1.AxisY.Title = "Сумма сигналів";
-            chartArea1.BackColor = System.Drawing.Color.Transparent;
-            chartArea1.BackSecondaryColor = System.Drawing.Color.Azure;
-            chartArea1.CursorX.IsUserSelectionEnabled = true;
-            chartArea1.Name = "ChartArea1";
-            this.chartMaximum.ChartAreas.Add(chartArea1);
+            chartArea2.Area3DStyle.IsRightAngleAxes = false;
+            chartArea2.AxisX.Title = "Номер зсуву";
+            chartArea2.AxisY.Title = "Сумма сигналів";
+            chartArea2.BackColor = System.Drawing.Color.Transparent;
+            chartArea2.BackSecondaryColor = System.Drawing.Color.Azure;
+            chartArea2.CursorX.IsUserSelectionEnabled = true;
+            chartArea2.Name = "ChartArea1";
+            this.chartMaximum.ChartAreas.Add(chartArea2);
             this.chartMaximum.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.chartMaximum.Legends.Add(legend1);
+            legend2.Name = "Legend1";
+            this.chartMaximum.Legends.Add(legend2);
             this.chartMaximum.Location = new System.Drawing.Point(0, 0);
             this.chartMaximum.Name = "chartMaximum";
             this.chartMaximum.Size = new System.Drawing.Size(952, 406);

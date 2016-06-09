@@ -50,6 +50,28 @@ namespace MicAngle
             point.Y = ynew;
             return point;
         }
+        public static Point rotateAnticlockwise(Point point, Point center, double angle)
+        {
+            double angleRadians = angle * (Math.PI / 180);
+            double s = Math.Sin(angleRadians);
+            double c = Math.Cos(angleRadians);
+            // translate point back to origin:
+            //point.Lat -= center.Lat;
+            // point.Lng -= center.Lng;
+
+            // rotate point
+            double xnew = (point.X - center.X) * c + (point.Y - center.Y) * s + center.X;
+            double ynew = -(point.X - center.X) * s + (point.Y - center.Y) * c + center.Y;
+            //double xnew = decardPoint.Y * c - decardPoint.X * s;
+            //double ynew = decardPoint.Y * s + decardPoint.X * c;
+
+            // translate point back:
+            // point.Lat = xnew + center.Lat;
+            // point.Lng = ynew + center.Lng;
+            point.X = xnew;
+            point.Y = ynew;
+            return point;
+        }
 
         public static double angleBetweenThreePoints(Point A, Point B, Point C)
         {

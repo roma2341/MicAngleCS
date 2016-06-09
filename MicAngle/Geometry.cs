@@ -29,5 +29,17 @@ namespace MicAngle
             return result;
 
         }
+        public static Point multiplyVector(Point point, Point center, double multiplyValue)
+        {
+            double vectorX = point.X - center.X;
+            double vectorY = point.Y - center.Y;
+            vectorX *= multiplyValue;
+            vectorY *= multiplyValue;
+            Point result = new Point();
+            result.X = vectorX + center.X;
+            result.Y = vectorY + center.Y;
+            return result;
+
+        }
     }
 }
