@@ -28,6 +28,29 @@ namespace MicAngle
             return signalFromMics;
 
         }
+        public static Point rotate(Point point, Point center, double angle)
+        {
+            double angleRadians = angle * (Math.PI / 180);
+            double s = Math.Sin(angleRadians);
+            double c = Math.Cos(angleRadians);
+            // translate point back to origin:
+            //point.Lat -= center.Lat;
+            // point.Lng -= center.Lng;
+
+            // rotate point
+            double xnew = (point.X - center.X) * c - (point.Y - center.Y) * s + center.X;
+            double ynew = (point.X - center.X) * s + (point.Y - center.Y) * c + center.Y;
+            //double xnew = decardPoint.Y * c - decardPoint.X * s;
+            //double ynew = decardPoint.Y * s + decardPoint.X * c;
+
+            // translate point back:
+            // point.Lat = xnew + center.Lat;
+            // point.Lng = ynew + center.Lng;
+            point.X = xnew;
+            point.Y = ynew;
+            return point;
+        }
+
         public static double angleBetweenThreePoints(Point A, Point B, Point C)
         {
                 var AB = Math.Sqrt(Math.Pow(B.X - A.X, 2) + Math.Pow(B.Y - A.Y, 2));
@@ -74,6 +97,94 @@ namespace MicAngle
                 result[index++] = Int32.Parse(m.Groups[0].Value);
             }
             return result;
+        }
+        public static int[,] TrimArrayRow(int rowToRemove, int[,] originalArray)
+        {
+            int[,] result = new int[originalArray.GetLength(0) - 1, originalArray.GetLength(1)];
+
+            for (int i = 0, j = 0; i < originalArray.GetLength(0); i++)
+            {
+                if (i == rowToRemove)
+                    continue;
+
+                for (int k = 0; k < originalArray.GetLength(1); k++)
+                {
+                    result[j, k] = originalArray[i, k];
+                }
+                j++;
+            }
+
+            return result;
+        }
+
+        public static int[,] TrimArrayColumn(int columnToRemove, int[,] originalArray)
+        {
+            int[,] result = new int[originalArray.GetLength(0), originalArray.GetLength(1) - 1];
+
+            for (int i = 0, j = 0; i < originalArray.GetLength(0); i++)
+            {
+                for (int k = 0, u = 0; k < originalArray.GetLength(1); k++)
+                {
+                    if (k == columnToRemove)
+                        continue;
+
+                    result[j, u] = originalArray[i, k];
+                    u++;
+                }
+                j++;
+            }
+
+            return result;
+        }
+
+
+        public static int[,] TrimArray(int rowToRemove, int columnToRemove, int[,] originalArray)
+        {
+            int[,] result = new int[originalArray.GetLength(0) - 1, originalArray.GetLength(1) - 1];
+
+            for (int i = 0, j = 0; i < originalArray.GetLength(0); i++)
+            {
+                if (i == rowToRemove)
+                    continue;
+
+                for (int k = 0, u = 0; k < originalArray.GetLength(1); k++)
+                {
+                    if (k == columnToRemove)
+                        continue;
+
+                    result[j, u] = originalArray[i, k];
+                    u++;
+                }
+                j++;
+            }
+
+            return result;
+        }
+        public static String arrayToString(int[,] arr, int limitWidth)
+        {
+            StringBuilder resultStrBuilder = new StringBuilder("");
+            //micsSignal = unitePartialMeasurement(signalFromMicrophonesA);
+            int width = (limitWidth < arr.GetLength(1)) ? limitWidth : arr.GetLength(1);
+            for (int i = 0; i < arr.GetLength(0); i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    resultStrBuilder.Append(arr[i, j] + " ");
+                }
+                resultStrBuilder.Append("\n");
+            }
+            return resultStrBuilder.ToString();
+        }
+        public static String arrayToString(int[,] arr)
+        {
+            return arrayToString(arr, int.MaxValue);
+        }
+       public static void Swap<T>(ref T lhs, ref T rhs)
+        {
+            T temp;
+            temp = lhs;
+            lhs = rhs;
+            rhs = temp;
         }
 
 

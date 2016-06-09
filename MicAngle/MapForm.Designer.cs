@@ -40,15 +40,19 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.labelZoom = new System.Windows.Forms.Label();
             this.tbZoom = new System.Windows.Forms.TextBox();
+            this.tbTestAngle = new System.Windows.Forms.TextBox();
+            this.labelTestAngle = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnTestMap = new System.Windows.Forms.Button();
             this.btnProcessMap = new System.Windows.Forms.Button();
             this.gbCoordType = new System.Windows.Forms.GroupBox();
             this.rbGeo = new System.Windows.Forms.RadioButton();
             this.rbDecart = new System.Windows.Forms.RadioButton();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPageGeoMap = new System.Windows.Forms.TabPage();
             this.mapControl = new GMap.NET.WindowsForms.GMapControl();
-            this.tbTestAngle = new System.Windows.Forms.TextBox();
-            this.labelTestAngle = new System.Windows.Forms.Label();
+            this.tabPageDecardMap = new System.Windows.Forms.TabPage();
+            this.pictureBoxMap = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -60,6 +64,10 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.gbCoordType.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.tabPageGeoMap.SuspendLayout();
+            this.tabPageDecardMap.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMap)).BeginInit();
             this.SuspendLayout();
             // 
             // tbLatitude
@@ -116,8 +124,8 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.mapControl);
-            this.splitContainer1.Size = new System.Drawing.Size(847, 581);
+            this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
+            this.splitContainer1.Size = new System.Drawing.Size(849, 584);
             this.splitContainer1.SplitterDistance = 328;
             this.splitContainer1.TabIndex = 7;
             // 
@@ -135,8 +143,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.flowLayoutPanel1);
-            this.splitContainer2.Size = new System.Drawing.Size(328, 581);
-            this.splitContainer2.SplitterDistance = 203;
+            this.splitContainer2.Size = new System.Drawing.Size(328, 584);
+            this.splitContainer2.SplitterDistance = 204;
             this.splitContainer2.TabIndex = 8;
             // 
             // tableLayoutPanel1
@@ -161,7 +169,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(328, 203);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(328, 204);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // labelZoom
@@ -184,6 +192,22 @@
             this.tbZoom.Text = "16";
             this.tbZoom.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbZoom_KeyPress);
             // 
+            // tbTestAngle
+            // 
+            this.tbTestAngle.Location = new System.Drawing.Point(77, 81);
+            this.tbTestAngle.Name = "tbTestAngle";
+            this.tbTestAngle.Size = new System.Drawing.Size(100, 20);
+            this.tbTestAngle.TabIndex = 6;
+            // 
+            // labelTestAngle
+            // 
+            this.labelTestAngle.AutoSize = true;
+            this.labelTestAngle.Location = new System.Drawing.Point(3, 78);
+            this.labelTestAngle.Name = "labelTestAngle";
+            this.labelTestAngle.Size = new System.Drawing.Size(58, 13);
+            this.labelTestAngle.TabIndex = 7;
+            this.labelTestAngle.Text = "Test Angle";
+            // 
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.Controls.Add(this.btnTestMap);
@@ -192,7 +216,7 @@
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(328, 374);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(328, 376);
             this.flowLayoutPanel1.TabIndex = 1;
             // 
             // btnTestMap
@@ -252,6 +276,28 @@
             this.rbDecart.UseVisualStyleBackColor = true;
             this.rbDecart.Click += new System.EventHandler(this.rbCoordType_Clicked);
             // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.tabPageGeoMap);
+            this.tabControl1.Controls.Add(this.tabPageDecardMap);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(517, 584);
+            this.tabControl1.TabIndex = 1;
+            // 
+            // tabPageGeoMap
+            // 
+            this.tabPageGeoMap.Controls.Add(this.mapControl);
+            this.tabPageGeoMap.Location = new System.Drawing.Point(4, 22);
+            this.tabPageGeoMap.Name = "tabPageGeoMap";
+            this.tabPageGeoMap.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageGeoMap.Size = new System.Drawing.Size(509, 558);
+            this.tabPageGeoMap.TabIndex = 1;
+            this.tabPageGeoMap.Text = "Geo Map";
+            this.tabPageGeoMap.UseVisualStyleBackColor = true;
+            // 
             // mapControl
             // 
             this.mapControl.Bearing = 0F;
@@ -262,7 +308,7 @@
             this.mapControl.GrayScaleMode = false;
             this.mapControl.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             this.mapControl.LevelsKeepInMemmory = 5;
-            this.mapControl.Location = new System.Drawing.Point(0, 0);
+            this.mapControl.Location = new System.Drawing.Point(3, 3);
             this.mapControl.MarkersEnabled = true;
             this.mapControl.MaxZoom = 30;
             this.mapControl.MinZoom = 2;
@@ -275,31 +321,34 @@
             this.mapControl.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.mapControl.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.mapControl.ShowTileGridLines = false;
-            this.mapControl.Size = new System.Drawing.Size(515, 581);
-            this.mapControl.TabIndex = 0;
+            this.mapControl.Size = new System.Drawing.Size(503, 552);
+            this.mapControl.TabIndex = 1;
             this.mapControl.Zoom = 0D;
             // 
-            // tbTestAngle
+            // tabPageDecardMap
             // 
-            this.tbTestAngle.Location = new System.Drawing.Point(77, 81);
-            this.tbTestAngle.Name = "tbTestAngle";
-            this.tbTestAngle.Size = new System.Drawing.Size(100, 20);
-            this.tbTestAngle.TabIndex = 6;
+            this.tabPageDecardMap.Controls.Add(this.pictureBoxMap);
+            this.tabPageDecardMap.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDecardMap.Name = "tabPageDecardMap";
+            this.tabPageDecardMap.Size = new System.Drawing.Size(509, 558);
+            this.tabPageDecardMap.TabIndex = 2;
+            this.tabPageDecardMap.Text = "Decard Map";
+            this.tabPageDecardMap.UseVisualStyleBackColor = true;
             // 
-            // labelTestAngle
+            // pictureBoxMap
             // 
-            this.labelTestAngle.AutoSize = true;
-            this.labelTestAngle.Location = new System.Drawing.Point(3, 78);
-            this.labelTestAngle.Name = "labelTestAngle";
-            this.labelTestAngle.Size = new System.Drawing.Size(58, 13);
-            this.labelTestAngle.TabIndex = 7;
-            this.labelTestAngle.Text = "Test Angle";
+            this.pictureBoxMap.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBoxMap.Location = new System.Drawing.Point(0, 0);
+            this.pictureBoxMap.Name = "pictureBoxMap";
+            this.pictureBoxMap.Size = new System.Drawing.Size(509, 558);
+            this.pictureBoxMap.TabIndex = 0;
+            this.pictureBoxMap.TabStop = false;
             // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(847, 581);
+            this.ClientSize = new System.Drawing.Size(849, 584);
             this.Controls.Add(this.splitContainer1);
             this.Name = "MapForm";
             this.Text = "MapForm";
@@ -320,6 +369,10 @@
             this.flowLayoutPanel1.ResumeLayout(false);
             this.gbCoordType.ResumeLayout(false);
             this.gbCoordType.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.tabPageGeoMap.ResumeLayout(false);
+            this.tabPageDecardMap.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMap)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -343,8 +396,12 @@
         private System.Windows.Forms.Button btnProcessMap;
         private System.Windows.Forms.Label labelZoom;
         private System.Windows.Forms.TextBox tbZoom;
-        private GMap.NET.WindowsForms.GMapControl mapControl;
         private System.Windows.Forms.TextBox tbTestAngle;
         private System.Windows.Forms.Label labelTestAngle;
+        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabPage tabPageGeoMap;
+        private GMap.NET.WindowsForms.GMapControl mapControl;
+        private System.Windows.Forms.TabPage tabPageDecardMap;
+        private System.Windows.Forms.PictureBox pictureBoxMap;
     }
 }

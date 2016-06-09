@@ -10,6 +10,8 @@ using System.Net;
 using GMap.NET;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace MicAngle
 {
@@ -223,11 +225,9 @@ namespace MicAngle
                 colorPolygonCount++;
             }
         }
-        public void processMap(double[] angles=null)
-        {
-            if (tbTestAngle.TextLength > 0) testAngle = int.Parse(tbTestAngle.Text);
-            if (signalsManger.Mn.Count == 0) return;
 
+        public void displayDataToGeoMap(double[] angles)
+        {
             PointLatLng geoCoordOfMicrophone = signalsManger.Mn[0].GeoPosition;
 
             //map.Center = new Google.Maps.Location("1600 Amphitheatre Parkay Mountain View, CA 94043");
@@ -236,20 +236,58 @@ namespace MicAngle
             GMapOverlay markersOverlay = new GMapOverlay("markers");
             drawSoundEmiter(markersOverlay);
             drawMicrophones(markersOverlay);
-            if (angles!=null)drawAngles(markersOverlay,angles);
-          
+            if (angles != null) drawAngles(markersOverlay, angles);
+
 
 
             mapControl.Overlays.Add(markersOverlay);
 
             //set position must be called last because otherwise map won't be redrawed
-                mapControl.Position = geoCoordOfMicrophone;
+            mapControl.Position = geoCoordOfMicrophone;
 
             // mapControl.ReloadMap();
 
 
             ////
-
+        }
+        public void displayDataToDecardMap(double[] angles)
+        {
+            var bitmap = new System.Drawing.Bitmap(pictureBoxMap.Size.Width, pictureBoxMap.Size.Height);
+            var mapImage = System.Drawing.Image.FromHbitmap(bitmap.GetHbitmap());
+            var MicColors = new Color[] { Color.Red, Color.Green, Color.Blue, Color.Yellow, Color.Violet };
+            var SoundSourceColors = new Color[] { Color.Black,Color.DarkRed };
+            System.Drawing.Pen blackPen = new System.Drawing.Pen(System.Drawing.Color.Black, 1);
+          using (var graphics = System.Drawing.Graphics.FromImage(mapImage))
+          {
+                GraphicsContainer containerState = graphics.BeginContainer();
+                // Flip the Y-Axis
+                graphics.ScaleTransform(1.0F, -1.0F);
+                graphics.TranslateTransform(0, -(float)pictureBoxMap.Size.Height);
+                graphics.DrawLine(blackPen, 0, 0, pictureBoxMap.Size.Width, 0);
+                graphics.DrawLine(blackPen, 0, 0,  0, pictureBoxMap.Size.Height);
+                for (int i = 0; i < signalsManger.Mn.Count; i++)
+                {
+                    //System.Drawing.Pen micPen = new System.Drawing.Pen(MicColors[i], 1);
+                    System.Drawing.Brush micBrush = new System.Drawing.SolidBrush(MicColors[i]);
+                    graphics.FillCircle(micBrush, signalsManger.Mn[i].X, signalsManger.Mn[i].Y, 3);
+                }
+                for (int i = 0; i < signalsManger.Sn.Count; i++)
+                {
+                    //System.Drawing.Pen soundSourcePen = new System.Drawing.Pen(SoundSourceColors[i], 3);
+                    System.Drawing.Brush soundSourceBrush = new System.Drawing.SolidBrush(SoundSourceColors[i]);
+                    graphics.FillCircle(soundSourceBrush, signalsManger.Sn[i].Position.X, signalsManger.Sn[i].Position.Y, 3);
+                }
+                graphics.EndContainer(containerState);
+            }
+            pictureBoxMap.Image = mapImage;
+        }
+        public void processMap(double[] angles=null)
+        {
+            if (tbTestAngle.TextLength > 0) testAngle = int.Parse(tbTestAngle.Text);
+            if (signalsManger.Mn.Count == 0) return;
+            if (rbGeo.Checked)
+                displayDataToGeoMap(angles);
+            else displayDataToDecardMap(angles);
 
             /*System.Drawing.Image mapImage = System.Drawing.Image.FromStream(wc.OpenRead(imgTagSrc));
             System.Drawing.Pen blackPen = new System.Drawing.Pen(System.Drawing.Color.Black, 3);
@@ -268,13 +306,13 @@ namespace MicAngle
         {
        
         }
-        public PointLatLng rotate(PointLatLng point, PointLatLng center,double angle )
+        public static PointLatLng rotate(PointLatLng point, PointLatLng center,double angle )
         {
             double angleRadians = angle * (Math.PI / 180);
             double s = Math.Sin(angleRadians);
             double c = Math.Cos(angleRadians);
-            Point decardPoint = GlobalMercator.LatLonToMeters(point.Lat, point.Lng);
-            Point decardCenter = GlobalMercator.LatLonToMeters(center.Lat, center.Lng);
+            System.Windows.Point decardPoint = GlobalMercator.LatLonToMeters(point.Lat, point.Lng);
+            System.Windows.Point decardCenter = GlobalMercator.LatLonToMeters(center.Lat, center.Lng);
             // translate point back to origin:
             //point.Lat -= center.Lat;
             // point.Lng -= center.Lng;
@@ -290,7 +328,7 @@ namespace MicAngle
             // point.Lng = ynew + center.Lng;
             decardPoint.X = xnew;
             decardPoint.Y = ynew;
-            Point resultPoint = GlobalMercator.MetersToLatLon(decardPoint);
+            System.Windows.Point resultPoint = GlobalMercator.MetersToLatLon(decardPoint);
             PointLatLng resultLatLng = new PointLatLng();
             resultLatLng.Lat = resultPoint.X;
             resultLatLng.Lng = resultPoint.Y;

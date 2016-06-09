@@ -117,15 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="rtbSettings.Text" xml:space="preserve">
-    <value>//На карті світу, мікрофони біля гуртожитку 5=) 
-samplingRate(44100)
-З(X:5479843,48118407;y:3300192,03251104;A:1,0)
-М(X:5479893,48118407;y:3300292,03251104)
-М(X:5479893,78118407;y:3300292,03251104)
-channels(2)
-channelOffset(0)
-shift(0,0,0,0)
-delays(0,1,0,0)</value>
-  </data>
 </root>

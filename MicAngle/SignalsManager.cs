@@ -14,6 +14,7 @@ namespace MicAngle
    public List<SoundEmiter> Sn { get; set; }
      public List<Microphone> Mn { get; set; }
         public int Channels { get; set; }
+        public int[] ConjuctedChannelsIndexes { get; set; }
         public int ChannelOffset { get; set; }
         public int[] MicrophonesShift { get; set; }
         public int[] MicrophonesDelay { get; set; }
@@ -152,16 +153,17 @@ namespace MicAngle
             int totalArraysCount = source.GetLength(0);
                 if (indexOfFirstArray >= totalArraysCount || indexOfSecondArray >= totalArraysCount) throw new IndexOutOfRangeException("uncorrect index");
             int startIndex = maxShiftValue;
-            int endindex = source.GetLength(1) - maxShiftValue -1;
-            for (int i = startIndex; i <= endindex; i++)
+            int endIndex = source.GetLength(1) - maxShiftValue -1;
+            if (startIndex > endIndex) MyUtils.Swap<int>(ref startIndex,ref endIndex);
+            for (int i = startIndex; i <= endIndex; i++)
                 {
-               int elementOfFirstArrayIndex = i - firstShift; //minus sign because of shift right if positive
+               int elementOfFirstArrayIndex = i - Math.Abs(firstShift); //minus sign because of shift right if positive
                 int elementOfFirstArray = 0;
                 if (elementOfFirstArrayIndex < 0 || elementOfFirstArrayIndex > source.GetLength(1)-1) elementOfFirstArray = emptyElement;
                 else
                 elementOfFirstArray = source[indexOfFirstArray, elementOfFirstArrayIndex];
 
-                int elementOfSecondArrayIndex = i - secondShift;
+                int elementOfSecondArrayIndex = i - Math.Abs(secondShift);
                 int elementOfSecondArray = 0;
                 if (elementOfSecondArrayIndex < 0 || elementOfSecondArrayIndex > source.GetLength(1)-1) elementOfSecondArray = emptyElement;
                 else
@@ -175,22 +177,26 @@ namespace MicAngle
         public double interCorelationFunc(int[,] buf, out bool success, int[] delays, bool isPositiveRotation,int maxDelaysCount, out long maxValue, long[] maxes = null)
         {
 
-            /* int[] originalValues = new int[buf_.GetLength(1)];
+             /*int[] originalValues = new int[buf_.GetLength(1)];
 
              Random rnd = new Random();
              for (int i = 0; i < originalValues.Length; i++)
              {
                  originalValues[i] = rnd.Next(1,short.MaxValue);
              }
-            int[] shiftedValues = MyUtils.shiftLeft(originalValues,44);
+            int[] shiftedValues1 = MyUtils.shiftLeft(originalValues,10);
+            int[] shiftedValues2 = MyUtils.shiftLeft(originalValues, 0);
+            int[] shiftedValues3 = MyUtils.shiftLeft(originalValues, 0);
 
 
-             int [,]buf = new int[2,originalValues.Length];
+            int [,]buf = new int[4,originalValues.Length];
              for (int i = 0; i < originalValues.Length; i++)
              {
-                 buf[0, i] = originalValues[i];
-                 buf[1, i] = shiftedValues[i];
-             }*/
+                buf[0, i] = originalValues[i];
+                buf[1, i] = shiftedValues1[i];
+                buf[1, i] = shiftedValues2[i];
+                buf[1, i] = shiftedValues3[i];
+            }*/
             //  const int MIC_COUNT = 2; 
             Console.WriteLine("******INTERCORELATION_FUNCTION********");
             string str = "";
@@ -288,7 +294,7 @@ namespace MicAngle
                 for (int j = startIndex; j < endIndex; j++)//for (int j = 27000; j < SM.Length; j++)
                 {
                     long summOfDifferentSignalValues = 1;
-                    for (int i = 0; i < Mn.Count; i++)
+                    for (int i = 0; i < buf.GetLength(0); i++)
                     {
                         summOfDifferentSignalValues *= buf[i, j];
                         // Console.WriteLine("buf[" + i + "," + j + "]="+ buf[i, j]);
@@ -358,21 +364,25 @@ namespace MicAngle
         {
             //TEST - replacing original signal by random values and moving it to another array with shift to check if 
             //my alhorithm working correctly
-            /* int[] originalValues = new int[buf_.GetLength(1)];
+            /*int[] originalValues = new int[buf_.GetLength(1)];
 
-            Random rnd = new Random();
-            for (int i = 0; i < originalValues.Length; i++)
-            {
-                originalValues[i] = rnd.Next(1,short.MaxValue);
-            }
-           int[] shiftedValues = MyUtils.shiftLeft(originalValues,4);
+             Random rnd = new Random();
+             for (int i = 0; i < originalValues.Length; i++)
+             {
+                 originalValues[i] = rnd.Next(1,short.MaxValue);
+             }
+            int[] shiftedValues1 = MyUtils.shiftLeft(originalValues,10);
+            int[] shiftedValues2 = MyUtils.shiftLeft(originalValues, 0);
+            int[] shiftedValues3 = MyUtils.shiftLeft(originalValues, 0);
 
 
-            int [,]buf = new int[2,originalValues.Length];
-            for (int i = 0; i < originalValues.Length; i++)
-            {
+            int [,]buf = new int[4,originalValues.Length];
+             for (int i = 0; i < originalValues.Length; i++)
+             {
                 buf[0, i] = originalValues[i];
-                buf[1, i] = shiftedValues[i];
+                buf[1, i] = shiftedValues1[i];
+                buf[1, i] = shiftedValues2[i];
+                buf[1, i] = shiftedValues3[i];
             }*/
             //END Of test
 
@@ -515,35 +525,53 @@ namespace MicAngle
             MicrophonesShift =  MyUtils.parseArray(shiftsString);
 
         }
-        public int[,] alignAndCombineSignalData(int[,] source,int micDataIndex, int spareMicDataIndex )
+        public void getConjunctedChannels(String str)
         {
-            int[,] resultArray = new int[source.GetLength(0) - 1, source.GetLength(1)];
+            String micPattern = @"[cC][oO][nN][jJ][uU][nN][cC][tT][eE][dD]\((-?\d+(?:[,]-?\d+)*)\)";
+            //shift(num,num,num)
+            Regex newReg = new Regex(micPattern);
+            MatchCollection matches = newReg.Matches(str);
+            if (matches.Count < 1) {
+                ConjuctedChannelsIndexes = null;
+                return;
+                    };
+            Match m = matches[0];
+            String shiftsString = m.Groups[1].Value;
+            ConjuctedChannelsIndexes = MyUtils.parseArray(shiftsString);
+
+        }
+        public int[,] alignAndCombineSignalData(int[,] source,int spareMicIndex1, int spareMicIndex2, int maxShiftCount )
+        {
+            int minSpareMicIndex = Math.Min(spareMicIndex1, spareMicIndex2);
+                int maxSpareMicIndex = Math.Max(spareMicIndex1, spareMicIndex2);
+            int[,] resultArray = new int[source.GetLength(0), source.GetLength(1)];
             int micIndex = 0;
 
             long maxCorrelation = 0;
             int maxIndex = 0;
-            for (int i = 0; i < 45; i++)
+            for (int i = -maxShiftCount; i < maxShiftCount; i++)
             {
-               long correlation =  getCrossCorrelation(source, spareMicDataIndex, micDataIndex, 0, i, 45);
+               long correlation =  getCrossCorrelation(source, minSpareMicIndex, maxSpareMicIndex, 0, i, maxShiftCount);
                 if (correlation > maxCorrelation)
                 {
                     maxCorrelation = correlation;
                     maxIndex = i;
                 }
             }
+            Console.WriteLine("Max index:" + maxIndex);
 
             for (int i=0; i < source.GetLength(0); i++)
             {
-                if (i == spareMicDataIndex) continue;
-                for (int j = 0; j < source.GetLength(0); j++)
+                //if (i == spareMicDataIndex) continue;
+                for (int j = 0; j < source.GetLength(1); j++)
                 {
                     resultArray[micIndex,j] = source[i,j];
                 }
                 micIndex++;
-
-
             }
-            shiftMultidimensional(resultArray, micDataIndex, maxIndex);
+            Console.WriteLine("Test");
+            resultArray = MyUtils.TrimArrayRow(maxSpareMicIndex, resultArray);
+           shiftMultidimensional(resultArray, maxSpareMicIndex, -maxIndex);
             return resultArray;
         }
         public void getMicrophonesDelays(String str)

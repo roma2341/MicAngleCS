@@ -134,7 +134,7 @@ namespace MicAngle
                 else signalFromMicrophonesB = MyUtils.shiftLeft(signalFromMicrophonesB, -delay);
                 MicsSignal = MyUtils.convertBytesToMicrophonesSignalArray(signalFromMicrophonesA, signalFromMicrophonesB, channels, BYTE_IN_SAMPLE);
                 signalDataToChart(MicsSignal);
-                rtbSignal.Text = arrayToString(MicsSignal, 100000);
+                rtbSignal.Text = MyUtils.arrayToString(MicsSignal, 100000);
             }
             else
             {
@@ -606,21 +606,7 @@ namespace MicAngle
             }
             waveInCapturedB = false;
         }
-        public String arrayToString(int[,] arr,int limitWidth)
-        {
-            StringBuilder resultStrBuilder = new StringBuilder("");
-            //micsSignal = unitePartialMeasurement(signalFromMicrophonesA);
-            int width = (limitWidth < arr.GetLength(1)) ? limitWidth : arr.GetLength(1);
-            for (int i = 0; i < arr.GetLength(0); i++)
-            {
-                for (int j = 0; j < width; j++)
-                {
-                    resultStrBuilder.Append(arr[i, j] + " ");
-                }
-                resultStrBuilder.Append("\n");
-            }
-            return resultStrBuilder.ToString();
-        }
+      
         private int[,] aggregatedArraysToSeparated(List<float[]> arrs,int totalArrayElmCount, int channels)
         {
             float[] source = new float[totalArrayElmCount];
@@ -667,7 +653,7 @@ namespace MicAngle
                 //aggregatedAsio
                 int LIMIT = 100000;
                 MicsSignal = result;
-                rtbSignal.Text = arrayToString(result,100000);
+                rtbSignal.Text = MyUtils.arrayToString(result,100000);
                 //rtbSignal.Text = arrayToString(micsSignal, LIMIT);
                 //angleForm.processAngle(micsSignal);
                 //  bufferedWaveProvider.ClearBuffer();

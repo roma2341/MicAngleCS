@@ -108,6 +108,7 @@
     </Compile>
     <Compile Include="Geometry.cs" />
     <Compile Include="GlobalMercator.cs" />
+    <Compile Include="GraphicsExtensions.cs" />
     <Compile Include="MapForm.cs">
       <SubType>Form</SubType>
     </Compile>

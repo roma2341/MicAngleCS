@@ -34,6 +34,7 @@ namespace MicAngle
             mapForm = new MapForm(this,sm);
             recordForm = new RecordForm(this);
             initSignalManager();
+            showTestAngles();
 
         }
         T[,] ResizeArray<T>(T[,] original, int rows, int cols)
@@ -192,8 +193,40 @@ namespace MicAngle
             {
                 signalsArr = signalFromRealMicrophones;
             }
-            //Підганяємо масиви по масиву з мінімальною кількістю ел.
 
+
+            //TEST CODE
+            /*int[] originalValues = new int[220];
+
+            Random rnd = new Random();
+            for (int i = 0; i < originalValues.Length; i++)
+            {
+                originalValues[i] = rnd.Next(-short.MaxValue, short.MaxValue);
+            }
+            int[] shiftedValues1 = MyUtils.shiftLeft(originalValues, 0);
+            int[] shiftedValues2 = MyUtils.shiftLeft(originalValues, 10);
+            int[] shiftedValues3 = MyUtils.shiftLeft(originalValues, 10);
+
+
+            signalsArr = new int[4, originalValues.Length];
+            for (int i = 0; i < originalValues.Length; i++)
+            {
+                signalsArr[0, i] = originalValues[i];
+                signalsArr[1, i] = shiftedValues1[i];
+                signalsArr[2, i] = shiftedValues2[i];
+                signalsArr[3, i] = shiftedValues3[i];
+            }
+            Console.WriteLine("Shifted array");
+           Console.WriteLine(MyUtils.arrayToString(signalsArr,100));*/
+            //TEST CODE
+
+
+
+            if (sm.ConjuctedChannelsIndexes != null && sm.ConjuctedChannelsIndexes.Length > 1) 
+            signalsArr = sm.alignAndCombineSignalData(signalsArr, sm.ConjuctedChannelsIndexes[0], sm.ConjuctedChannelsIndexes[1], MAX_SHIFT_COUNT);
+            //Підганяємо масиви по масиву з мінімальною кількістю ел.
+            Console.WriteLine("Aligned array");
+            Console.WriteLine(MyUtils.arrayToString(signalsArr, 100));
             //   Console.WriteLine("PROCESSING FINISHED.");
             const int NO_SHIFT_DATA_COUNT = 1; // +1 to total shift count, because wee need
             
@@ -346,6 +379,7 @@ namespace MicAngle
             sm.getChannelsOffset(rtbSettings.Text);
             sm.getMicrophonesShift(rtbSettings.Text);
             sm.getMicrophonesDelays(rtbSettings.Text);
+            sm.getConjunctedChannels(rtbSettings.Text);
             dataInputCounter++;
         }
 
@@ -372,6 +406,31 @@ namespace MicAngle
 
         private void rtbSettings_TextChanged(object sender, EventArgs e)
         {
+
+        }
+        private void showTestAngles()
+        {
+            //R^2 = X^2 + Y^2
+            //0..90 degrees
+            int steps = 90;
+            double x_step = 1.0 / 90.0;
+           // double current_x = 0;
+            double R = 1;
+            for (int i = 0; i <= steps; i++)
+            {
+                // double current_y = R * R - current_x * current_x;
+                var currentPoint = new System.Windows.Point(0.15, 0);
+                currentPoint = MyUtils.rotate(currentPoint, new System.Windows.Point(0, 0), i);
+                double current_x = currentPoint.X;
+                double current_y = currentPoint.Y;
+                double distanceToZero = SignalsManager.getDistance(0.15, 0, current_x, current_y);
+                double V = 340;
+                double t = distanceToZero / V; // t = S / v
+                double k = 44100 * t;
+                Console.WriteLine(String.Format("X:{0} Y:{1} DISTANCE_TO_ZERO:{2} K:{3} ANGLE:{4}",
+                    current_x, current_y, distanceToZero,k, i));
+                current_x+= x_step;
+            }
 
         }
 

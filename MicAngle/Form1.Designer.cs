@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.btnProcessAngle = new System.Windows.Forms.Button();
@@ -37,11 +36,11 @@
             this.lblResult = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.chartMaximum = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.rbMicRow = new System.Windows.Forms.RadioButton();
+            this.rbMicPares = new System.Windows.Forms.RadioButton();
             this.btnToggleRecordForm = new System.Windows.Forms.Button();
             this.btnToggleMap = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rbMicPares = new System.Windows.Forms.RadioButton();
-            this.rbMicRow = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -67,7 +66,8 @@
             this.rtbSettings.Name = "rtbSettings";
             this.rtbSettings.Size = new System.Drawing.Size(409, 154);
             this.rtbSettings.TabIndex = 2;
-            this.rtbSettings.Text = resources.GetString("rtbSettings.Text");
+            this.rtbSettings.Text = "samplingRate(44100)\nЗ(X:10;y:10;A:1,0)\nМ(X:0;y:0)\nМ(X:0,15;y:2)\nchannels(2)\nchann" +
+    "elOffset(0)\nshift(0,0,0,0)\ndelays(0,1,0,0)";
             this.rtbSettings.TextChanged += new System.EventHandler(this.rtbSettings_TextChanged);
             // 
             // btnInputData
@@ -132,6 +132,39 @@
             this.chartMaximum.TabIndex = 1;
             this.chartMaximum.Text = "chart1";
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.rbMicRow);
+            this.groupBox1.Controls.Add(this.rbMicPares);
+            this.groupBox1.Location = new System.Drawing.Point(669, 29);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(127, 73);
+            this.groupBox1.TabIndex = 7;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Спосіб визначення";
+            // 
+            // rbMicRow
+            // 
+            this.rbMicRow.AutoSize = true;
+            this.rbMicRow.Checked = true;
+            this.rbMicRow.Location = new System.Drawing.Point(7, 49);
+            this.rbMicRow.Name = "rbMicRow";
+            this.rbMicRow.Size = new System.Drawing.Size(103, 17);
+            this.rbMicRow.TabIndex = 1;
+            this.rbMicRow.TabStop = true;
+            this.rbMicRow.Text = "Ряд мікрофонів";
+            this.rbMicRow.UseVisualStyleBackColor = true;
+            // 
+            // rbMicPares
+            // 
+            this.rbMicPares.AutoSize = true;
+            this.rbMicPares.Location = new System.Drawing.Point(7, 25);
+            this.rbMicPares.Name = "rbMicPares";
+            this.rbMicPares.Size = new System.Drawing.Size(110, 17);
+            this.rbMicPares.TabIndex = 0;
+            this.rbMicPares.Text = "Пари мікрофонів";
+            this.rbMicPares.UseVisualStyleBackColor = true;
+            // 
             // btnToggleRecordForm
             // 
             this.btnToggleRecordForm.Location = new System.Drawing.Point(519, 59);
@@ -151,39 +184,6 @@
             this.btnToggleMap.Text = "Показати карту";
             this.btnToggleMap.UseVisualStyleBackColor = true;
             this.btnToggleMap.Click += new System.EventHandler(this.btnToggleMap_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.rbMicRow);
-            this.groupBox1.Controls.Add(this.rbMicPares);
-            this.groupBox1.Location = new System.Drawing.Point(651, 24);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(127, 73);
-            this.groupBox1.TabIndex = 7;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Спосіб визначення";
-            // 
-            // rbMicPares
-            // 
-            this.rbMicPares.AutoSize = true;
-            this.rbMicPares.Location = new System.Drawing.Point(7, 25);
-            this.rbMicPares.Name = "rbMicPares";
-            this.rbMicPares.Size = new System.Drawing.Size(110, 17);
-            this.rbMicPares.TabIndex = 0;
-            this.rbMicPares.Text = "Пари мікрофонів";
-            this.rbMicPares.UseVisualStyleBackColor = true;
-            // 
-            // rbMicRow
-            // 
-            this.rbMicRow.AutoSize = true;
-            this.rbMicRow.Checked = true;
-            this.rbMicRow.Location = new System.Drawing.Point(7, 49);
-            this.rbMicRow.Name = "rbMicRow";
-            this.rbMicRow.Size = new System.Drawing.Size(103, 17);
-            this.rbMicRow.TabIndex = 1;
-            this.rbMicRow.TabStop = true;
-            this.rbMicRow.Text = "Ряд мікрофонів";
-            this.rbMicRow.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
