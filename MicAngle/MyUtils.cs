@@ -107,6 +107,11 @@ namespace MicAngle
             }
             return result;
         }
+        public static T[] shift<T>(T[] source, int n)
+        {
+            if (n >= 0) return shiftRight<T>(source, n);
+            else return shiftLeft<T>(source, -n);
+        }
         public static int[] parseArray(String str)
         {
             String micPattern = @"[-]?[0-9]+";

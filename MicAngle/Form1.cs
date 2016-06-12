@@ -223,8 +223,8 @@ namespace MicAngle
 
 
 
-            if (sm.ConjuctedChannelsIndexes != null && sm.ConjuctedChannelsIndexes.Length > 1) 
-            signalsArr = sm.alignAndCombineSignalData(signalsArr, sm.ConjuctedChannelsIndexes[0], sm.ConjuctedChannelsIndexes[1], MAX_SHIFT_COUNT);
+          //  if (sm.ConjuctedChannelsIndexes != null && sm.ConjuctedChannelsIndexes.Length > 1) 
+          //  signalsArr = sm.alignAndCombineSignalData(signalsArr, sm.ConjuctedChannelsIndexes[0], sm.ConjuctedChannelsIndexes[1], MAX_SHIFT_COUNT);
             //Підганяємо масиви по масиву з мінімальною кількістю ел.
            // Console.WriteLine("Aligned array");
            // Console.WriteLine(MyUtils.arrayToString(signalsArr, 100));

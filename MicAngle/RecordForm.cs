@@ -152,7 +152,7 @@ namespace MicAngle
                 return;
             }
             if (waveInCapturedA) return;
-            signalFromMicrophonesA = e.Buffer;
+            //signalFromMicrophonesA = e.Buffer;
             waveInStartTimeA = (long)(stopwatch.Elapsed.TotalMilliseconds * 1000000);
             waveInCapturedA = true;
             /* if (this.InvokeRequired)
@@ -172,7 +172,7 @@ namespace MicAngle
                    ouputStr += e.Buffer[i]+" ";
                }
                System.IO.File.WriteAllText("WaveInSignal.txt", ouputStr);*/
-            // int[,] signalFromMics = convertByteBufferToIntWithChanels(e.Buffer);
+             int[,] signalFromMics = convertByteBufferToIntWithChanels(e.Buffer);
             // signalFromMicrophones.Add(signalFromMics);
             //angleForm.processAngle(signalFromMics);               
             // Thread.Sleep(4000);
@@ -647,13 +647,23 @@ namespace MicAngle
                 recAsio = null;
                 //micsSignal = unitePartialMeasurement(signalFromMicrophonesA);
                 // int[,] result = processMultipleChannels(AsioData,BYTES_PER_SAMPLE,true);
-                int[,] result = aggregatedArraysToSeparated(aggregatedAsio, aggregatedAsioCount, angleForm.getSignalManager().Channels);
+
+
+
+
+               // int[,] result= angleForm.getSignalManager().generateTestMicSignal(2900,4,2,15);
+
+
+                int MAX_SHIFT_COUNT = 30;
+               int[,] result = aggregatedArraysToSeparated(aggregatedAsio, aggregatedAsioCount, angleForm.getSignalManager().Channels);
+                if (angleForm.getSignalManager().ConjuctedChannelsIndexes != null && angleForm.getSignalManager().ConjuctedChannelsIndexes.Length > 1)
+                    result = angleForm.getSignalManager().alignAndCombineSignalData(result, angleForm.getSignalManager().ConjuctedChannelsIndexes[0], angleForm.getSignalManager().ConjuctedChannelsIndexes[1], MAX_SHIFT_COUNT);
                 MicsSignal = result;
                 Console.WriteLine("Arrays aggregated( height:" + result.GetLength(0) + "width: " + result.GetLength(1));
                 //aggregatedAsio
                 int LIMIT = 100000;
-                MicsSignal = result;
                 rtbSignal.Text = MyUtils.arrayToString(result,100000);
+                MicsSignal = result;
                 //rtbSignal.Text = arrayToString(micsSignal, LIMIT);
                 //angleForm.processAngle(micsSignal);
                 //  bufferedWaveProvider.ClearBuffer();

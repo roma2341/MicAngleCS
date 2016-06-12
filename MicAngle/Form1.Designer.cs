@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.btnProcessAngle = new System.Windows.Forms.Button();
             this.rtbSettings = new System.Windows.Forms.RichTextBox();
             this.btnInputData = new System.Windows.Forms.Button();
@@ -41,6 +41,7 @@
             this.rbMicPares = new System.Windows.Forms.RadioButton();
             this.btnToggleRecordForm = new System.Windows.Forms.Button();
             this.btnToggleMap = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -102,6 +103,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
             this.splitContainer1.Panel2.Controls.Add(this.btnToggleRecordForm);
             this.splitContainer1.Panel2.Controls.Add(this.btnToggleMap);
@@ -115,17 +117,17 @@
             // 
             // chartMaximum
             // 
-            chartArea3.Area3DStyle.IsRightAngleAxes = false;
-            chartArea3.AxisX.Title = "Номер зсуву";
-            chartArea3.AxisY.Title = "Сумма сигналів";
-            chartArea3.BackColor = System.Drawing.Color.Transparent;
-            chartArea3.BackSecondaryColor = System.Drawing.Color.Azure;
-            chartArea3.CursorX.IsUserSelectionEnabled = true;
-            chartArea3.Name = "ChartArea1";
-            this.chartMaximum.ChartAreas.Add(chartArea3);
+            chartArea1.Area3DStyle.IsRightAngleAxes = false;
+            chartArea1.AxisX.Title = "Номер зсуву";
+            chartArea1.AxisY.Title = "Сумма сигналів";
+            chartArea1.BackColor = System.Drawing.Color.Transparent;
+            chartArea1.BackSecondaryColor = System.Drawing.Color.Azure;
+            chartArea1.CursorX.IsUserSelectionEnabled = true;
+            chartArea1.Name = "ChartArea1";
+            this.chartMaximum.ChartAreas.Add(chartArea1);
             this.chartMaximum.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend3.Name = "Legend1";
-            this.chartMaximum.Legends.Add(legend3);
+            legend1.Name = "Legend1";
+            this.chartMaximum.Legends.Add(legend1);
             this.chartMaximum.Location = new System.Drawing.Point(0, 0);
             this.chartMaximum.Name = "chartMaximum";
             this.chartMaximum.Size = new System.Drawing.Size(952, 406);
@@ -185,6 +187,15 @@
             this.btnToggleMap.UseVisualStyleBackColor = true;
             this.btnToggleMap.Click += new System.EventHandler(this.btnToggleMap_Click);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(518, 129);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "label1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -218,6 +229,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton rbMicPares;
         public System.Windows.Forms.RadioButton rbMicRow;
+        private System.Windows.Forms.Label label1;
     }
 }
 

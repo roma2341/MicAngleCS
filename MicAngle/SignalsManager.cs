@@ -10,7 +10,7 @@ namespace MicAngle
     {
         static short MAX_SHORT = 32767;//short.MaxValue;//32767
         public int SamplingRate { get; set; }
-	public static double V = 300;
+	public static double V = 340;
    public List<SoundEmiter> Sn { get; set; }
      public List<Microphone> Mn { get; set; }
         public int Channels { get; set; }
@@ -149,11 +149,12 @@ namespace MicAngle
        public long getCrossCorrelation(int [,]source, int indexOfFirstArray, int indexOfSecondArray,int firstShift,int secondShift,int maxShiftValue)
         {
             long result = 0;
+            const int VALUES_TO_SKIP = 4000;
             int emptyElement = 1; //Take this if out of range after shift
             int totalArraysCount = source.GetLength(0);
                 if (indexOfFirstArray >= totalArraysCount || indexOfSecondArray >= totalArraysCount) throw new IndexOutOfRangeException("uncorrect index");
-            int startIndex = maxShiftValue;
-            int endIndex = source.GetLength(1) - maxShiftValue -1;
+            int startIndex = maxShiftValue+ VALUES_TO_SKIP;
+            int endIndex = source.GetLength(1) - maxShiftValue - VALUES_TO_SKIP - 1;
             if (startIndex > endIndex) MyUtils.Swap<int>(ref startIndex,ref endIndex);
             for (int i = startIndex; i <= endIndex; i++)
                 {
@@ -176,8 +177,8 @@ namespace MicAngle
 
         public double interCorelationFunc(int[,] buf, out bool success, int[] delays, bool isPositiveRotation,int maxDelaysCount, out long maxValue, long[] maxes = null)
         {
-
-             /*int[] originalValues = new int[buf_.GetLength(1)];
+            const int SKIP_VALUES_COUNT = 500;
+            /* int[] originalValues = new int[buf_.GetLength(1)];
 
              Random rnd = new Random();
              for (int i = 0; i < originalValues.Length; i++)
@@ -185,17 +186,13 @@ namespace MicAngle
                  originalValues[i] = rnd.Next(1,short.MaxValue);
              }
             int[] shiftedValues1 = MyUtils.shiftLeft(originalValues,10);
-            int[] shiftedValues2 = MyUtils.shiftLeft(originalValues, 0);
-            int[] shiftedValues3 = MyUtils.shiftLeft(originalValues, 0);
 
 
-            int [,]buf = new int[4,originalValues.Length];
+            int [,]buf = new int[2,originalValues.Length];
              for (int i = 0; i < originalValues.Length; i++)
              {
                 buf[0, i] = originalValues[i];
                 buf[1, i] = shiftedValues1[i];
-                buf[1, i] = shiftedValues2[i];
-                buf[1, i] = shiftedValues3[i];
             }*/
             //  const int MIC_COUNT = 2; 
             Console.WriteLine("******INTERCORELATION_FUNCTION********");
@@ -242,7 +239,7 @@ namespace MicAngle
                  for (int j = 0; j < buf.GetLength(1); j++)
                      bufSaved[i,j] = buf[i,j];
              }*/
-            Array.Copy(buf, 0, bufSaved, 0, buf.Length);
+            //Array.Copy(buf, 0, bufSaved, 0, buf.Length);
             ///
             //delays[0] = 0;
             //  for (int l = 1; l < MIC_COUNT; l++)
@@ -261,19 +258,7 @@ namespace MicAngle
 
                 // buf[0]=shiftRight(buf[0], delays[l]);
                 //  buf[1] = shiftRight(buf[1], delays[l]);
-                if (k != 0)//Не зсуваємо на першій ітерації
 
-                {
-                    for (int i = 0; i < buf.GetLength(0); i++)
-                    {
-                        /*   if (k<SHIFT_COUNT)
-                         shift(buf,i, -delays[i]);
-                         else*/
-                        if (isPositiveRotation) shiftMultidimensional(buf, i, delays[i]);
-                        else shiftMultidimensional(buf, i, -delays[i]);
-
-                    }
-                }
 
                 //  long[] SM = new long[buf.GetLength(1)];
 
@@ -283,8 +268,8 @@ namespace MicAngle
                 //   int startIndex = delays.Max() * SHIFT_COUNT;
                 // int startIndex = 0;
                 //  int endIndex = buf.GetLength(1); //startIndex + elementsToSum;
-                int startIndex = maxDelaysCount;//buf.GetLength(1)/2-2000;
-                int endIndex = buf.GetLength(1) - 1 - maxDelaysCount;//buf.GetLength(1)-1- SHIFT_COUNT;//buf.GetLength(1) / 2 + 2000;
+                int startIndex = maxDelaysCount+ SKIP_VALUES_COUNT;//buf.GetLength(1)/2-2000;
+                int endIndex = buf.GetLength(1) - 1 - maxDelaysCount- SKIP_VALUES_COUNT;//buf.GetLength(1)-1- SHIFT_COUNT;//buf.GetLength(1) / 2 + 2000;
                 // if (k < 0) startIndex = -k - 1;
                 //if (k > 0)
                 // endIndex -= startIndex;
@@ -296,7 +281,11 @@ namespace MicAngle
                     long summOfDifferentSignalValues = 1;
                     for (int i = 0; i < buf.GetLength(0); i++)
                     {
-                        summOfDifferentSignalValues *= buf[i, j];
+                        int delay = MicrophonesDelay[i];
+                        if (!isPositiveRotation) delay = -delay;
+                        int sampleIndex = j - delay * k;
+                        if (sampleIndex>=0 && sampleIndex < buf.GetLength(1))              
+                        summOfDifferentSignalValues *= buf[i, sampleIndex];
                         // Console.WriteLine("buf[" + i + "," + j + "]="+ buf[i, j]);
                     }
                     //summ += (long)Math.Sqrt((double)Math.Abs(summOfDifferentSignalValues));
@@ -353,7 +342,7 @@ namespace MicAngle
                 for (int j = 0; j < buf.GetLength(1); j++)
                     buf[i,j] = bufSaved[i,j];
             }*/
-            Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
+            //Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
 
 
             return result;
@@ -571,8 +560,41 @@ namespace MicAngle
             }
             Console.WriteLine("Test");
             resultArray = MyUtils.TrimArrayRow(maxSpareMicIndex, resultArray);
-           shiftMultidimensional(resultArray, maxSpareMicIndex, -maxIndex);
+           shiftMultidimensional(resultArray, maxSpareMicIndex, maxIndex);
             return resultArray;
+        }
+        public int[,] generateTestMicSignal(int samplesCountPerMic,int micsCount, int shiftIndex, int shiftValue)
+        {
+
+            int[] originalValues = new int[samplesCountPerMic];
+            int[][] shiftedValues = new int[micsCount][];
+
+            Random rnd = new Random();
+            for (int i = 0; i < originalValues.Length; i++)
+            {
+                originalValues[i] = rnd.Next(1, short.MaxValue);
+            }
+            for (int i = 0; i < micsCount; i++)
+            {
+                int shift = 0;
+                if (i >= shiftIndex) shift = shiftValue;
+                shiftedValues[i] = MyUtils.shift(originalValues, shift);
+            }
+          
+
+
+
+            int[,] result = new int[4, originalValues.Length];
+            for (int i = 0; i < originalValues.Length; i++)
+            {
+                for (int j = 0; j < micsCount; j++)
+                {
+                    result[j, i] = shiftedValues[j][i];
+                }
+       
+            }
+            return result;
+
         }
         public void getMicrophonesDelays(String str)
         {
