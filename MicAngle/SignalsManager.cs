@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace MicAngle
 {
@@ -106,7 +107,41 @@ namespace MicAngle
             return result;
         }
 
+        private Dictionary<int, int>[] processShiftForAngles(int maxDegrees )
+        {
+            //R^2 = X^2 + Y^2
+            //0..90 degrees
+            int steps = maxDegrees;
+            double x_step = 1.0 / 90.0;
+            // double current_x = 0;
+            // double R = 1;
+            Dictionary<int, int>[] result = new Dictionary<int, int>[Mn.Count-1];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = new Dictionary<int, int>();
+            }
+            for (int i = 0; i <= steps; i++)
+            {
+                Point mainMicPos = Mn[0].Position;
+                for (int j = 1; j < Mn.Count; j++) {
+                    Point micPos = Mn[j].Position;
+                    // double current_y = R * R - current_x * current_x;
+                    var currentPoint = new Point() ;
+                    currentPoint = MyUtils.rotate(micPos, mainMicPos, i);
+                    double current_x = currentPoint.X;
+                    double current_y = currentPoint.Y;
+                    double distanceToZero = SignalsManager.getDistance(micPos.X, micPos.Y, current_x, current_y);
+                    double t = distanceToZero / V; // t = S / v
+                    double k = SamplingRate * t;
+                    result[j-1][i]=(int)k;
+                   // Console.WriteLine(String.Format("X:{0} Y:{1} DISTANCE_TO_ZERO:{2} K:{3} ANGLE:{4}",
+                     //  current_x, current_y, distanceToZero, k, i));
+                    //current_x += x_step;
+                }
+            }
+            return result;
 
+        }
         // Виконує розрахунок затримок проходження сигналу (t=s/v) від мікрофонів до джерел звуку
         // @return Двувимірний масив з затримкою від Мікрофони[i] до Звуки[j]
 
@@ -149,7 +184,7 @@ namespace MicAngle
        public long getCrossCorrelation(int [,]source, int indexOfFirstArray, int indexOfSecondArray,int firstShift,int secondShift,int maxShiftValue)
         {
             long result = 0;
-            const int VALUES_TO_SKIP = 4000;
+            const int VALUES_TO_SKIP = 90000;
             int emptyElement = 1; //Take this if out of range after shift
             int totalArraysCount = source.GetLength(0);
                 if (indexOfFirstArray >= totalArraysCount || indexOfSecondArray >= totalArraysCount) throw new IndexOutOfRangeException("uncorrect index");
@@ -250,7 +285,8 @@ namespace MicAngle
             double cosA = 0, arcCosA = 0;
             int startK = 0;
             int endK = maxDelaysCount - 1;
-            for (int k = startK; k <= endK; k++)
+
+           for (int k = startK; k <= endK; k++)
             {
                 long korelKoff = 0;
                 //Вертаємо масив в початковий стан без зсувів
@@ -374,10 +410,10 @@ namespace MicAngle
                 buf[1, i] = shiftedValues3[i];
             }*/
             //END Of test
-
+            Dictionary<int, int>[] anglesShift = processShiftForAngles(90);
             success = true;
             int correlationStatisticSize = (buf.GetLength(0) - 1) ;//TODO
-            int MAXIMAL_SHIFT_TO_SAVE = 100;
+            int MAXIMAL_SHIFT_TO_SAVE = 91;
             correlationDetailsPositive = new long[buf.GetLength(0), MAXIMAL_SHIFT_TO_SAVE];
             correlationDetailsNegative = new long[buf.GetLength(0), MAXIMAL_SHIFT_TO_SAVE];
             CorrelationStatistic[] maxCorrelationValues = new CorrelationStatistic[correlationStatisticSize];//N-1 where N is microphones count;
@@ -385,14 +421,32 @@ namespace MicAngle
             {
                 double maxDistance = 0;
                 int maxShiftsCount = getMaxMicDelay(0, i, out maxDistance);
+                Console.WriteLine("max shift count:" + maxShiftsCount);
+                int degrees = anglesShift[0].Keys.Count;
                 long currentMicsPareMaxCorrelationValue = 0;
                 int currentMicsPareMaxCorrelationShift = 0;
-                for (int j = 0; j < maxShiftsCount; j++)
+                for (int j = 0; j < degrees; j++)
                 {
-                    int shiftStep = MicrophonesDelay[i];
-                    int actualShift = j * shiftStep;
-                    long correlation1 = getCrossCorrelation(buf, 0, i,0,actualShift, shiftStep* maxShiftsCount);
-                    long correlation2 = getCrossCorrelation(buf, 0, i, 0, -actualShift, shiftStep * maxShiftsCount);
+                    bool likePrevious = true;
+                    if (j == 0)
+                    {
+                        likePrevious = false;
+                    }
+                    else
+                    for (int k = 0; k < anglesShift.GetLength(0); k++)
+                    {
+                        
+                        if (anglesShift[k][j] != anglesShift[k][j - 1]) likePrevious = false;
+                    }
+                    if (likePrevious)
+                    {
+                        correlationDetailsPositive[i, j] = correlationDetailsPositive[i, j-1];
+                        correlationDetailsNegative[i, j] = correlationDetailsNegative[i, j-1];
+                        continue;
+                    }
+                    int actualShift = anglesShift[i-1][j];
+                    long correlation1 = getCrossCorrelation(buf, 0, i,0,actualShift, degrees);
+                    long correlation2 = getCrossCorrelation(buf, 0, i, 0, -actualShift, degrees);
                     if (j < MAXIMAL_SHIFT_TO_SAVE) { 
                     correlationDetailsPositive[i, j] = correlation1;
                     correlationDetailsNegative[i, j] = correlation2;
@@ -403,7 +457,7 @@ namespace MicAngle
                         if (correlation1 > currentMicsPareMaxCorrelationValue)
                         {
                             currentMicsPareMaxCorrelationValue = correlation1;
-                            currentMicsPareMaxCorrelationShift = j;
+                            currentMicsPareMaxCorrelationShift = anglesShift[i - 1][j];
                         }
                     }
                     else
@@ -411,7 +465,7 @@ namespace MicAngle
                         if (correlation2 > currentMicsPareMaxCorrelationValue)
                         {
                             currentMicsPareMaxCorrelationValue = correlation2;
-                            currentMicsPareMaxCorrelationShift = -j;
+                            currentMicsPareMaxCorrelationShift = -anglesShift[i - 1][j];
                         }
                     }
                     //Console.WriteLine("shift:" + currentMicsPareMaxCorrelationShift + " val:" + currentMicsPareMaxCorrelationValue);
@@ -431,7 +485,7 @@ namespace MicAngle
             double cosA = V * delay / (lengthBetweenMics * SamplingRate);
             double arcCosA = Math.Acos(cosA);
             double angle =  arcCosA * 180 / Math.PI;
-            //if (delay < 0)angle = 180-angle;
+           // if (delay < 0)angle = 360-angle;
             return angle;
         }
         public double[] getRealAngles()

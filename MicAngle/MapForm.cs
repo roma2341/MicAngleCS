@@ -260,6 +260,7 @@ namespace MicAngle
             System.Drawing.Pen dashedBluePen = new System.Drawing.Pen(System.Drawing.Color.Blue, 1);
             dashedBluePen.DashPattern = new float[]{ 5, 2, 15, 4 };
             System.Drawing.Pen greenPen = new System.Drawing.Pen(System.Drawing.Color.Green, 1);
+            greenPen.DashPattern = new float[] { 5, 2, 15, 4 };
             using (var graphics = System.Drawing.Graphics.FromImage(mapImage))
           {
                 GraphicsContainer containerState = graphics.BeginContainer();
@@ -286,7 +287,7 @@ namespace MicAngle
                     if (parent.rbMicRow.Checked)
                         secondMicPos = signalsManger.Mn[1].Position;
                     System.Windows.Point soundSourcePos = MyUtils.rotate(signalsManger.Mn[0].Position, secondMicPos, angles[i]);
-                    System.Windows.Point alternativeSoundSourcePos = MyUtils.rotate(signalsManger.Mn[0].Position, secondMicPos, 360-angles[i]);
+                    System.Windows.Point alternativeSoundSourcePos = MyUtils.rotateAnticlockwise(signalsManger.Mn[0].Position, secondMicPos, angles[i]);
                     double realAngle = MyUtils.angleBetweenThreePoints(signalsManger.Mn[0].Position, secondMicPos, signalsManger.Sn[0].Position);
                     System.Console.WriteLine("angle:" + angles[i] + " real angle:" + realAngle);
                 
