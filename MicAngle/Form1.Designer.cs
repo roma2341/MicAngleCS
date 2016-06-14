@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.btnProcessAngle = new System.Windows.Forms.Button();
             this.rtbSettings = new System.Windows.Forms.RichTextBox();
             this.btnInputData = new System.Windows.Forms.Button();
@@ -117,17 +117,17 @@
             // 
             // chartMaximum
             // 
-            chartArea2.Area3DStyle.IsRightAngleAxes = false;
-            chartArea2.AxisX.Title = "Номер зсуву";
-            chartArea2.AxisY.Title = "Сумма сигналів";
-            chartArea2.BackColor = System.Drawing.Color.Transparent;
-            chartArea2.BackSecondaryColor = System.Drawing.Color.Azure;
-            chartArea2.CursorX.IsUserSelectionEnabled = true;
-            chartArea2.Name = "ChartArea1";
-            this.chartMaximum.ChartAreas.Add(chartArea2);
+            chartArea1.Area3DStyle.IsRightAngleAxes = false;
+            chartArea1.AxisX.Title = "Номер зсуву";
+            chartArea1.AxisY.Title = "Сумма сигналів";
+            chartArea1.BackColor = System.Drawing.Color.Transparent;
+            chartArea1.BackSecondaryColor = System.Drawing.Color.Azure;
+            chartArea1.CursorX.IsUserSelectionEnabled = true;
+            chartArea1.Name = "ChartArea1";
+            this.chartMaximum.ChartAreas.Add(chartArea1);
             this.chartMaximum.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.chartMaximum.Legends.Add(legend2);
+            legend1.Name = "Legend1";
+            this.chartMaximum.Legends.Add(legend1);
             this.chartMaximum.Location = new System.Drawing.Point(0, 0);
             this.chartMaximum.Name = "chartMaximum";
             this.chartMaximum.Size = new System.Drawing.Size(952, 406);
@@ -139,9 +139,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(518, 129);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.Size = new System.Drawing.Size(31, 13);
             this.label1.TabIndex = 8;
-            this.label1.Text = "label1";
+            this.label1.Text = "dffffff";
             // 
             // groupBox1
             // 

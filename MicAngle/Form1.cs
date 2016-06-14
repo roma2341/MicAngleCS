@@ -240,8 +240,8 @@ namespace MicAngle
             double leftShiftAngle = sm.interCorelationFunc(signalsArr, out success, delayForFirstMicrophonePair, false, MAX_SHIFT_COUNT, out leftShiftMaximumValue, maxesLeft);
             Console.WriteLine("rightShiftAngle:" + rightShiftAngle);
             Console.WriteLine("leftShiftAngle:" + leftShiftAngle);
-            rightShiftMaximumValue = Math.Abs(rightShiftMaximumValue);
-            leftShiftMaximumValue = Math.Abs(leftShiftMaximumValue);
+            rightShiftMaximumValue = rightShiftMaximumValue;
+            leftShiftMaximumValue = leftShiftMaximumValue;
 
             resultAngle = (rightShiftMaximumValue > leftShiftMaximumValue) ? rightShiftAngle : 180 - leftShiftAngle;
             if (!success)
@@ -267,11 +267,11 @@ namespace MicAngle
             series.Color = Color.Blue;
             long yMin = (maxesRight.Min() < maxesLeft.Min()) ? maxesRight.Min() : maxesLeft.Min();
             long yMax = (maxesRight.Max() > maxesLeft.Max()) ? maxesRight.Max() : maxesLeft.Max();
-            long yMaxAbs = (Math.Abs(yMax) > Math.Abs(yMin)) ? yMax : yMin;
+
             for (int i = lastShiftIndex; i >= 0; i--)
             {
                 long value = maxesLeft[i];
-                if (Math.Abs(value) >= Math.Abs(yMaxAbs))
+                if (value >= yMax)
                     seriesOfMax.Points.AddXY(-i, value);
                 else
                     series.Points.AddXY(-i, value);
@@ -282,7 +282,7 @@ namespace MicAngle
             {
                 long value = maxesRight[i];
               //  Console.WriteLine(String.Format("x:{0} y:{1}", i, value));
-                if (Math.Abs(value) >= Math.Abs(yMaxAbs))
+                if (value >= yMax)
                     seriesOfMax.Points.AddXY(i, value);
                 else
                     series.Points.AddXY(i, value);
@@ -354,8 +354,8 @@ namespace MicAngle
                     if (correlationDetailsNegative[i, j] < minY) minY = correlationDetailsNegative[i, j];
                 }
             }
-            this.chartMaximum.ChartAreas[0].AxisX.Maximum = correlationDetailsPositive.GetLength(1) / 2;
-            this.chartMaximum.ChartAreas[0].AxisX.Minimum = -correlationDetailsPositive.GetLength(1) / 2;
+            this.chartMaximum.ChartAreas[0].AxisX.Maximum = correlationDetailsPositive.GetLength(1) ;
+            this.chartMaximum.ChartAreas[0].AxisX.Minimum = -correlationDetailsPositive.GetLength(1) ;
             this.chartMaximum.ChartAreas[0].AxisX.Interval = 1;
             this.chartMaximum.ChartAreas[0].AxisY.Maximum = maxY;
             this.chartMaximum.ChartAreas[0].AxisY.Minimum = minY;

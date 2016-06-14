@@ -184,7 +184,7 @@ namespace MicAngle
        public long getCrossCorrelation(int [,]source, int indexOfFirstArray, int indexOfSecondArray,int firstShift,int secondShift,int maxShiftValue)
         {
             long result = 0;
-            const int VALUES_TO_SKIP = 90000;
+            const int VALUES_TO_SKIP = 2000;
             int emptyElement = 1; //Take this if out of range after shift
             int totalArraysCount = source.GetLength(0);
                 if (indexOfFirstArray >= totalArraysCount || indexOfSecondArray >= totalArraysCount) throw new IndexOutOfRangeException("uncorrect index");
@@ -205,9 +205,9 @@ namespace MicAngle
                 else
                 elementOfSecondArray = source[indexOfSecondArray, elementOfSecondArrayIndex];
 
-                result += Math.Abs(elementOfFirstArray * elementOfSecondArray);
+                result += elementOfFirstArray * elementOfSecondArray;
             }
-            return Math.Abs(result);
+            return result;
         }
 
         public double interCorelationFunc(int[,] buf, out bool success, int[] delays, bool isPositiveRotation,int maxDelaysCount, out long maxValue, long[] maxes = null)
@@ -325,14 +325,14 @@ namespace MicAngle
                         // Console.WriteLine("buf[" + i + "," + j + "]="+ buf[i, j]);
                     }
                     //summ += (long)Math.Sqrt((double)Math.Abs(summOfDifferentSignalValues));
-                    korelKoff += Math.Abs(summOfDifferentSignalValues);
+                    korelKoff += summOfDifferentSignalValues;
                 }
                 korelKoff /= (endIndex - startIndex);
                 // korelKoff /= buf.GetLength(1);
                 //long absSumm = Math.Abs(summ);
                 //summ = (long)Math.Sqrt(absSumm);
                 if (maxes != null) maxes[k] = korelKoff;
-                if (Math.Abs(korelKoff) > Math.Abs(maxValue))
+                if (korelKoff > maxValue)
                 //if (summ > maxValue)
                 {
                     //Console.Out.WriteLine("max Long:"+long.MaxValue);

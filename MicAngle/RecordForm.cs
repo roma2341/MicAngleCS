@@ -369,7 +369,7 @@ namespace MicAngle
             }
         void waveIn_DataAvailableAsioTestA(object sender, AsioAudioAvailableEventArgs e)
         {
-            Console.WriteLine("AsioSampleType:"+e.AsioSampleType.ToString());
+          //  Console.WriteLine("AsioSampleType:"+e.AsioSampleType.ToString());
             int samplesCount = e.SamplesPerBuffer*angleForm.getSignalManager().Channels;
             float[] interlivedAsioSamples = new float[samplesCount];
             e.GetAsInterleavedSamples(interlivedAsioSamples);
@@ -396,7 +396,7 @@ namespace MicAngle
             int micBufferLength = micSamplesCount ;
             //int[,] signalFromMics = new int[e.InputBuffers.Length* channels, micSamplesCount];
             byte[] buf = new byte[micBufferLength];
-             Console.WriteLine("e.InputBuffers.Length:" + e.InputBuffers.Length);
+            // Console.WriteLine("e.InputBuffers.Length:" + e.InputBuffers.Length);
             // int micIndex = 0;
             // fileContentStrAsioA = "";
             /*for (int i = 0; i < e.InputBuffers.Length; i++)
