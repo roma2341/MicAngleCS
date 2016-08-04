@@ -281,6 +281,7 @@ namespace MicAngle
                     System.Drawing.Brush soundSourceBrush = new System.Drawing.SolidBrush(SoundSourceColors[i]);
                     graphics.FillCircle(soundSourceBrush, signalsManger.Sn[i].Position.X, signalsManger.Sn[i].Position.Y, 3);
                 }
+                if (angles!=null)//TODO ZIGZAG -КОСТИЛЬ
                 for (int i = 0; i < angles.Length; i++)
                 {
                     var secondMicPos = signalsManger.Mn[i + 1].Position;

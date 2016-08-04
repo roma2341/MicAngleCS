@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NAudio.Wave.Asio;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -163,6 +164,69 @@ namespace MicAngle
             }
 
             return result;
+        }
+
+           /// <summary>
+        /// Converts all the recorded audio into a buffer of 32 bit floating point samples, interleaved by channel
+        /// </summary>
+        /// <returns>The samples as 32 bit floating point, interleaved</returns>
+        public static float[] GetAsInterleavedSamples(IntPtr[] InputBuffers, int SamplesPerBuffer, AsioSampleType asioSampleType)
+        {
+            int channels = InputBuffers.Length;
+            float[] samples = new float[SamplesPerBuffer * channels];
+            int index = 0;
+            unsafe
+            {
+                if (asioSampleType == NAudio.Wave.Asio.AsioSampleType.Int32LSB)
+                {
+                    for (int n = 0; n < SamplesPerBuffer; n++)
+                    {
+                        for (int ch = 0; ch < channels; ch++)
+                        {
+                            samples[index++] = *((int*)InputBuffers[ch] + n) / (float)Int32.MaxValue;
+                        }
+                    }
+                }
+                else if (asioSampleType == NAudio.Wave.Asio.AsioSampleType.Int16LSB)
+                {
+                    for (int n = 0; n < SamplesPerBuffer; n++)
+                    {
+                        for (int ch = 0; ch < channels; ch++)
+                        {
+                            samples[index++] = *((short*)InputBuffers[ch] + n) / (float)Int16.MaxValue;
+                        }
+                    }
+                }
+                else if (asioSampleType == NAudio.Wave.Asio.AsioSampleType.Int24LSB)
+                {
+                    for (int n = 0; n < SamplesPerBuffer; n++)
+                    {
+                        for (int ch = 0; ch < channels; ch++)
+                        {
+                            byte *pSample = ((byte*)InputBuffers[ch] + n * 3);
+
+                            //int sample = *pSample + *(pSample+1) << 8 + (sbyte)*(pSample+2) << 16;
+                            int sample = pSample[0] | (pSample[1] << 8) | ((sbyte)pSample[2] << 16);
+                            samples[index++] = sample / 8388608.0f;
+                        }
+                    }
+                }
+                else if (asioSampleType == NAudio.Wave.Asio.AsioSampleType.Float32LSB)
+                {
+                    for (int n = 0; n < SamplesPerBuffer; n++)
+                    {
+                        for (int ch = 0; ch < channels; ch++)
+                        {
+                            samples[index++] = *((float*)InputBuffers[ch] + n);
+                        }
+                    }
+                }
+                else
+                {
+                    throw new NotImplementedException(String.Format("ASIO Sample Type {0} not supported", asioSampleType));
+                }
+            }
+            return samples;
         }
 
 

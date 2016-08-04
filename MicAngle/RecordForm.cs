@@ -28,7 +28,6 @@ namespace MicAngle
         bool waveInCapturedA = false, waveInCapturedB = false;
         //ASIO
         NAudio.Wave.AsioOut recAsio, recAsio2;
-        NAudio.Wave.BufferedWaveProvider buffer;
 
         // CountdownEvent cntEvent = new CountdownEvent(1);
         WaveInEvent waveInA,waveInB;
@@ -40,14 +39,14 @@ namespace MicAngle
         public int[,] MicsSignal;
 
         List<byte[]>[] AsioData;
-        List<float[]> aggregatedAsio; //LRLRLRLR;
-        int aggregatedAsioCount = 0;
+       volatile List<float[]> aggregatedAsio; //LRLRLRLR;
+        private Object aggregatedAsioLock_ = new object();
         int[] asioTotalBytesCount;
         //List<int[,]> signalFromMicrophones;
         byte[] signalFromMicrophonesA;
         byte[] signalFromMicrophonesB;
-       // int signalABytes = 0, signalBBytes = 0;
-
+        // int signalABytes = 0, signalBBytes = 0;
+        Thread asioDataHandlerThread = null;
         //Класс для записи в файл
         //BufferedWaveProvider bufferedWaveProvider = null;
         public void stringDataToChart(String input)
@@ -109,6 +108,20 @@ namespace MicAngle
             }
 
             
+        }
+
+       public void HandleAsioData(List<float[]> aggregatedAsio)
+        {
+            while (true) { 
+            lock (aggregatedAsioLock_)
+            {
+                Console.WriteLine("HandleAsioData aggregatedAsio length:"+ aggregatedAsio.Count);
+                    //TODO
+                    aggregatedDataTomicSignal();
+                aggregatedAsio.Clear();
+            }
+            Thread.Sleep(100);
+            }
         }
 
         void StopRecording()
@@ -231,7 +244,6 @@ namespace MicAngle
                     index+=2;
                 }
             }
-            buffer.AddSamples(buf, 0, buf.Length);
             angleForm.processAngle(signalFromMics);
             e.WrittenToOutputBuffers = true;
 
@@ -374,8 +386,11 @@ namespace MicAngle
             int samplesCount = e.SamplesPerBuffer*angleForm.getSignalManager().Channels;
             float[] interlivedAsioSamples = new float[samplesCount];
             e.GetAsInterleavedSamples(interlivedAsioSamples);
+            Console.WriteLine("Aggregated buffer size:" + aggregatedAsio.Count);
+            lock (aggregatedAsioLock_) {
             aggregatedAsio.Add(interlivedAsioSamples);
-            aggregatedAsioCount += samplesCount;
+            }
+
             /*if (this.InvokeRequired)
             {
                 this.BeginInvoke(new EventHandler<AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestA), sender, e);
@@ -396,7 +411,12 @@ namespace MicAngle
             int micSamplesCount = e.SamplesPerBuffer * SAMPLE_SIZE_BYTES;
             int micBufferLength = micSamplesCount ;
             //int[,] signalFromMics = new int[e.InputBuffers.Length* channels, micSamplesCount];
-            byte[] buf = new byte[micBufferLength];
+            /* byte[] buf = new byte[e.SamplesPerBuffer];
+             for (int i = 0; i < e.InputBuffers.Length; i++)
+             {
+                 Marshal.Copy(e.InputBuffers[i], buf, 0, e.SamplesPerBuffer);
+             }
+             buffer.AddSamples(buf, 0, buf.Length);*/
             // Console.WriteLine("e.InputBuffers.Length:" + e.InputBuffers.Length);
             // int micIndex = 0;
             // fileContentStrAsioA = "";
@@ -455,20 +475,19 @@ namespace MicAngle
                   Console.WriteLine();
               }
               System.IO.File.WriteAllText("inputSignal.txt", fileContentStrAsioA); */
-           /* for (int i = 0; i < e.InputBuffers.Length; i++)
-            {
-                int firstMicIndex = angleForm.getSignalManager().ChannelOffset;//2
-                int lastMicIndex = firstMicIndex + channels-1;//5
-                Marshal.Copy(e.InputBuffers[i], buf, 0, micBufferLength);
-                if (i >= firstMicIndex && i <= lastMicIndex) {
-                    Marshal.Copy(e.InputBuffers[i], buf, 0, micBufferLength);
-                    AsioData[i - firstMicIndex].Add(buf);
-                    asioTotalBytesCount[i - firstMicIndex] += buf.Length;
-                        }
-            }*/
+            /* for (int i = 0; i < e.InputBuffers.Length; i++)
+             {
+                 int firstMicIndex = angleForm.getSignalManager().ChannelOffset;//2
+                 int lastMicIndex = firstMicIndex + channels-1;//5
+                 Marshal.Copy(e.InputBuffers[i], buf, 0, micBufferLength);
+                 if (i >= firstMicIndex && i <= lastMicIndex) {
+                     Marshal.Copy(e.InputBuffers[i], buf, 0, micBufferLength);
+                     AsioData[i - firstMicIndex].Add(buf);
+                     asioTotalBytesCount[i - firstMicIndex] += buf.Length;
+                         }
+             }*/
 
             //signalFromMicrophonesA.Add(buf);
-
             e.WrittenToOutputBuffers = true;
 
         }
@@ -608,8 +627,11 @@ namespace MicAngle
             waveInCapturedB = false;
         }
       
-        private int[,] aggregatedArraysToSeparated(List<float[]> arrs,int totalArrayElmCount, int channels)
+        private int[,] aggregatedArraysToSeparated(List<float[]> arrs, int channels)
         {
+            int totalArrayElmCount = 0;
+            foreach (float[] a in arrs) totalArrayElmCount += a.Length;
+
             float[] source = new float[totalArrayElmCount];
             int[,] result = new int[channels, totalArrayElmCount / channels];
             int index = 0;
@@ -636,6 +658,14 @@ namespace MicAngle
             return result;
            
         }
+        public void aggregatedDataTomicSignal()
+        {
+            int MAX_SHIFT_COUNT = 30;
+            int[,] result = aggregatedArraysToSeparated(aggregatedAsio, angleForm.getSignalManager().Channels);
+            if (angleForm.getSignalManager().ConjuctedChannelsIndexes != null && angleForm.getSignalManager().ConjuctedChannelsIndexes.Length > 1)
+                result = angleForm.getSignalManager().alignAndCombineSignalData(result, angleForm.getSignalManager().ConjuctedChannelsIndexes[0], angleForm.getSignalManager().ConjuctedChannelsIndexes[1], MAX_SHIFT_COUNT);
+            MicsSignal = result;
+        }
         private void asio_RecordingStoppedA(object sender, EventArgs e)
         {
             if (this.InvokeRequired)
@@ -648,23 +678,12 @@ namespace MicAngle
                 recAsio = null;
                 //micsSignal = unitePartialMeasurement(signalFromMicrophonesA);
                 // int[,] result = processMultipleChannels(AsioData,BYTES_PER_SAMPLE,true);
-
-
-
-
-               // int[,] result= angleForm.getSignalManager().generateTestMicSignal(2900,4,2,15);
-
-
-                int MAX_SHIFT_COUNT = 30;
-               int[,] result = aggregatedArraysToSeparated(aggregatedAsio, aggregatedAsioCount, angleForm.getSignalManager().Channels);
-                if (angleForm.getSignalManager().ConjuctedChannelsIndexes != null && angleForm.getSignalManager().ConjuctedChannelsIndexes.Length > 1)
-                    result = angleForm.getSignalManager().alignAndCombineSignalData(result, angleForm.getSignalManager().ConjuctedChannelsIndexes[0], angleForm.getSignalManager().ConjuctedChannelsIndexes[1], MAX_SHIFT_COUNT);
-                MicsSignal = result;
-                Console.WriteLine("Arrays aggregated( height:" + result.GetLength(0) + "width: " + result.GetLength(1));
+                // int[,] result= angleForm.getSignalManager().generateTestMicSignal(2900,4,2,15);
+                aggregatedDataTomicSignal();
+               // Console.WriteLine("Arrays aggregated( height:" + result.GetLength(0) + "width: " + result.GetLength(1));
                 //aggregatedAsio
                 int LIMIT = 100000;
-                rtbSignal.Text = MyUtils.arrayToString(result,100000);
-                MicsSignal = result;
+                rtbSignal.Text = MyUtils.arrayToString(MicsSignal, 100000);
                 //rtbSignal.Text = arrayToString(micsSignal, LIMIT);
                 //angleForm.processAngle(micsSignal);
                 //  bufferedWaveProvider.ClearBuffer();
@@ -801,7 +820,6 @@ namespace MicAngle
                         ///
                         AsioData = new List<byte[]>[channels];
                         aggregatedAsio = new List<float[]>(); //LRLRLRLR;
-                        aggregatedAsioCount = 0;
 
                         asioTotalBytesCount = new int[channels];
                         for (int i = 0; i < AsioData.Length; i++)
@@ -829,12 +847,13 @@ namespace MicAngle
                         //recAsio2 = new NAudio.Wave.AsioOut(driverId);
                         //recAsio2.ChannelOffset = 1;
                         NAudio.Wave.WaveFormat formato = new NAudio.Wave.WaveFormat(angleForm.getSignalManager().SamplingRate, channels);
-                        buffer = new NAudio.Wave.BufferedWaveProvider(formato);
+                       // buffer = new NAudio.Wave.BufferedWaveProvider(formato);
+                       // buffer.DiscardOnBufferOverflow = true;
+                        asioDataHandlerThread = new Thread(() => HandleAsioData(aggregatedAsio));
+                        asioDataHandlerThread.Start();
                         recAsio.AudioAvailable += new EventHandler<NAudio.Wave.AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestA);
                         //recAsio2.AudioAvailable += new EventHandler<NAudio.Wave.AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestB);
-
-                        recAsio.InitRecordAndPlayback(null, channels, angleForm.getSignalManager().SamplingRate); //rec channel = 1
-                                                                                                                  // recAsio2.InitRecordAndPlayback(null, angleForm.getSignalManager().Mn.Count, SAMPLING_RATE); //rec channel = 1
+                        recAsio.InitRecordAndPlayback(null, channels, angleForm.getSignalManager().SamplingRate); //rec channel = 1                                                                                       // recAsio2.InitRecordAndPlayback(null, angleForm.getSignalManager().Mn.Count, SAMPLING_RATE); //rec channel = 1
                         recAsio.PlaybackStopped += new EventHandler<StoppedEventArgs>(asio_RecordingStoppedA);
                         recAsio.Play();
                         //recAsio2.Play();
