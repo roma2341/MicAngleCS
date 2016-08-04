@@ -141,8 +141,9 @@ namespace MicAngle
                 recAsio.Stop();
                 //recAsio2.Stop();
             }
+            toggleRecordButton();
             //stringDataToChart(fileContentStrAsioA + '\n' + fileContentStrAsioB);
-          
+
         }
         void waveIn_DataAvailableA(object sender, WaveInEventArgs e)
         {
@@ -209,14 +210,14 @@ namespace MicAngle
             }
             asioInvocesCount1++;
             Console.WriteLine("asioInvocesCount:" + asioInvocesCount1);
-            if (asioInvocesCount1 < 30)
+         /*   if (asioInvocesCount1 < 30)
             {
                 return;
             }
             else
             {
                 asioInvocesCount1=0;
-            }
+            }*/
             int channels = angleForm.getSignalManager().Channels;
             int[,] signalFromMics = new int[e.InputBuffers.Length, e.SamplesPerBuffer/2];
             byte[] buf = new byte[e.SamplesPerBuffer];
@@ -745,6 +746,10 @@ namespace MicAngle
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+            BeginRecording();
+        }
+        public void BeginRecording()
+        {
             int channels = angleForm.getSignalManager().Channels;
             //  cntEvent.Wait();
             if (!isRecording)
@@ -762,14 +767,14 @@ namespace MicAngle
 
                     if (rbWaveIn.Checked)
                     {
-                      //  MessageBox.Show("Start Recording");
+                        //  MessageBox.Show("Start Recording");
 
-                            Thread.CurrentThread.IsBackground = true;
-                            waveInA = new WaveInEvent();
-                            waveInB = new WaveInEvent();
-                            //Дефолтное устройство для записи (если оно имеется)
-                            waveInA.DeviceNumber = deviceIdA;
-                            waveInB.DeviceNumber = deviceIdB;
+                        Thread.CurrentThread.IsBackground = true;
+                        waveInA = new WaveInEvent();
+                        waveInB = new WaveInEvent();
+                        //Дефолтное устройство для записи (если оно имеется)
+                        waveInA.DeviceNumber = deviceIdA;
+                        waveInB.DeviceNumber = deviceIdB;
                         //Прикрепляем к событию DataAvailable обработчик, возникающий при наличии записываемых данных
                         waveInA.DataAvailable += new EventHandler<WaveInEventArgs>(waveIn_DataAvailableA);
                         waveInB.DataAvailable += new EventHandler<WaveInEventArgs>(waveIn_DataAvailableB);
@@ -795,7 +800,7 @@ namespace MicAngle
                         ///ASIO
                         ///
                         AsioData = new List<byte[]>[channels];
-                       aggregatedAsio = new List<float[]>(); //LRLRLRLR;
+                        aggregatedAsio = new List<float[]>(); //LRLRLRLR;
                         aggregatedAsioCount = 0;
 
                         asioTotalBytesCount = new int[channels];
@@ -804,41 +809,36 @@ namespace MicAngle
                             AsioData[i] = new List<byte[]>();
                             asioTotalBytesCount[i] = 0;
                         }
-                       
+
 
                         recAsio = new NAudio.Wave.AsioOut(driverId);
-                       
+
                         Console.WriteLine("|||||||||||||||||||||||||||||||||||||||||||||");
                         Console.WriteLine("Input channels:");
-                       for (int i = 0; i < recAsio.DriverInputChannelCount; i++)
+                        for (int i = 0; i < recAsio.DriverInputChannelCount; i++)
                         {
 
-                                Console.WriteLine(recAsio.AsioInputChannelName(i));
+                            Console.WriteLine(recAsio.AsioInputChannelName(i));
                         }
                         Console.WriteLine("Output channels:");
                         for (int i = 0; i < recAsio.DriverOutputChannelCount; i++)
                         {
-                                Console.WriteLine(recAsio.AsioOutputChannelName(i));
+                            Console.WriteLine(recAsio.AsioOutputChannelName(i));
                         }
                         Console.WriteLine("|||||||||||||||||||||||||||||||||||||||||||||");
                         //recAsio2 = new NAudio.Wave.AsioOut(driverId);
                         //recAsio2.ChannelOffset = 1;
                         NAudio.Wave.WaveFormat formato = new NAudio.Wave.WaveFormat(angleForm.getSignalManager().SamplingRate, channels);
-                       buffer = new NAudio.Wave.BufferedWaveProvider(formato);
+                        buffer = new NAudio.Wave.BufferedWaveProvider(formato);
                         recAsio.AudioAvailable += new EventHandler<NAudio.Wave.AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestA);
                         //recAsio2.AudioAvailable += new EventHandler<NAudio.Wave.AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestB);
-                      
+
                         recAsio.InitRecordAndPlayback(null, channels, angleForm.getSignalManager().SamplingRate); //rec channel = 1
-                                                                                      // recAsio2.InitRecordAndPlayback(null, angleForm.getSignalManager().Mn.Count, SAMPLING_RATE); //rec channel = 1
+                                                                                                                  // recAsio2.InitRecordAndPlayback(null, angleForm.getSignalManager().Mn.Count, SAMPLING_RATE); //rec channel = 1
                         recAsio.PlaybackStopped += new EventHandler<StoppedEventArgs>(asio_RecordingStoppedA);
                         recAsio.Play();
                         //recAsio2.Play();
                     }
-                    
-
-
-
-
                     //soundDisplayTimer.Start();
                 }
                 catch (Exception ex)
@@ -847,7 +847,6 @@ namespace MicAngle
             else
             {
                 StopRecording();
-                toggleRecordButton();
             }
         }
 

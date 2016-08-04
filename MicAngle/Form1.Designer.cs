@@ -42,6 +42,10 @@
             this.rbMicPares = new System.Windows.Forms.RadioButton();
             this.btnToggleRecordForm = new System.Windows.Forms.Button();
             this.btnToggleMap = new System.Windows.Forms.Button();
+            this.tbIterationsCount = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tbProcessingDelay = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -103,6 +107,10 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this.label3);
+            this.splitContainer1.Panel2.Controls.Add(this.tbProcessingDelay);
+            this.splitContainer1.Panel2.Controls.Add(this.label2);
+            this.splitContainer1.Panel2.Controls.Add(this.tbIterationsCount);
             this.splitContainer1.Panel2.Controls.Add(this.label1);
             this.splitContainer1.Panel2.Controls.Add(this.groupBox1);
             this.splitContainer1.Panel2.Controls.Add(this.btnToggleRecordForm);
@@ -147,7 +155,7 @@
             // 
             this.groupBox1.Controls.Add(this.rbMicRow);
             this.groupBox1.Controls.Add(this.rbMicPares);
-            this.groupBox1.Location = new System.Drawing.Point(669, 29);
+            this.groupBox1.Location = new System.Drawing.Point(729, 29);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(127, 73);
             this.groupBox1.TabIndex = 7;
@@ -196,6 +204,38 @@
             this.btnToggleMap.UseVisualStyleBackColor = true;
             this.btnToggleMap.Click += new System.EventHandler(this.btnToggleMap_Click);
             // 
+            // tbIterationsCount
+            // 
+            this.tbIterationsCount.Location = new System.Drawing.Point(644, 31);
+            this.tbIterationsCount.Name = "tbIterationsCount";
+            this.tbIterationsCount.Size = new System.Drawing.Size(79, 20);
+            this.tbIterationsCount.TabIndex = 9;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(644, 8);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(47, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Ітерацій";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(644, 65);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(77, 13);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Затримка(мс)";
+            // 
+            // tbProcessingDelay
+            // 
+            this.tbProcessingDelay.Location = new System.Drawing.Point(644, 88);
+            this.tbProcessingDelay.Name = "tbProcessingDelay";
+            this.tbProcessingDelay.Size = new System.Drawing.Size(79, 20);
+            this.tbProcessingDelay.TabIndex = 11;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -230,6 +270,10 @@
         private System.Windows.Forms.RadioButton rbMicPares;
         public System.Windows.Forms.RadioButton rbMicRow;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox tbProcessingDelay;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox tbIterationsCount;
     }
 }
 

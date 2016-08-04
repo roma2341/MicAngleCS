@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
@@ -309,10 +310,39 @@ namespace MicAngle
 
         private void btnProcessAngle_Click(object sender, EventArgs e)
         {
-            if (rbMicPares.Checked)
-            processAngle(recordForm.MicsSignal);
-            else
-            processAngleAllTogether(recordForm.MicsSignal);
+            string iterationsCountStr = tbIterationsCount.Text;
+            string processingDelaysMsStr = tbProcessingDelay.Text;
+            bool micParesChecked = rbMicPares.Checked;
+            int[,] micsSignal = recordForm.MicsSignal;
+            int processingDelayMs = 1000;
+            int.TryParse(processingDelaysMsStr, out processingDelayMs);
+            int iterationsCount = 0;
+            int.TryParse(iterationsCountStr, out iterationsCount);
+
+            new Thread(() => 
+            {
+                Thread.CurrentThread.IsBackground = true;
+                /* my code here */
+                for (int i = 0; i < iterationsCount; i++)
+                {
+                    this.BeginInvoke(new MethodInvoker(delegate
+                    {
+                        if (micParesChecked)
+                            processAngle(micsSignal);
+                        else
+                            processAngleAllTogether(micsSignal);
+                    }));
+                    Thread.Sleep(processingDelayMs);
+                }
+            }).Start();
+            if (iterationsCount == 0)
+            {
+                if (micParesChecked)
+                    processAngle(micsSignal);
+                else
+                    processAngleAllTogether(micsSignal);
+            }
+        
         }
         private void displayCorrelationStatistic()
         {
