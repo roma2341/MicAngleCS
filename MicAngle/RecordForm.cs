@@ -39,7 +39,7 @@ namespace MicAngle
         public int[,] MicsSignal;
 
         List<byte[]>[] AsioData;
-       volatile List<float[]> aggregatedAsio; //LRLRLRLR;
+        List<float[]> aggregatedAsio; //LRLRLRLR;
         private Object aggregatedAsioLock_ = new object();
         int[] asioTotalBytesCount;
         //List<int[,]> signalFromMicrophones;
@@ -109,18 +109,24 @@ namespace MicAngle
 
             
         }
-
+       volatile bool isHandlingAsioDataThreadEnabled = false;
+       public void FinishHandlingAsioData()
+        {
+            isHandlingAsioDataThreadEnabled = false;
+            asioDataHandlerThread = null;
+        }
        public void HandleAsioData(List<float[]> aggregatedAsio)
         {
-            while (true) { 
+            isHandlingAsioDataThreadEnabled = true;
+            while (isHandlingAsioDataThreadEnabled) { 
             lock (aggregatedAsioLock_)
             {
-                Console.WriteLine("HandleAsioData aggregatedAsio length:"+ aggregatedAsio.Count);
+                //Console.WriteLine("HandleAsioData aggregatedAsio length:"+ aggregatedAsio.Count);
                     //TODO
                     aggregatedDataTomicSignal();
                 aggregatedAsio.Clear();
             }
-            Thread.Sleep(100);
+            Thread.Sleep(1000);
             }
         }
 
@@ -152,6 +158,7 @@ namespace MicAngle
             else
             {
                 recAsio.Stop();
+                FinishHandlingAsioData();
                 //recAsio2.Stop();
             }
             toggleRecordButton();
@@ -386,7 +393,7 @@ namespace MicAngle
             int samplesCount = e.SamplesPerBuffer*angleForm.getSignalManager().Channels;
             float[] interlivedAsioSamples = new float[samplesCount];
             e.GetAsInterleavedSamples(interlivedAsioSamples);
-            Console.WriteLine("Aggregated buffer size:" + aggregatedAsio.Count);
+            //Console.WriteLine("Aggregated buffer size:" + aggregatedAsio.Count);
             lock (aggregatedAsioLock_) {
             aggregatedAsio.Add(interlivedAsioSamples);
             }

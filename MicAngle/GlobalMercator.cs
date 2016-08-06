@@ -20,7 +20,6 @@ namespace MicAngle
         //Converts given lat/lon in WGS84 Datum to XY in Spherical Mercator EPSG:900913
         public static Point LatLonToMeters(double lon, double lat)
         {
-            Console.WriteLine("LatLonToMeters lat:" + lat+ " lon:" + lon);
             var p = new Point();
             p.X = lon * OriginShift / 180;
             p.Y = Math.Log(Math.Tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180);

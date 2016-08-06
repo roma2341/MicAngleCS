@@ -365,22 +365,13 @@ namespace MicAngle
             }
             if (cosA > 1)
                 success = false;
-            Console.Out.WriteLine(" MAX_SUM:" + maxValue +
-" MAX_INDEX:" + maxIndex);
-
-
-
             //buffer=savedBuffer;
-
-
             /*for (int i = 0; i < buf.GetLength(0); i++)
             {
                 for (int j = 0; j < buf.GetLength(1); j++)
                     buf[i,j] = bufSaved[i,j];
             }*/
             //Array.Copy(bufSaved, 0, buf, 0, bufSaved.Length);
-
-
             return result;
         }
 

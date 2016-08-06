@@ -268,6 +268,8 @@ namespace MicAngle
             series.Color = Color.Blue;
             long yMin = (maxesRight.Min() < maxesLeft.Min()) ? maxesRight.Min() : maxesLeft.Min();
             long yMax = (maxesRight.Max() > maxesLeft.Max()) ? maxesRight.Max() : maxesLeft.Max();
+            this.chartMaximum.ChartAreas[0].AxisY.Maximum = yMax;
+            this.chartMaximum.ChartAreas[0].AxisY.Minimum = yMin;
 
             for (int i = lastShiftIndex; i >= 0; i--)
             {
@@ -282,12 +284,10 @@ namespace MicAngle
             for (int i = 0; i <= lastShiftIndex; i++)
             {
                 long value = maxesRight[i];
-              //  Console.WriteLine(String.Format("x:{0} y:{1}", i, value));
                 if (value >= yMax)
                     seriesOfMax.Points.AddXY(i, value);
                 else
                     series.Points.AddXY(i, value);
-                // Console.WriteLine("series max[ " + i + "]=" + maxes[i+ SHIFT_COUNT]);
             }
 
             this.chartMaximum.ChartAreas[0].AxisY.Minimum = yMin;
@@ -313,7 +313,7 @@ namespace MicAngle
             string iterationsCountStr = tbIterationsCount.Text;
             string processingDelaysMsStr = tbProcessingDelay.Text;
             bool micParesChecked = rbMicPares.Checked;
-            int[,] micsSignal = recordForm.MicsSignal;
+         
             int processingDelayMs = 1000;
             int.TryParse(processingDelaysMsStr, out processingDelayMs);
             int iterationsCount = 0;
@@ -325,18 +325,31 @@ namespace MicAngle
                 /* my code here */
                 for (int i = 0; i < iterationsCount; i++)
                 {
-                    this.BeginInvoke(new MethodInvoker(delegate
+                    int[,] micsSignal = recordForm.MicsSignal;
+                    if (this.InvokeRequired)
+                    {
+                        this.BeginInvoke(new MethodInvoker(delegate
+                        {
+                            if (micParesChecked)
+                                processAngle(micsSignal);
+                            else
+                                processAngleAllTogether(micsSignal);
+                        }));
+                    }
+                    else
                     {
                         if (micParesChecked)
                             processAngle(micsSignal);
                         else
                             processAngleAllTogether(micsSignal);
-                    }));
+                    }
+                 
                     Thread.Sleep(processingDelayMs);
                 }
             }).Start();
             if (iterationsCount == 0)
             {
+                int[,] micsSignal = recordForm.MicsSignal;
                 if (micParesChecked)
                     processAngle(micsSignal);
                 else
@@ -460,8 +473,8 @@ namespace MicAngle
                 double V = 340;
                 double t = distanceToZero / V; // t = S / v
                 double k = 44100 * t;
-                Console.WriteLine(String.Format("X:{0} Y:{1} DISTANCE_TO_ZERO:{2} K:{3} ANGLE:{4}",
-                    current_x, current_y, distanceToZero,k, i));
+               /* Console.WriteLine(String.Format("X:{0} Y:{1} DISTANCE_TO_ZERO:{2} K:{3} ANGLE:{4}",
+                    current_x, current_y, distanceToZero,k, i));*/
                 current_x+= x_step;
             }
 
