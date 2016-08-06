@@ -400,6 +400,8 @@ namespace MicAngle
             this.chartMaximum.ChartAreas[0].AxisX.Maximum = correlationDetailsPositive.GetLength(1) ;
             this.chartMaximum.ChartAreas[0].AxisX.Minimum = -correlationDetailsPositive.GetLength(1) ;
             this.chartMaximum.ChartAreas[0].AxisX.Interval = 1;
+            if (maxY == minY) maxY += 100;
+            minY -= 100;
             this.chartMaximum.ChartAreas[0].AxisY.Maximum = maxY;
             this.chartMaximum.ChartAreas[0].AxisY.Minimum = minY;
             Series seriesOfMaximum = new Series("Максимуми");
