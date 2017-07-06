@@ -102,9 +102,9 @@ namespace SimpleAngle
             int i = 0;
             for (int sample = 0; sample < buffer.Length / 4; sample++)
             {
-                result[0,i] = BitConverter.ToInt16(buffer, i);
+                result[0, sample] = BitConverter.ToInt16(buffer, i);
                 i += 2;
-                result[1,i] = BitConverter.ToInt16(buffer, i);
+                result[1, sample] = BitConverter.ToInt16(buffer, i);
                 i += 2;
             }
             return result;
