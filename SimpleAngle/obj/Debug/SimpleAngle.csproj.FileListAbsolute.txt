@@ -1,0 +1,11 @@
+C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\bin\Debug\SimpleAngle.exe.config
+C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.csprojResolveAssemblyReference.cache
+C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.Form1.resources
+C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.Properties.Resources.resources
+C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.csproj.GenerateResource.Cache
+C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\bin\Debug\SimpleAngle.exe
+C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\bin\Debug\SimpleAngle.pdb
+C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\bin\Debug\NAudio.dll
+C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\bin\Debug\NAudio.xml
+C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.exe
+C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.pdb
