@@ -90,6 +90,21 @@ namespace SimpleAngle
                }
                System.IO.File.WriteAllText("WaveInSignal.txt", ouputStr);*/
             int[,] signalFromMics = convertByteArrayToChanneled(e.Buffer,2);
+
+            for (int i = 0; i < signalFromMics.GetLength(0); i++)
+            {
+                signalChart.Series[i].Points.Clear();
+            }
+              
+            for (int i = 0; i < signalFromMics.GetLength(0); i++) {
+                Console.WriteLine("i:" + i);
+                for (int j = 0; i < signalFromMics.GetLength(1)/10; j++)
+                {
+                    Console.WriteLine("j:" + j);
+                    signalChart.Series[i].Points.AddXY(i, signalFromMics[i, j]);
+                }
+             }
+            
             // signalFromMicrophones.Add(signalFromMics);
             //angleForm.processAngle(signalFromMics);               
             // Thread.Sleep(4000);
@@ -152,8 +167,8 @@ namespace SimpleAngle
                         //Формат wav-файла - принимает параметры - частоту дискретизации и количество каналов(здесь mono)
                         waveInA.WaveFormat = new WaveFormat(SAMPLING_RATE, CHANNELS);
                        // waveInB.WaveFormat = new WaveFormat(angleForm.getSignalManager().SamplingRate, angleForm.getSignalManager().Channels);
-                        waveInA.BufferMilliseconds = 100;
-                        waveInB.BufferMilliseconds = 100;
+                        waveInA.BufferMilliseconds = 1000;
+                        waveInB.BufferMilliseconds = 1000;
                         //Инициализируем объект WaveFileWriter
                         // writer = new WaveFileWriter(outputFilename, waveIn.WaveFormat);
                         //Начало записи
