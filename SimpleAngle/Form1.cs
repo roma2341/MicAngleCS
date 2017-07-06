@@ -97,18 +97,35 @@ namespace SimpleAngle
             }
               
             for (int i = 0; i < signalFromMics.GetLength(0); i++) {
-                Console.WriteLine("i:" + i);
-                for (int j = 0; i < signalFromMics.GetLength(1)/10; j++)
+               // Console.WriteLine("i:" + i);
+                for (int j = 0; j < signalFromMics.GetLength(1)/10; j++)
                 {
-                    Console.WriteLine("j:" + j);
-                    signalChart.Series[i].Points.AddXY(i, signalFromMics[i, j]);
+                   // Console.WriteLine("j:" + j);
+                    signalChart.Series[i].Points.AddXY(j, signalFromMics[i, j]);
                 }
              }
-            
+
+            int[] correlations = generateCorrelationArray ()
+
             // signalFromMicrophones.Add(signalFromMics);
             //angleForm.processAngle(signalFromMics);               
             // Thread.Sleep(4000);
             // bufferedWaveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
+        }
+
+        public int[] generateCorrelationArray(int [,] twoDimensional,int shifts)
+        {
+            int[] result = new int[shifts];
+            for (int shiftIndex = 0; shiftIndex < shifts; shiftIndex++) {
+                int summa = 0; 
+            for (var i = 0; i < twoDimensional.GetLength(1); i++)
+                {
+                    summa += twoDimensional[0, shiftIndex] * twoDimensional[1, shiftIndex + shiftIndex];
+                }
+                result[shiftIndex] = summa;
+            }
+            return result;
+            
         }
 
         public int[,] convertByteArrayToChanneled(byte[] buffer,int channels)
