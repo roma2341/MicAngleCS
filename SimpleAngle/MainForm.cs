@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace SimpleAngle
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         WaveInEvent waveInA, waveInB;
 
@@ -23,24 +23,96 @@ namespace SimpleAngle
 
         Stopwatch stopwatch;
 
-        public Form1()
+        const int MICROPHONES_COUNT = 2;
+        List<CheckBox> signalChartCheckBoxes;
+        List<CheckBox> correlationChartCheckBoxes;
+
+        public MainForm()
         {
             InitializeComponent();
+            initDynamicCheckBoxes();
+
             int waveInDevicesCount = WaveIn.DeviceCount;
             for (int uDeviceID = 0; uDeviceID < waveInDevicesCount; uDeviceID++)
             {
                 WaveInCapabilities waveInCaps = WaveIn.GetCapabilities(uDeviceID);
                 String productName = waveInCaps.ProductName;
                 comboWaveInDeviceA.Items.Add(productName);
-               // comboWaveInDeviceB.Items.Add(productName);
+                comboWaveInDeviceB.Items.Add(productName);
             }
 
 
             comboWaveInDeviceA.SelectedIndex = 0;
-           /* if (waveInDevicesCount > 1)
+            if (waveInDevicesCount > 1)
                 comboWaveInDeviceB.SelectedIndex = 1;
             else
-                comboWaveInDeviceB.SelectedIndex = 0;*/
+                comboWaveInDeviceB.SelectedIndex = 0;
+        }
+
+
+        /*CONTROL VISIBILITY OF SERIES*/
+
+        private void updateSignalSeriesVisibility()
+        {
+            for (var i = 0; i < MICROPHONES_COUNT; i++)
+            {
+                signalChart.Series[i].Enabled = signalChartCheckBoxes[i].Checked;
+            }
+        }
+
+        private void updateCorrelationSeriesVisibility()
+        {
+            for (var i = 0; i < MICROPHONES_COUNT; i++)
+            {
+                correlationChart.Series[i].Enabled = correlationChartCheckBoxes[i].Checked;
+            }
+        }
+
+
+        private void signalCheckBoxClickEventHandler(object sender, EventArgs e)
+        {
+            updateSignalSeriesVisibility();
+        }
+
+        private void correlationCheckBoxClickEventHandler(object sender, EventArgs e)
+        {
+            updateCorrelationSeriesVisibility();
+        }
+
+        private void initDynamicCheckBoxes()
+        {
+            signalChartCheckBoxes = new List<CheckBox>();
+            correlationChartCheckBoxes = new List<CheckBox>();
+
+            for (var i = 0; i < MICROPHONES_COUNT; i++)
+            {
+
+                CheckBox cb = prepareCheckbox(i);
+                cb.CheckedChanged += signalCheckBoxClickEventHandler;
+
+                signalChartCheckBoxes.Add(cb);
+                signalChartGroupBox.Controls.Add(cb);
+            }
+            for (var i = 0; i < MICROPHONES_COUNT; i++)
+            {
+                CheckBox cb = prepareCheckbox(i);
+                cb.CheckedChanged += correlationCheckBoxClickEventHandler;
+
+                correlationChartCheckBoxes.Add(cb);
+                correlationChartGroupBox.Controls.Add(cb);
+            }
+        }
+
+        private CheckBox prepareCheckbox(int index)
+        {
+            int micNumber = index + 1;
+            String name = "Mic" + micNumber;
+            CheckBox cb = new CheckBox();
+            cb.Checked = true;
+            cb.Text = name;
+            cb.Name = name;
+            cb.Location = new Point(10, index * cb.Height);
+            return cb;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -57,7 +129,6 @@ namespace SimpleAngle
 
         void StopRecording()
         {
-            const int BYTE_IN_SAMPLE = 2;
             //MessageBox.Show("StopRecording");
                 waveInA.StopRecording();
                 //waveInB.StopRecording();
@@ -89,13 +160,19 @@ namespace SimpleAngle
                    ouputStr += e.Buffer[i]+" ";
                }
                System.IO.File.WriteAllText("WaveInSignal.txt", ouputStr);*/
-            int[,] signalFromMics = convertByteArrayToChanneled(e.Buffer,2);
+            int[,] signalFromMics = DataCorrelation.convertByteArrayToChanneled(e.Buffer,2);
 
+            //clear chatrts part
             for (int i = 0; i < signalFromMics.GetLength(0); i++)
             {
                 signalChart.Series[i].Points.Clear();
             }
-              
+            for (int i = 0; i < signalFromMics.GetLength(0); i++)
+            {
+                correlationChart.Series[i].Points.Clear();
+            }
+
+            //fill data part
             for (int i = 0; i < signalFromMics.GetLength(0); i++) {
                // Console.WriteLine("i:" + i);
                 for (int j = 0; j < signalFromMics.GetLength(1)/10; j++)
@@ -105,7 +182,13 @@ namespace SimpleAngle
                 }
              }
 
-            int[] correlations = generateCorrelationArray ()
+            int[] correlations = DataCorrelation.generateCorrelationArray(signalFromMics,40);
+
+            for (int i = 0; i < correlations.Length; i++)
+            {
+                // Console.WriteLine("j:" + j);
+                correlationChart.Series[0].Points.AddXY(i, correlations[i]);
+            }
 
             // signalFromMicrophones.Add(signalFromMics);
             //angleForm.processAngle(signalFromMics);               
@@ -113,34 +196,8 @@ namespace SimpleAngle
             // bufferedWaveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
         }
 
-        public int[] generateCorrelationArray(int [,] twoDimensional,int shifts)
-        {
-            int[] result = new int[shifts];
-            for (int shiftIndex = 0; shiftIndex < shifts; shiftIndex++) {
-                int summa = 0; 
-            for (var i = 0; i < twoDimensional.GetLength(1); i++)
-                {
-                    summa += twoDimensional[0, shiftIndex] * twoDimensional[1, shiftIndex + shiftIndex];
-                }
-                result[shiftIndex] = summa;
-            }
-            return result;
-            
-        }
 
-        public int[,] convertByteArrayToChanneled(byte[] buffer,int channels)
-        {
-            int[,] result = new int[channels, buffer.Length / 2];
-            int i = 0;
-            for (int sample = 0; sample < buffer.Length / 4; sample++)
-            {
-                result[0, sample] = BitConverter.ToInt16(buffer, i);
-                i += 2;
-                result[1, sample] = BitConverter.ToInt16(buffer, i);
-                i += 2;
-            }
-            return result;
-        }
+       
 
         private void waveIn_RecordingStoppedA(object sender, EventArgs e)
         {

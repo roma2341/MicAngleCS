@@ -9,3 +9,14 @@ C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\bin\Debug\NAudio.dll
 C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\bin\Debug\NAudio.xml
 C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.exe
 C:\Users\Zeon002\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.pdb
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\bin\Debug\SimpleAngle.exe.config
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.exe
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.pdb
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\bin\Debug\SimpleAngle.exe
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\bin\Debug\SimpleAngle.pdb
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\bin\Debug\NAudio.dll
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\bin\Debug\NAudio.xml
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.csprojResolveAssemblyReference.cache
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.Properties.Resources.resources
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.csproj.GenerateResource.Cache
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.MainForm.resources
