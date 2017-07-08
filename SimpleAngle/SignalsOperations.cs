@@ -13,5 +13,7 @@ namespace SimpleAngle
             const int SOUND_SPEED = 340;
             return (int)Math.Ceiling(micDistanceDelta * samplingRate / SOUND_SPEED);
         }
+
+
     }
 }

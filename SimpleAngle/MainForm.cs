@@ -19,6 +19,7 @@ namespace SimpleAngle
         const int SAMPLING_RATE = 44100;
         const int CHANNELS = 2;
         const int MICROPHONES_COUNT = 2;
+        const double MICROPHONE_DISTANCE = 0.5; //Meters
 
 
         WaveInEvent waveInA, waveInB;
@@ -189,12 +190,21 @@ namespace SimpleAngle
                 }
              }
 
-            int[] correlations = DataCorrelation.generateCorrelationArray(signalFromMics,40);
+            int maxShift = SignalsOperations.processMaxShiftsCount(MICROPHONE_DISTANCE,SAMPLING_RATE);
+            int[] shiftsCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, maxShift, maxShift);
+            int[] backwardShiftCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, maxShift, maxShift,true);
 
-            for (int i = 0; i < correlations.Length; i++)
+            for (int i = 0; i < backwardShiftCorrelation.Length; i++)
             {
                 // Console.WriteLine("j:" + j);
-                correlationChart.Series[0].Points.AddXY(i, correlations[i]);
+                int index = backwardShiftCorrelation.Length - i -1;
+                correlationChart.Series[0].Points.AddXY(-index, backwardShiftCorrelation[i]);
+            }
+
+            for (int i = 0; i < shiftsCorrelation.Length; i++)
+            {
+                // Console.WriteLine("j:" + j);
+                correlationChart.Series[0].Points.AddXY(i, shiftsCorrelation[i]);
             }
 
             // signalFromMicrophones.Add(signalFromMics);
