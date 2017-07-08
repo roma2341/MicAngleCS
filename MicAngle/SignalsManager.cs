@@ -404,7 +404,7 @@ namespace MicAngle
             Dictionary<int, int>[] anglesShift = processShiftForAngles(90);
             success = true;
             int correlationStatisticSize = (buf.GetLength(0) - 1) ;//TODO
-            int MAXIMAL_SHIFT_TO_SAVE = 91;
+            int MAXIMAL_SHIFT_TO_SAVE = 41;
             correlationDetailsPositive = new long[buf.GetLength(0), MAXIMAL_SHIFT_TO_SAVE];
             correlationDetailsNegative = new long[buf.GetLength(0), MAXIMAL_SHIFT_TO_SAVE];
             CorrelationStatistic[] maxCorrelationValues = new CorrelationStatistic[correlationStatisticSize];//N-1 where N is microphones count;
@@ -413,7 +413,7 @@ namespace MicAngle
                 double maxDistance = 0;
                 int maxShiftsCount = getMaxMicDelay(0, i, out maxDistance);
                 Console.WriteLine("max shift count:" + maxShiftsCount);
-                int degrees = anglesShift[0].Keys.Count;
+                int degrees = anglesShift[0].Keys.Count > MAXIMAL_SHIFT_TO_SAVE ? MAXIMAL_SHIFT_TO_SAVE : anglesShift[0].Keys.Count;
                 long currentMicsPareMaxCorrelationValue = 0;
                 int currentMicsPareMaxCorrelationShift = 0;
                 for (int j = 0; j < degrees; j++)
