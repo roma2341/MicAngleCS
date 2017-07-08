@@ -16,14 +16,18 @@ namespace SimpleAngle
 {
     public partial class MainForm : Form
     {
-        WaveInEvent waveInA, waveInB;
-
         const int SAMPLING_RATE = 44100;
         const int CHANNELS = 2;
+        const int MICROPHONES_COUNT = 2;
+
+
+        WaveInEvent waveInA, waveInB;
+        bool isRecording = false;
+
+
 
         Stopwatch stopwatch;
 
-        const int MICROPHONES_COUNT = 2;
         List<CheckBox> signalChartCheckBoxes;
         List<CheckBox> correlationChartCheckBoxes;
 
@@ -115,12 +119,15 @@ namespace SimpleAngle
             return cb;
         }
 
+
+
+
         private void button1_Click(object sender, EventArgs e)
         {
             BeginRecording();
         }
 
-        bool isRecording = false;
+
 
         public void toggleRecordButton()
         {

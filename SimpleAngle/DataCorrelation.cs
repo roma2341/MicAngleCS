@@ -30,7 +30,7 @@ namespace SimpleAngle
         {
             int[,] result = new int[channels, buffer.Length / channels];
             int i = 0;
-            for (int sample = 0; sample < buffer.Length / channels * BYTE_IN_SAMPLE; sample++)
+            for (int sample = 0; sample < buffer.Length / (channels * BYTE_IN_SAMPLE); sample++)
             {
                 result[0, sample] = BitConverter.ToInt16(buffer, i);
                 i += BYTE_IN_SAMPLE;
