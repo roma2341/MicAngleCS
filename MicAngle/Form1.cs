@@ -497,5 +497,6 @@ namespace MicAngle
             }
             recordFormShowed = !recordFormShowed;
         }
+
     }
 }

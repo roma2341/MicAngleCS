@@ -53,6 +53,7 @@
             this.btnSignalToChart = new System.Windows.Forms.Button();
             this.comboWaveInDeviceB = new System.Windows.Forms.ComboBox();
             this.btnTextInputToChart = new System.Windows.Forms.Button();
+            this.buttonMictest = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chart3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartSignal)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -234,11 +235,22 @@
             this.btnTextInputToChart.UseVisualStyleBackColor = true;
             this.btnTextInputToChart.Click += new System.EventHandler(this.btnTextInputToChart_Click);
             // 
+            // buttonMictest
+            // 
+            this.buttonMictest.Location = new System.Drawing.Point(416, 611);
+            this.buttonMictest.Name = "buttonMictest";
+            this.buttonMictest.Size = new System.Drawing.Size(75, 23);
+            this.buttonMictest.TabIndex = 17;
+            this.buttonMictest.Text = "Mictest";
+            this.buttonMictest.UseVisualStyleBackColor = true;
+            this.buttonMictest.Click += new System.EventHandler(this.buttonMictest_Click);
+            // 
             // RecordForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(893, 651);
+            this.Controls.Add(this.buttonMictest);
             this.Controls.Add(this.btnTextInputToChart);
             this.Controls.Add(this.comboWaveInDeviceB);
             this.Controls.Add(this.btnSignalToChart);
@@ -273,5 +285,6 @@
         private System.Windows.Forms.Button btnSignalToChart;
         private System.Windows.Forms.ComboBox comboWaveInDeviceB;
         private System.Windows.Forms.Button btnTextInputToChart;
+        private System.Windows.Forms.Button buttonMictest;
     }
 }

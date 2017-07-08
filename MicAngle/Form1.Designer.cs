@@ -36,16 +36,16 @@
             this.lblResult = new System.Windows.Forms.Label();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.chartMaximum = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.label3 = new System.Windows.Forms.Label();
+            this.tbProcessingDelay = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.tbIterationsCount = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbMicRow = new System.Windows.Forms.RadioButton();
             this.rbMicPares = new System.Windows.Forms.RadioButton();
             this.btnToggleRecordForm = new System.Windows.Forms.Button();
             this.btnToggleMap = new System.Windows.Forms.Button();
-            this.tbIterationsCount = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.tbProcessingDelay = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -142,6 +142,38 @@
             this.chartMaximum.TabIndex = 1;
             this.chartMaximum.Text = "chart1";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(644, 65);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(77, 13);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Затримка(мс)";
+            // 
+            // tbProcessingDelay
+            // 
+            this.tbProcessingDelay.Location = new System.Drawing.Point(644, 88);
+            this.tbProcessingDelay.Name = "tbProcessingDelay";
+            this.tbProcessingDelay.Size = new System.Drawing.Size(79, 20);
+            this.tbProcessingDelay.TabIndex = 11;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(644, 8);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(47, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Ітерацій";
+            // 
+            // tbIterationsCount
+            // 
+            this.tbIterationsCount.Location = new System.Drawing.Point(644, 31);
+            this.tbIterationsCount.Name = "tbIterationsCount";
+            this.tbIterationsCount.Size = new System.Drawing.Size(79, 20);
+            this.tbIterationsCount.TabIndex = 9;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -203,38 +235,6 @@
             this.btnToggleMap.Text = "Показати карту";
             this.btnToggleMap.UseVisualStyleBackColor = true;
             this.btnToggleMap.Click += new System.EventHandler(this.btnToggleMap_Click);
-            // 
-            // tbIterationsCount
-            // 
-            this.tbIterationsCount.Location = new System.Drawing.Point(644, 31);
-            this.tbIterationsCount.Name = "tbIterationsCount";
-            this.tbIterationsCount.Size = new System.Drawing.Size(79, 20);
-            this.tbIterationsCount.TabIndex = 9;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(644, 8);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(47, 13);
-            this.label2.TabIndex = 10;
-            this.label2.Text = "Ітерацій";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(644, 65);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(77, 13);
-            this.label3.TabIndex = 12;
-            this.label3.Text = "Затримка(мс)";
-            // 
-            // tbProcessingDelay
-            // 
-            this.tbProcessingDelay.Location = new System.Drawing.Point(644, 88);
-            this.tbProcessingDelay.Name = "tbProcessingDelay";
-            this.tbProcessingDelay.Size = new System.Drawing.Size(79, 20);
-            this.tbProcessingDelay.TabIndex = 11;
             // 
             // Form1
             // 

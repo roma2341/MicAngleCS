@@ -770,6 +770,32 @@ namespace MicAngle
             stringDataToChart(rtbSignal.Text);
         }
 
+        private void buttonMictest_Click(object sender, EventArgs e)
+        {
+            int channels = angleForm.getSignalManager().Channels;
+            int driverId = comboAsioDrivers.SelectedIndex;
+            AsioData = new List<byte[]>[channels];
+            aggregatedAsio = new List<float[]>(); //LRLRLRLR;
+
+            asioTotalBytesCount = new int[channels];
+            for (int i = 0; i < AsioData.Length; i++)
+            {
+                AsioData[i] = new List<byte[]>();
+                asioTotalBytesCount[i] = 0;
+            }
+
+            recAsio = new NAudio.Wave.AsioOut(driverId);
+
+            NAudio.Wave.WaveFormat formato = new NAudio.Wave.WaveFormat(angleForm.getSignalManager().SamplingRate, channels);
+            asioDataHandlerThread = new Thread(() => HandleAsioData(aggregatedAsio));
+            asioDataHandlerThread.Start();
+            recAsio.AudioAvailable += new EventHandler<NAudio.Wave.AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestA);
+            recAsio.InitRecordAndPlayback(null, channels, angleForm.getSignalManager().SamplingRate); //rec channel = 1                                                                                       // recAsio2.InitRecordAndPlayback(null, angleForm.getSignalManager().Mn.Count, SAMPLING_RATE); //rec channel = 1
+            recAsio.PlaybackStopped += new EventHandler<StoppedEventArgs>(asio_RecordingStoppedA);
+            recAsio.Play();
+            //recAsio2.Play();
+        }
+
         private void button1_Click_1(object sender, EventArgs e)
         {
             BeginRecording();
