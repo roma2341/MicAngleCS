@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SimpleAngle.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,21 +11,22 @@ namespace SimpleAngle
     {
         const int BYTE_IN_SAMPLE = 2;
 
-        public static int[] generateCorrelationArray(int[,] twoDimensional, int shifts,int clampedElements = 0,bool inverse = false)
+        public static int[] generateCorrelationArray(int[,] twoDimensional, CorrelationConfig config)
         {
-            int[] result = new int[shifts];
-            for (int shiftIndex = 0; shiftIndex < shifts; shiftIndex++)
+            int[] result = new int[config.ShiftsCount];
+            for (int shiftIndex = 0; shiftIndex < config.ShiftsCount; shiftIndex++)
             {
                 int summa = 0;
-                for (var i = clampedElements; i < twoDimensional.GetLength(1) - clampedElements; i++)
+                for (var i = config.ClampedElements; i < twoDimensional.GetLength(1) - config.ClampedElements; i++)
                 {
-                    int secondMultiplierIndex = inverse ? shiftIndex - shiftIndex : shiftIndex + shiftIndex;
+                    int secondMultiplierIndex = config.Inverse ? shiftIndex - shiftIndex : shiftIndex + shiftIndex;
                     summa += twoDimensional[0, shiftIndex] * twoDimensional[1, secondMultiplierIndex];
                 }
                 result[shiftIndex] = summa;
             }
             return result;
         }
+
 
         public static int[,] convertByteArrayToChanneled(byte[] buffer, int channels)
         {

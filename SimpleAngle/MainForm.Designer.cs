@@ -28,14 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.btnShowDiagrams = new System.Windows.Forms.Button();
             this.signalChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tbIterations = new System.Windows.Forms.TextBox();
@@ -49,6 +49,8 @@
             this.comboWaveInDeviceB = new System.Windows.Forms.ComboBox();
             this.comboWaveInDeviceA = new System.Windows.Forms.ComboBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.signalChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.correlationChart)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -61,6 +63,14 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).BeginInit();
+            this.splitContainer4.Panel1.SuspendLayout();
+            this.splitContainer4.Panel2.SuspendLayout();
+            this.splitContainer4.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnShowDiagrams
@@ -75,26 +85,26 @@
             // 
             // signalChart
             // 
-            chartArea1.CursorX.IsUserEnabled = true;
-            chartArea1.CursorX.IsUserSelectionEnabled = true;
-            chartArea1.Name = "ChartArea1";
-            this.signalChart.ChartAreas.Add(chartArea1);
+            chartArea3.CursorX.IsUserEnabled = true;
+            chartArea3.CursorX.IsUserSelectionEnabled = true;
+            chartArea3.Name = "ChartArea1";
+            this.signalChart.ChartAreas.Add(chartArea3);
             this.signalChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend1.Name = "Legend1";
-            this.signalChart.Legends.Add(legend1);
+            legend3.Name = "Legend1";
+            this.signalChart.Legends.Add(legend3);
             this.signalChart.Location = new System.Drawing.Point(0, 0);
             this.signalChart.Name = "signalChart";
-            series1.ChartArea = "ChartArea1";
-            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            series2.ChartArea = "ChartArea1";
-            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series2.Legend = "Legend1";
-            series2.Name = "Series2";
-            this.signalChart.Series.Add(series1);
-            this.signalChart.Series.Add(series2);
-            this.signalChart.Size = new System.Drawing.Size(903, 170);
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series6.Legend = "Legend1";
+            series6.Name = "Series2";
+            this.signalChart.Series.Add(series5);
+            this.signalChart.Series.Add(series6);
+            this.signalChart.Size = new System.Drawing.Size(760, 170);
             this.signalChart.TabIndex = 1;
             this.signalChart.Text = "chart1";
             // 
@@ -107,33 +117,33 @@
             // 
             // correlationChart
             // 
-            chartArea2.Name = "ChartArea1";
-            this.correlationChart.ChartAreas.Add(chartArea2);
+            chartArea4.Name = "ChartArea1";
+            this.correlationChart.ChartAreas.Add(chartArea4);
             this.correlationChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend2.Name = "Legend1";
-            this.correlationChart.Legends.Add(legend2);
+            legend4.Name = "Legend1";
+            this.correlationChart.Legends.Add(legend4);
             this.correlationChart.Location = new System.Drawing.Point(0, 0);
             this.correlationChart.Name = "correlationChart";
-            series3.ChartArea = "ChartArea1";
-            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series3.Legend = "Legend1";
-            series3.Name = "Series1";
-            series4.ChartArea = "ChartArea1";
-            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series4.Legend = "Legend1";
-            series4.Name = "Series2";
-            this.correlationChart.Series.Add(series3);
-            this.correlationChart.Series.Add(series4);
-            this.correlationChart.Size = new System.Drawing.Size(903, 210);
+            series7.ChartArea = "ChartArea1";
+            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series7.Legend = "Legend1";
+            series7.Name = "Series1";
+            series8.ChartArea = "ChartArea1";
+            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series8.Legend = "Legend1";
+            series8.Name = "Series2";
+            this.correlationChart.Series.Add(series7);
+            this.correlationChart.Series.Add(series8);
+            this.correlationChart.Size = new System.Drawing.Size(761, 210);
             this.correlationChart.TabIndex = 5;
             this.correlationChart.Text = "chart2";
             // 
             // signalChartGroupBox
             // 
             this.signalChartGroupBox.BackColor = System.Drawing.SystemColors.Control;
-            this.signalChartGroupBox.Location = new System.Drawing.Point(779, 72);
+            this.signalChartGroupBox.Location = new System.Drawing.Point(9, 13);
             this.signalChartGroupBox.Name = "signalChartGroupBox";
-            this.signalChartGroupBox.Size = new System.Drawing.Size(95, 100);
+            this.signalChartGroupBox.Size = new System.Drawing.Size(95, 70);
             this.signalChartGroupBox.TabIndex = 6;
             this.signalChartGroupBox.TabStop = false;
             this.signalChartGroupBox.Text = "groupBox1";
@@ -141,9 +151,9 @@
             // correlationChartGroupBox
             // 
             this.correlationChartGroupBox.BackColor = System.Drawing.SystemColors.Control;
-            this.correlationChartGroupBox.Location = new System.Drawing.Point(779, 73);
+            this.correlationChartGroupBox.Location = new System.Drawing.Point(8, 3);
             this.correlationChartGroupBox.Name = "correlationChartGroupBox";
-            this.correlationChartGroupBox.Size = new System.Drawing.Size(116, 119);
+            this.correlationChartGroupBox.Size = new System.Drawing.Size(95, 66);
             this.correlationChartGroupBox.TabIndex = 7;
             this.correlationChartGroupBox.TabStop = false;
             this.correlationChartGroupBox.Text = "groupBox1";
@@ -175,7 +185,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(909, 174);
+            this.tabPage2.Size = new System.Drawing.Size(909, 390);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -189,13 +199,11 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.signalChartGroupBox);
-            this.splitContainer1.Panel1.Controls.Add(this.signalChart);
+            this.splitContainer1.Panel1.Controls.Add(this.splitContainer3);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.correlationChartGroupBox);
-            this.splitContainer1.Panel2.Controls.Add(this.correlationChart);
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer4);
             this.splitContainer1.Size = new System.Drawing.Size(903, 384);
             this.splitContainer1.SplitterDistance = 170;
             this.splitContainer1.TabIndex = 0;
@@ -237,6 +245,40 @@
             this.splitContainer2.SplitterDistance = 65;
             this.splitContainer2.TabIndex = 9;
             // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.signalChart);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.signalChartGroupBox);
+            this.splitContainer3.Size = new System.Drawing.Size(903, 170);
+            this.splitContainer3.SplitterDistance = 760;
+            this.splitContainer3.TabIndex = 7;
+            // 
+            // splitContainer4
+            // 
+            this.splitContainer4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer4.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer4.Name = "splitContainer4";
+            // 
+            // splitContainer4.Panel1
+            // 
+            this.splitContainer4.Panel1.Controls.Add(this.correlationChart);
+            // 
+            // splitContainer4.Panel2
+            // 
+            this.splitContainer4.Panel2.Controls.Add(this.correlationChartGroupBox);
+            this.splitContainer4.Size = new System.Drawing.Size(903, 210);
+            this.splitContainer4.SplitterDistance = 761;
+            this.splitContainer4.TabIndex = 8;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -258,6 +300,14 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
+            this.splitContainer4.Panel1.ResumeLayout(false);
+            this.splitContainer4.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
+            this.splitContainer4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -277,6 +327,8 @@
         private System.Windows.Forms.ComboBox comboWaveInDeviceB;
         private System.Windows.Forms.ComboBox comboWaveInDeviceA;
         private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.SplitContainer splitContainer4;
     }
 }
 

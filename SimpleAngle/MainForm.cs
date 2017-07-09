@@ -1,4 +1,5 @@
 ﻿using NAudio.Wave;
+using SimpleAngle.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,7 +24,27 @@ namespace SimpleAngle
 
 
         WaveInEvent waveInA, waveInB;
+
+        BufferedWaveProvider waveProvider1, waveProvider2;
+
         bool isRecording = false;
+        bool waveInCapturedA = false;
+        bool waveInCapturedB = false;
+
+        public void setWaveInCapturedA()
+        {
+            this.waveInCapturedA = true;
+        }
+
+        public void setWaveInCapturedB()
+        {
+            this.waveInCapturedB = true;
+        }
+        public void clearWaveInCaptured()
+        {
+            this.waveInCapturedA = false;
+            this.waveInCapturedB = false;
+        }
 
 
 
@@ -149,10 +170,16 @@ namespace SimpleAngle
                 this.BeginInvoke(new EventHandler<WaveInEventArgs>(waveIn_DataAvailableA), sender, e);
                 return;
             }
+
+            waveProvider1.AddSamples(e.Buffer, 0, e.BytesRecorded);
+
+            if (true)
+            return;
+
             //if (waveInCapturedA) return;
             //signalFromMicrophonesA = e.Buffer;
-           // waveInStartTimeA = (long)(stopwatch.Elapsed.TotalMilliseconds * 1000000);
-           // waveInCapturedA = true;
+            // waveInStartTimeA = (long)(stopwatch.Elapsed.TotalMilliseconds * 1000000);
+            // waveInCapturedA = true;
             /* if (this.InvokeRequired)
              {
                  this.BeginInvoke(new EventHandler<WaveInEventArgs>(waveIn_DataAvailable), sender, e);
@@ -191,8 +218,8 @@ namespace SimpleAngle
              }
 
             int maxShift = SignalsOperations.processMaxShiftsCount(MICROPHONE_DISTANCE,SAMPLING_RATE);
-            int[] shiftsCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, maxShift, maxShift);
-            int[] backwardShiftCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, maxShift, maxShift,true);
+            int[] shiftsCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, new CorrelationConfig( maxShift, maxShift,false));
+            int[] backwardShiftCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, new CorrelationConfig(maxShift, maxShift,true));
 
             for (int i = 0; i < backwardShiftCorrelation.Length; i++)
             {
@@ -224,9 +251,10 @@ namespace SimpleAngle
             }
             else
             {
-                waveInA.Dispose();
-                waveInA = null;
+              //  waveInA.Dispose();
+               // waveInA = null;
             }
+            setWaveInCapturedA();
             //waveInCapturedA = false;
         }
 
@@ -235,35 +263,46 @@ namespace SimpleAngle
             //  cntEvent.Wait();
             if (!isRecording)
             {
+                clearWaveInCaptured();
                 toggleRecordButton();
                 int deviceIdA = comboWaveInDeviceA.SelectedIndex;
                 int deviceIdB = comboWaveInDeviceB.SelectedIndex;
-                //bufferedWaveProvider = new BufferedWaveProvider(new WaveFormat(44000, 1));
+                if (waveProvider1 == null)
+                waveProvider1 = new BufferedWaveProvider(new WaveFormat(SAMPLING_RATE, CHANNELS));
+                else
+                {
+                    waveProvider1.ClearBuffer();
+                }
                 try
                 {
                         //  MessageBox.Show("Start Recording");
 
                         Thread.CurrentThread.IsBackground = true;
+                        if (waveInA == null)
+                    {
                         waveInA = new WaveInEvent();
-                        waveInB = new WaveInEvent();
-                        //Дефолтное устройство для записи (если оно имеется)
                         waveInA.DeviceNumber = deviceIdA;
-                        waveInB.DeviceNumber = deviceIdB;
-                        //Прикрепляем к событию DataAvailable обработчик, возникающий при наличии записываемых данных
                         waveInA.DataAvailable += new EventHandler<WaveInEventArgs>(waveIn_DataAvailableA);
-                       // waveInB.DataAvailable += new EventHandler<WaveInEventArgs>(waveIn_DataAvailableB);
-                        //Прикрепляем обработчик завершения записи
                         waveInA.RecordingStopped += new EventHandler<StoppedEventArgs>(waveIn_RecordingStoppedA);
-                        //waveInB.RecordingStopped += new EventHandler<StoppedEventArgs>(waveIn_RecordingStoppedB);
-                        //Формат wav-файла - принимает параметры - частоту дискретизации и количество каналов(здесь mono)
                         waveInA.WaveFormat = new WaveFormat(SAMPLING_RATE, CHANNELS);
-                       // waveInB.WaveFormat = new WaveFormat(angleForm.getSignalManager().SamplingRate, angleForm.getSignalManager().Channels);
                         waveInA.BufferMilliseconds = 1000;
-                        waveInB.BufferMilliseconds = 1000;
-                        //Инициализируем объект WaveFileWriter
-                        // writer = new WaveFileWriter(outputFilename, waveIn.WaveFormat);
-                        //Начало записи
-                        stopwatch = new Stopwatch();
+
+                    }
+                    if (waveInB == null)
+                    {
+                        waveInA = new WaveInEvent();
+                        waveInA.DeviceNumber = deviceIdA;
+                        waveInA.DataAvailable += new EventHandler<WaveInEventArgs>(waveIn_DataAvailableA);
+                        waveInA.RecordingStopped += new EventHandler<StoppedEventArgs>(waveIn_RecordingStoppedA);
+                        waveInA.WaveFormat = new WaveFormat(SAMPLING_RATE, CHANNELS);
+                        waveInA.BufferMilliseconds = 1000;
+
+                    }
+
+                    //Инициализируем объект WaveFileWriter
+                    // writer = new WaveFileWriter(outputFilename, waveIn.WaveFormat);
+                    //Начало записи
+                    stopwatch = new Stopwatch();
                         stopwatch.Start();
                         waveInA.StartRecording();
                         //waveInB.StartRecording();
