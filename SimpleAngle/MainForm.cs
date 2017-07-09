@@ -40,6 +40,12 @@ namespace SimpleAngle
         {
             this.waveInCapturedB = true;
         }
+
+        public bool isWaveInCaptured()
+        {
+            return this.waveInCapturedA;
+        }
+
         public void clearWaveInCaptured()
         {
             this.waveInCapturedA = false;
@@ -195,45 +201,7 @@ namespace SimpleAngle
                    ouputStr += e.Buffer[i]+" ";
                }
                System.IO.File.WriteAllText("WaveInSignal.txt", ouputStr);*/
-            int[,] signalFromMics = DataCorrelation.convertByteArrayToChanneled(e.Buffer,2);
-
-            //clear chatrts part
-            for (int i = 0; i < signalFromMics.GetLength(0); i++)
-            {
-                signalChart.Series[i].Points.Clear();
-            }
-            for (int i = 0; i < signalFromMics.GetLength(0); i++)
-            {
-                correlationChart.Series[i].Points.Clear();
-            }
-
-            //fill data part
-            for (int i = 0; i < signalFromMics.GetLength(0); i++) {
-               // Console.WriteLine("i:" + i);
-                for (int j = 0; j < signalFromMics.GetLength(1)/10; j++)
-                {
-                   // Console.WriteLine("j:" + j);
-                    signalChart.Series[i].Points.AddXY(j, signalFromMics[i, j]);
-                }
-             }
-
-            int maxShift = SignalsOperations.processMaxShiftsCount(MICROPHONE_DISTANCE,SAMPLING_RATE);
-            int[] shiftsCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, new CorrelationConfig( maxShift, maxShift,false));
-            int[] backwardShiftCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, new CorrelationConfig(maxShift, maxShift,true));
-
-            for (int i = 0; i < backwardShiftCorrelation.Length; i++)
-            {
-                // Console.WriteLine("j:" + j);
-                int index = backwardShiftCorrelation.Length - i -1;
-                correlationChart.Series[0].Points.AddXY(-index, backwardShiftCorrelation[i]);
-            }
-
-            for (int i = 0; i < shiftsCorrelation.Length; i++)
-            {
-                // Console.WriteLine("j:" + j);
-                correlationChart.Series[0].Points.AddXY(i, shiftsCorrelation[i]);
-            }
-
+           
             // signalFromMicrophones.Add(signalFromMics);
             //angleForm.processAngle(signalFromMics);               
             // Thread.Sleep(4000);
@@ -255,16 +223,67 @@ namespace SimpleAngle
                // waveInA = null;
             }
             setWaveInCapturedA();
+            if(isWaveInCaptured())
+            {
+                processAllWavesInRecorder();
+            }
             //waveInCapturedA = false;
         }
+
+        public void processAllWavesInRecorder()
+        {
+            byte[] bufferValue = new byte[waveProvider1.BufferedBytes];
+            waveProvider1.Read(bufferValue, 0, waveProvider1.BufferedBytes);
+            int[,] signalFromMics = DataCorrelation.convertByteArrayToChanneled(bufferValue, 2);
+
+            //clear chatrts part
+            for (int i = 0; i < signalFromMics.GetLength(0); i++)
+            {
+                signalChart.Series[i].Points.Clear();
+            }
+            for (int i = 0; i < signalFromMics.GetLength(0); i++)
+            {
+                correlationChart.Series[i].Points.Clear();
+            }
+
+            //fill data part
+            for (int i = 0; i < signalFromMics.GetLength(0); i++)
+            {
+                // Console.WriteLine("i:" + i);
+                for (int j = 0; j < signalFromMics.GetLength(1) / 10; j++)
+                {
+                    // Console.WriteLine("j:" + j);
+                    signalChart.Series[i].Points.AddXY(j, signalFromMics[i, j]);
+                }
+            }
+
+            int maxShift = SignalsOperations.processMaxShiftsCount(MICROPHONE_DISTANCE, SAMPLING_RATE);
+            int[] shiftsCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, new CorrelationConfig(maxShift, maxShift, false));
+            int[] backwardShiftCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, new CorrelationConfig(maxShift, maxShift, true));
+
+            for (int i = 0; i < backwardShiftCorrelation.Length; i++)
+            {
+                // Console.WriteLine("j:" + j);
+                int index = backwardShiftCorrelation.Length - i - 1;
+                correlationChart.Series[0].Points.AddXY(-index, backwardShiftCorrelation[i]);
+            }
+
+            for (int i = 0; i < shiftsCorrelation.Length; i++)
+            {
+                // Console.WriteLine("j:" + j);
+                correlationChart.Series[0].Points.AddXY(i, shiftsCorrelation[i]);
+            }
+
+        }
+
 
         public void BeginRecording()
         {
             //  cntEvent.Wait();
             if (!isRecording)
             {
-                clearWaveInCaptured();
                 toggleRecordButton();
+                clearWaveInCaptured();
                 int deviceIdA = comboWaveInDeviceA.SelectedIndex;
                 int deviceIdB = comboWaveInDeviceB.SelectedIndex;
                 if (waveProvider1 == null)
@@ -276,7 +295,6 @@ namespace SimpleAngle
                 try
                 {
                         //  MessageBox.Show("Start Recording");
-
                         Thread.CurrentThread.IsBackground = true;
                         if (waveInA == null)
                     {
@@ -288,7 +306,7 @@ namespace SimpleAngle
                         waveInA.BufferMilliseconds = 1000;
 
                     }
-                    if (waveInB == null)
+                   /* if (waveInB == null)
                     {
                         waveInA = new WaveInEvent();
                         waveInA.DeviceNumber = deviceIdA;
@@ -297,7 +315,7 @@ namespace SimpleAngle
                         waveInA.WaveFormat = new WaveFormat(SAMPLING_RATE, CHANNELS);
                         waveInA.BufferMilliseconds = 1000;
 
-                    }
+                    }*/
 
                     //Инициализируем объект WaveFileWriter
                     // writer = new WaveFileWriter(outputFilename, waveIn.WaveFormat);
@@ -314,6 +332,7 @@ namespace SimpleAngle
             }
             else
             {
+                toggleRecordButton();
                 StopRecording();
             }
         }
