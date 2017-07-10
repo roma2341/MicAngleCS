@@ -64,6 +64,7 @@
     </Compile>
     <Compile Include="Models\CorrelationConfig.cs" />
     <Compile Include="Models\IndexPair.cs" />
+    <Compile Include="Models\SoundConfig.cs" />
     <Compile Include="MyUtils.cs" />
     <Compile Include="Models\Point.cs" />
     <Compile Include="Program.cs" />

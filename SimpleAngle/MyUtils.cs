@@ -29,6 +29,25 @@ namespace MicAngle
             return signalFromMics;
 
         }
+
+        public static Point CalculatePointWithDistance(Point a, Point b, int distance)
+        {
+
+            // a. calculate the vector from o to g:
+            double vectorX = b.X - a.X;
+            double vectorY = b.Y - a.Y;
+
+            // b. calculate the proportion of hypotenuse
+            double factor = distance / Math.Sqrt(vectorX * vectorX + vectorY * vectorY);
+
+            // c. factor the lengths
+            vectorX *= factor;
+            vectorY *= factor;
+
+            // d. calculate and Draw the new vector,
+            return new Point((int)(a.X + vectorX), (int)(a.Y + vectorY));
+        }
+
         public static Point rotate(Point point, Point center, double angle)
         {
             double angleRadians = angle * (Math.PI / 180);

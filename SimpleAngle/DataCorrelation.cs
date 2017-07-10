@@ -11,6 +11,14 @@ namespace SimpleAngle
     class DataCorrelation
     {
         const int BYTE_IN_SAMPLE = 2;
+        SoundConfig config;
+
+        public DataCorrelation(SoundConfig conf)
+        {
+            this.config = conf;
+        }
+
+
 
         public static int[] generateCorrelationArray(int[,] twoDimensional, CorrelationConfig config)
         {
@@ -107,6 +115,27 @@ namespace SimpleAngle
             resultArray = MyUtils.TrimArrayRow(maxSpareMicIndex, resultArray);
             SignalsOperations.shiftMultidimensional(resultArray, maxSpareMicIndex, maxIndex);
             return resultArray;
+        }
+
+        public int getShiftBetweenMicrophones(int[,] source, int mic1Index, int mic2Index, int maxShiftCount)
+        {
+
+            long maxCorrelation = 0;
+            int maxShift = 0;
+            if (maxShiftCount > source.GetLength(1)) throw new IndexOutOfRangeException("max shift can't be greatest than array");
+            for (int i = -maxShiftCount; i < maxShiftCount; i++)
+            {
+                long correlation = getCrossCorrelation(source, mic1Index, mic2Index, 0, i, maxShiftCount);
+                if (correlation > maxCorrelation)
+                {
+                    maxCorrelation = correlation;
+                    maxShift = i;
+                }
+            }
+
+            Console.WriteLine("Max shift (ANGLE PROCESSING):" + maxShift);
+
+            return maxShift;
         }
 
 

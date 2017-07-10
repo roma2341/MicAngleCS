@@ -1,5 +1,6 @@
 ﻿using MicAngle;
 using Newtonsoft.Json;
+using SimpleAngle.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,9 @@ namespace SimpleAngle
 {
     public class SignalsOperations
     {
-        public static int processMaxShiftsCount(double micDistanceDelta, int samplingRate)
+        public static int processMaxShiftsCount(double micDistanceDelta, int samplingRate,int v)
         {
-            const int SOUND_SPEED = 340;
-            return (int)Math.Ceiling(micDistanceDelta * samplingRate / SOUND_SPEED);
+            return (int)Math.Ceiling(micDistanceDelta * samplingRate / v);
         }
 
         public static void shiftMultidimensionalRight(int[,] source, int dimensionI, int n)
@@ -63,6 +63,16 @@ namespace SimpleAngle
             }
             arr = MyUtils.shift<int>(arr, shift);
             return arr;
+        }
+
+        public static double getAngleFromDelay(SoundConfig config,int delay)
+        {
+
+            double cosA = config.V * delay / (config.DistanceBetweenMicrophones * config.SamplingRate);
+            double arcCosA = Math.Acos(cosA);
+            double angle = arcCosA * 180 / Math.PI;
+            // if (delay < 0)angle = 360-angle;
+            return angle;
         }
 
         public static int[,] getTestDataMultidimensional(int count,int dimenison, int shift)

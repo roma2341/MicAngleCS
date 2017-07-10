@@ -1,4 +1,5 @@
-﻿using NAudio.Wave;
+﻿using MicAngle;
+using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using SimpleAngle.Models;
 using System;
@@ -26,6 +27,10 @@ namespace SimpleAngle
         const int CONJUNCTED_CHANNELS_2 = 2;
         const bool CONJUNTION_ENABLED = true;
         const int ALIGN_MIC_DATA_SHIFTS_MAX = 130;
+        const int V = 340;
+
+        DataCorrelation correlationer;
+        SoundConfig soundConfig;
 
 
         bool isRecording = false;
@@ -40,6 +45,12 @@ namespace SimpleAngle
         {
             InitializeComponent();
             initDynamicCheckBoxes();
+
+            soundConfig = new Models.SoundConfig();
+            soundConfig.SamplingRate = SAMPLING_RATE;
+            soundConfig.V = V;
+            soundConfig.DistanceBetweenMicrophones = MICROPHONE_DISTANCE;
+            correlationer = new DataCorrelation(soundConfig);
 
             string[] asioDevices = AsioOut.GetDriverNames();
             foreach (string devName in asioDevices)
@@ -112,7 +123,7 @@ namespace SimpleAngle
             cb.Checked = true;
             cb.Text = name;
             cb.Name = name;
-            cb.Location = new Point(10, index * cb.Height);
+            cb.Location = new System.Drawing.Point(10, index * cb.Height);
             return cb;
         }
 
@@ -137,11 +148,69 @@ namespace SimpleAngle
             recAsio.Stop();
 
         }
-    
+        
+        public void drawAngles(double angle1, double  angle2)
+        {
+
+            int contextRotation = int.Parse(tbAngle.Text);
+            float scaling = float.Parse(textBoxScaling.Text);
+
+
+     Bitmap MyImage = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
+            pictureBox1.Image = MyImage;
+
+            Graphics g;
+            g = Graphics.FromImage(MyImage);
+            g.TranslateTransform(pictureBox1.Size.Width / 2, pictureBox1.Size.Height / 2);
+            g.ScaleTransform(scaling, scaling);
+            g.RotateTransform(contextRotation);
+           
+
+            Pen mypen = new Pen(Brushes.Black);
+            g.Clear(Color.White);
+            MicAngle.Point center = new MicAngle.Point(0, 0);
+            MicAngle.Point point1 = new MicAngle.Point(-100, 0);
+            MicAngle.Point point2 = new MicAngle.Point(100, 0);
+            MicAngle.Point rotated1 = MyUtils.rotate(center, point1, angle1);
+            MicAngle.Point rotated2 = MyUtils.rotate(center, point2, 360 - angle2);
+
+
+
+            Pen pen1 = new Pen(Color.Red);
+
+            g.DrawLine(mypen, (float)center.X, (float)center.Y, (float)point1.X, (float)point1.Y);
+            g.DrawLine(mypen, (float)center.X, (float)center.Y, (float)point2.X, (float)point2.Y);
+
+            MicAngle.Point prolongedRotated1 = MyUtils.CalculatePointWithDistance(point1, rotated1, 1000);
+            MicAngle.Point prolongedRotated2 = MyUtils.CalculatePointWithDistance(point2, rotated2, 1000);
+
+            float rot1X = (float)prolongedRotated1.X;
+            float rot1Y = (float)prolongedRotated1.Y;
+            float rot2X = (float)prolongedRotated2.X;
+            float rot2Y = (float)prolongedRotated2.Y;
+
+            g.DrawLine(pen1, (float)point1.X, (float)point1.Y, rot1X, rot1Y);
+            g.DrawLine(pen1, (float)point2.X, (float)point2.Y, rot2X, rot2Y);
+
+
+
+            g.Dispose();
+        }
 
         public void processSoundData(int[,] data)
         {
             data =  DataCorrelation.alignAndCombineSignalData(data, CONJUNCTED_CHANNELS_1, CONJUNCTED_CHANNELS_2, ALIGN_MIC_DATA_SHIFTS_MAX);
+            int maxShiftCount = SignalsOperations.processMaxShiftsCount(MICROPHONE_DISTANCE, SAMPLING_RATE, V);
+           int shift01 = correlationer.getShiftBetweenMicrophones(data, 0, 1, maxShiftCount);
+            int shift12 = correlationer.getShiftBetweenMicrophones(data, 0, 1, maxShiftCount);
+
+            double angle01 = SignalsOperations.getAngleFromDelay(soundConfig, shift01);
+            double angle12 = SignalsOperations.getAngleFromDelay(soundConfig, shift12);
+
+            drawAngles(angle01, angle12);
+
+            Console.WriteLine("angle01:" + angle01);
+            Console.WriteLine("angle12:" + angle12);
 
             //clear chatrts part
             for (int i = 0; i < data.GetLength(0); i++)
@@ -162,7 +231,7 @@ namespace SimpleAngle
                 }
             }
 
-            int maxShift = SignalsOperations.processMaxShiftsCount(MICROPHONE_DISTANCE, SAMPLING_RATE);
+            int maxShift = SignalsOperations.processMaxShiftsCount(MICROPHONE_DISTANCE, SAMPLING_RATE,V);
             /*int[] shiftsCorrelation = DataCorrelation.generateCorrelationArray(data, new CorrelationConfig(maxShift, maxShift, false));
             int[] backwardShiftCorrelation = DataCorrelation.generateCorrelationArray(data, new CorrelationConfig(maxShift, maxShift, true));
 
