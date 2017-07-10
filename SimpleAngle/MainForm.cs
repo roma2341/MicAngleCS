@@ -11,8 +11,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SimpleAngle
@@ -32,6 +30,8 @@ namespace SimpleAngle
         DataCorrelation correlationer;
         SoundConfig soundConfig;
 
+        Timer asioTimer = new Timer();
+
 
         bool isRecording = false;
         List<float[]> soundData = null;
@@ -40,11 +40,22 @@ namespace SimpleAngle
 
         List<CheckBox> signalChartCheckBoxes;
         List<CheckBox> correlationChartCheckBoxes;
+        bool asioRunnerActive = false;
+        public void HandleAsioRunner(Object myObject,
+                                            EventArgs myEventArgs)
+        {
+
+            asioRunnerActive = true;
+            BeginRecording();
+        }
 
         public MainForm()
         {
             InitializeComponent();
             initDynamicCheckBoxes();
+
+            asioTimer.Tick += HandleAsioRunner;
+            asioTimer.Interval = 3000;
 
             soundConfig = new Models.SoundConfig();
             soundConfig.SamplingRate = SAMPLING_RATE;
@@ -132,7 +143,16 @@ namespace SimpleAngle
 
         private void button1_Click(object sender, EventArgs e)
         {
-            BeginRecording();
+            if (asioRunnerActive)
+            {
+                asioTimer.Stop();
+                asioRunnerActive = false;
+            }
+            else {
+                asioTimer.Start();
+                asioRunnerActive = true;
+            }
+          //  BeginRecording();
         }
 
 
@@ -285,7 +305,8 @@ namespace SimpleAngle
         {
             if (!isRecording)
             {
-                int deviceIdAsio = comboAsioDevice.SelectedIndex;
+                int deviceIdAsio = comboAsioDevice.SelectedIndex; 
+
                 soundData = new List<float[]>();
                 if (recAsio==null) { 
                 recAsio = new NAudio.Wave.AsioOut(deviceIdAsio);
