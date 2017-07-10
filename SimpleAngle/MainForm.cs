@@ -20,42 +20,18 @@ namespace SimpleAngle
     {
         const int SAMPLING_RATE = 44100;
         const int CHANNELS = 2;
-        const int MICROPHONES_COUNT = 4;
+        const int MICROPHONES_COUNT = 2;
         const double MICROPHONE_DISTANCE = 0.5; //Meters
+        const int CONJUNCTED_CHANNELS_1 = 1;
+        const int CONJUNCTED_CHANNELS_2 = 1;
+        const bool CONJUNTION_ENABLED = true;
+        const int ALIGN_MIC_DATA_SHIFTS_MAX = 130;
 
-
-        WaveInEvent waveInA, waveInB;
-
-        BufferedWaveProvider waveProvider1, waveProvider2;
 
         bool isRecording = false;
-        bool waveInCapturedA = false;
-        bool waveInCapturedB = false;
+        List<float[]> soundData = null;
 
-        public void setWaveInCapturedA()
-        {
-            this.waveInCapturedA = true;
-        }
-
-        public void setWaveInCapturedB()
-        {
-            this.waveInCapturedB = true;
-        }
-
-        public bool isWaveInCaptured()
-        {
-            return this.waveInCapturedA && this.waveInCapturedB;
-        }
-
-        public void clearWaveInCaptured()
-        {
-            this.waveInCapturedA = false;
-            this.waveInCapturedB = false;
-        }
-
-
-
-        Stopwatch stopwatch;
+        NAudio.Wave.AsioOut recAsio;
 
         List<CheckBox> signalChartCheckBoxes;
         List<CheckBox> correlationChartCheckBoxes;
@@ -65,21 +41,13 @@ namespace SimpleAngle
             InitializeComponent();
             initDynamicCheckBoxes();
 
-            int waveInDevicesCount = WaveIn.DeviceCount;
-            for (int uDeviceID = 0; uDeviceID < waveInDevicesCount; uDeviceID++)
+            string[] asioDevices = AsioOut.GetDriverNames();
+            foreach (string devName in asioDevices)
             {
-                WaveInCapabilities waveInCaps = WaveIn.GetCapabilities(uDeviceID);
-                String productName = waveInCaps.ProductName;
-                comboWaveInDeviceA.Items.Add(productName);
-                comboWaveInDeviceB.Items.Add(productName);
+                comboAsioDevice.Items.Add(devName);
             }
 
-
-            comboWaveInDeviceA.SelectedIndex = 0;
-            if (waveInDevicesCount > 1)
-                comboWaveInDeviceB.SelectedIndex = 1;
-            else
-                comboWaveInDeviceB.SelectedIndex = 0;
+            comboAsioDevice.SelectedIndex = 0;
         }
 
 
@@ -166,141 +134,17 @@ namespace SimpleAngle
         void StopRecording()
         {
             //MessageBox.Show("StopRecording");
-                waveInA.StopRecording();
-                waveInB.StopRecording();
+            recAsio.Stop();
+
         }
     
-        void waveIn_DataAvailableA(object sender, WaveInEventArgs e)
+
+        public void processSoundData(int[,] data)
         {
-            if (this.InvokeRequired)
-            {
-                this.BeginInvoke(new EventHandler<WaveInEventArgs>(waveIn_DataAvailableA), sender, e);
-                return;
-            }
-            Console.WriteLine("DataAvailableA");
-
-            waveProvider1.AddSamples(e.Buffer, 0, e.BytesRecorded);
-            setWaveInCapturedA();
-            if (isWaveInCaptured())
-            {
-                StopRecording();
-            }
-
-            //if (waveInCapturedA) return;
-            //signalFromMicrophonesA = e.Buffer;
-            // waveInStartTimeA = (long)(stopwatch.Elapsed.TotalMilliseconds * 1000000);
-            // waveInCapturedA = true;
-            /* if (this.InvokeRequired)
-             {
-                 this.BeginInvoke(new EventHandler<WaveInEventArgs>(waveIn_DataAvailable), sender, e);
-                 return;
-             }
-             else*/
-            //Записываем данные из буфера в файл
-            // const int bytesInOnePortion = 4;
-            // int bytesPerChannel = bytesInOnePortion / channels;
-            /*   string ouputStr = "WaveIn data:\n";
-               for (int i = 0; i < e.Buffer.Length; i++)
-               {
-                   ouputStr += e.Buffer[i]+" ";
-               }
-               System.IO.File.WriteAllText("WaveInSignal.txt", ouputStr);*/
-
-            // signalFromMicrophones.Add(signalFromMics);
-            //angleForm.processAngle(signalFromMics);               
-            // Thread.Sleep(4000);
-            // bufferedWaveProvider.AddSamples(e.Buffer, 0, e.BytesRecorded);
-        }
-        void waveIn_DataAvailableB(object sender, WaveInEventArgs e)
-        {
-            if (this.InvokeRequired)
-            {
-                this.BeginInvoke(new EventHandler<WaveInEventArgs>(waveIn_DataAvailableB), sender, e);
-                return;
-            }
-            Console.WriteLine("DataAvailableB");
-
-            waveProvider2.AddSamples(e.Buffer, 0, e.BytesRecorded);
-            setWaveInCapturedB();
-            if (isWaveInCaptured())
-            {
-                StopRecording();
-            }
-        }
-
-
-
-        private  void waveIn_RecordingStoppedA(object sender, EventArgs e)
-        {
-            if (this.InvokeRequired)
-            {
-                this.BeginInvoke(new EventHandler(waveIn_RecordingStoppedA), sender, e);
-                return;
-            }
-
-            setWaveInCapturedA();
-            if(isWaveInCaptured())
-            {
-                Console.WriteLine("waveIn_RecordingStoppedA processAllWavesInRecorder");
-                processAllWavesInRecorder();
-            }
-            //waveInCapturedA = false;
-        }
-
-        private void waveIn_RecordingStoppedB(object sender, EventArgs e)
-        {
-            if (this.InvokeRequired)
-            {
-                this.BeginInvoke(new EventHandler(waveIn_RecordingStoppedB), sender, e);
-                return;
-            }
-
-            setWaveInCapturedB();
-            if (isWaveInCaptured())
-            {
-                Console.WriteLine("waveIn_RecordingStoppedB processAllWavesInRecorder");
-                processAllWavesInRecorder();
-            }
-            //waveInCapturedA = false;
-        }
-
-        public void processAllWavesInRecorder()
-        {
-            clearWaveInCaptured();
-            byte[] bufferValue1 = new byte[waveProvider1.BufferedBytes];
-            waveProvider1.Read(bufferValue1, 0, waveProvider1.BufferedBytes);
-            int[,] signalFromMics1 = DataCorrelation.convertByteArrayToChanneled(bufferValue1, 2);
-
-            byte[] bufferValue2 = new byte[waveProvider2.BufferedBytes];
-            waveProvider2.Read(bufferValue2, 0, waveProvider2.BufferedBytes);
-            int[,] signalFromMics2 = DataCorrelation.convertByteArrayToChanneled(bufferValue2, 2);
-
-
-            int minSignalsCount = signalFromMics1.GetLength(1) < signalFromMics2.GetLength(1) ? signalFromMics1.GetLength(1) : signalFromMics2.GetLength(1);
-
-            int[,] signalFromMics = new int[MICROPHONES_COUNT, minSignalsCount];
-
-            for (int i = 0; i < MICROPHONES_COUNT; i++)
-                for (int j = 0; j < minSignalsCount; j++)
-            {
-                    if( i < MICROPHONES_COUNT / 2 )
-                    {
-                        signalFromMics[i, j] = signalFromMics1[i, j];
-                    }
-                    else
-                    {
-                        signalFromMics[i, j] = signalFromMics2[i - (MICROPHONES_COUNT / 2 ), j];
-                    }             
-            }
-
-            signalFromMics =  DataCorrelation.alignAndCombineSignalData(signalFromMics, 1, 2, 200);
-        
-
-
-
+            data =  DataCorrelation.alignAndCombineSignalData(data, CONJUNCTED_CHANNELS_1, CONJUNCTED_CHANNELS_2, ALIGN_MIC_DATA_SHIFTS_MAX);
 
             //clear chatrts part
-            for (int i = 0; i < signalFromMics.GetLength(0); i++)
+            for (int i = 0; i < data.GetLength(0); i++)
             {
                 signalChart.Series[i].Points.Clear();
             }
@@ -308,19 +152,19 @@ namespace SimpleAngle
                 correlationChart.Series[0].Points.Clear();
 
             //fill data part
-            for (int i = 0; i < signalFromMics.GetLength(0); i++)
+            for (int i = 0; i < data.GetLength(0); i++)
             {
                 // Console.WriteLine("i:" + i);
-                for (int j = 0; j < signalFromMics.GetLength(1) / 10; j++)
+                for (int j = 0; j < data.GetLength(1); j++)
                 {
                     // Console.WriteLine("j:" + j);
-                    signalChart.Series[i].Points.AddXY(j, signalFromMics[i, j]);
+                    signalChart.Series[i].Points.AddXY(j, data[i, j]);
                 }
             }
 
             int maxShift = SignalsOperations.processMaxShiftsCount(MICROPHONE_DISTANCE, SAMPLING_RATE);
-            int[] shiftsCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, new CorrelationConfig(maxShift, maxShift, false));
-            int[] backwardShiftCorrelation = DataCorrelation.generateCorrelationArray(signalFromMics, new CorrelationConfig(maxShift, maxShift, true));
+            /*int[] shiftsCorrelation = DataCorrelation.generateCorrelationArray(data, new CorrelationConfig(maxShift, maxShift, false));
+            int[] backwardShiftCorrelation = DataCorrelation.generateCorrelationArray(data, new CorrelationConfig(maxShift, maxShift, true));
 
             for (int i = 0; i < backwardShiftCorrelation.Length; i++)
             {
@@ -333,70 +177,55 @@ namespace SimpleAngle
             {
                 // Console.WriteLine("j:" + j);
                 correlationChart.Series[0].Points.AddXY(i, shiftsCorrelation[i]);
+            }*/
+
+        }
+        int recordedIterations = 0;
+        void waveIn_DataAvailableAsioTestA(object sender, AsioAudioAvailableEventArgs e)
+        {
+            recordedIterations++;
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new EventHandler<AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestA), sender, e);
+                return;
             }
+            Console.WriteLine("waveIn_DataAvailableAsioTestA begin");
+            int samplesCount = e.SamplesPerBuffer * MICROPHONES_COUNT;
+            float[] interlivedAsioSamples = new float[samplesCount];
+            e.GetAsInterleavedSamples(interlivedAsioSamples);
+            soundData.Add(interlivedAsioSamples);
+
+           
+           // e.WrittenToOutputBuffers = true;
+          // if(recordedIterations > 3)
+            StopRecording();
+            /*StringBuilder builder = new StringBuilder("");
+            for (var i = 0; i < interlivedAsioSamples.Length; i++)
+            {
+                builder.Append(" " + interlivedAsioSamples[i]);
+            }
+            Console.WriteLine(builder.ToString());*/
+            Console.WriteLine("waveIn_DataAvailableAsioTestA end");
 
         }
 
 
         public void BeginRecording()
         {
-            //  cntEvent.Wait();
             if (!isRecording)
             {
-                toggleRecordButton();
-                clearWaveInCaptured();
-                int deviceIdA = comboWaveInDeviceA.SelectedIndex;
-                int deviceIdB = comboWaveInDeviceB.SelectedIndex;
-                if (waveProvider1 == null)
-                waveProvider1 = new BufferedWaveProvider(new WaveFormat(SAMPLING_RATE, CHANNELS));
-                else
-                {
-                    waveProvider1.ClearBuffer();
-                }
-                if (waveProvider2 == null)
-                    waveProvider2 = new BufferedWaveProvider(new WaveFormat(SAMPLING_RATE, CHANNELS));
-                else
-                {
-                    waveProvider2.ClearBuffer();
+                int deviceIdAsio = comboAsioDevice.SelectedIndex;
+                soundData = new List<float[]>();
+                if (recAsio==null) { 
+                recAsio = new NAudio.Wave.AsioOut(deviceIdAsio);
+                // buffer = new NAudio.Wave.BufferedWaveProvider(formato);
+                // buffer.DiscardOnBufferOverflow = true;
+                recAsio.AudioAvailable += new EventHandler<NAudio.Wave.AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestA);
+                recAsio.InitRecordAndPlayback(null, MICROPHONES_COUNT, SAMPLING_RATE); //rec channel = 1                                                                                       // recAsio2.InitRecordAndPlayback(null, angleForm.getSignalManager().Mn.Count, SAMPLING_RATE); //rec channel = 1
+                recAsio.PlaybackStopped += new EventHandler<StoppedEventArgs>(asio_RecordingStoppedA);
                 }
 
-                    try
-                    {
-                        //  MessageBox.Show("Start Recording");
-                        Thread.CurrentThread.IsBackground = true;
-                        if (waveInA == null)
-                    {
-                        waveInA = new WaveInEvent();
-                        waveInA.DeviceNumber = deviceIdA;
-                        waveInA.DataAvailable += new EventHandler<WaveInEventArgs>(waveIn_DataAvailableA);
-                        waveInA.RecordingStopped += new EventHandler<StoppedEventArgs>(waveIn_RecordingStoppedA);
-                        waveInA.WaveFormat = new WaveFormat(SAMPLING_RATE, CHANNELS);
-                        waveInA.BufferMilliseconds = 500;
-
-                    }
-                    if (waveInB == null)
-                    {
-                        waveInB = new WaveInEvent();
-                        waveInB.DeviceNumber = deviceIdB;
-                        waveInB.DataAvailable += new EventHandler<WaveInEventArgs>(waveIn_DataAvailableB);
-                        waveInB.RecordingStopped += new EventHandler<StoppedEventArgs>(waveIn_RecordingStoppedB);
-                        waveInB.WaveFormat = new WaveFormat(SAMPLING_RATE, CHANNELS);
-                        waveInB.BufferMilliseconds = 500;
-
-                    }
-
-                    //Инициализируем объект WaveFileWriter
-                    // writer = new WaveFileWriter(outputFilename, waveIn.WaveFormat);
-                    //Начало записи
-                    stopwatch = new Stopwatch();
-                        stopwatch.Start();
-                        waveInA.StartRecording();
-                        waveInB.StartRecording();
-
-                    
-                }
-                catch (Exception ex)
-                { MessageBox.Show(ex.Message); }
+                recAsio.Play();
             }
             else
             {
@@ -405,5 +234,80 @@ namespace SimpleAngle
             }
         }
 
+        /*public void aggregatedDataTomicSignal()
+        {
+
+            int[,] result = aggregatedArraysToSeparated(aggregatedAsio, CHANNELS*MICROPHONES_COUNT);
+            if (CONJUNTION_ENABLED)
+                result = DataCorrelation.alignAndCombineSignalData(result, CONJUNCTED_CHANNELS_1, CONJUNCTED_CHANNELS_1, MAX_SHIFT_COUNT);
+        }*/
+
+        private int[,] aggregatedArraysToSeparated(List<float[]> arrs, int channels)
+        {
+            int totalArrayElmCount = 0;
+            foreach (float[] a in arrs) totalArrayElmCount += a.Length;
+
+            float[] source = new float[totalArrayElmCount];
+            int[,] result = new int[channels, totalArrayElmCount / channels];
+            int index = 0;
+            foreach (float[] singleArr in arrs)
+            {
+                foreach (float val in singleArr)
+                {
+                    source[index++] = val;
+                }
+            }
+            index = 0;
+            for (int i = 0; i < source.Length; i += channels)
+            {
+                for (int j = 0; j < channels; j++)
+                {
+                    result[j, index] = (int)(source[i + j] * short.MaxValue);
+                }
+                // result[0, index] = ((int)(source[i] * Int32.MaxValue));
+                // result[1, index] = ((int)(source[i] * Int32.MaxValue));
+                index++;
+            }
+            return result;
+
+        }
+
+        private void asio_RecordingStoppedA(object sender, EventArgs e)
+        {
+            recordedIterations = 0;
+            if (this.InvokeRequired)
+            {
+                this.BeginInvoke(new EventHandler(asio_RecordingStoppedA), sender, e);
+                return;
+            }
+            else
+            {
+                int[,] arr = aggregatedArraysToSeparated(soundData, MICROPHONES_COUNT);
+               
+
+                processSoundData(arr);
+                //recAsio.Dispose();
+                //recAsio = null;
+               // recAsio.Dispose();
+               // recAsio = null;
+                //micsSignal = unitePartialMeasurement(signalFromMicrophonesA);
+                // int[,] result = processMultipleChannels(AsioData,BYTES_PER_SAMPLE,true);
+                // int[,] result= angleForm.getSignalManager().generateTestMicSignal(2900,4,2,15);
+               // aggregatedDataTomicSignal();
+                // Console.WriteLine("Arrays aggregated( height:" + result.GetLength(0) + "width: " + result.GetLength(1));
+                //aggregatedAsio
+               // int LIMIT = 100000;
+               // rtbSignal.Text = MyUtils.arrayToString(MicsSignal, 100000);
+                //rtbSignal.Text = arrayToString(micsSignal, LIMIT);
+                //angleForm.processAngle(micsSignal);
+                //  bufferedWaveProvider.ClearBuffer();
+            }
+        }
+
+        private void btnAsioControlPanel_Click(object sender, EventArgs e)
+        {
+            if (recAsio!=null)
+            recAsio.ShowControlPanel();
+        }
     }
 }

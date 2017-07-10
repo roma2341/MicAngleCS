@@ -103,7 +103,7 @@ namespace SimpleAngle
                 micIndex++;
             }
             Console.WriteLine("Test");
-            resultArray = MyUtils.TrimArrayRow(maxSpareMicIndex, resultArray);
+           // resultArray = MyUtils.TrimArrayRow(maxSpareMicIndex, resultArray);
             SignalsOperations.shiftMultidimensional(resultArray, maxSpareMicIndex, maxIndex);
             return resultArray;
         }
