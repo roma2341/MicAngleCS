@@ -20,10 +20,10 @@ namespace SimpleAngle
     {
         const int SAMPLING_RATE = 44100;
         const int CHANNELS = 2;
-        const int MICROPHONES_COUNT = 2;
+        const int MICROPHONES_COUNT = 4;
         const double MICROPHONE_DISTANCE = 0.5; //Meters
         const int CONJUNCTED_CHANNELS_1 = 1;
-        const int CONJUNCTED_CHANNELS_2 = 1;
+        const int CONJUNCTED_CHANNELS_2 = 2;
         const bool CONJUNTION_ENABLED = true;
         const int ALIGN_MIC_DATA_SHIFTS_MAX = 130;
 
@@ -183,7 +183,7 @@ namespace SimpleAngle
         int recordedIterations = 0;
         void waveIn_DataAvailableAsioTestA(object sender, AsioAudioAvailableEventArgs e)
         {
-            recordedIterations++;
+           
             if (this.InvokeRequired)
             {
                 this.BeginInvoke(new EventHandler<AsioAudioAvailableEventArgs>(waveIn_DataAvailableAsioTestA), sender, e);
@@ -193,11 +193,12 @@ namespace SimpleAngle
             int samplesCount = e.SamplesPerBuffer * MICROPHONES_COUNT;
             float[] interlivedAsioSamples = new float[samplesCount];
             e.GetAsInterleavedSamples(interlivedAsioSamples);
+            if(recordedIterations>0)
             soundData.Add(interlivedAsioSamples);
 
            
            // e.WrittenToOutputBuffers = true;
-          // if(recordedIterations > 3)
+           if(recordedIterations > 2)
             StopRecording();
             /*StringBuilder builder = new StringBuilder("");
             for (var i = 0; i < interlivedAsioSamples.Length; i++)
@@ -205,6 +206,7 @@ namespace SimpleAngle
                 builder.Append(" " + interlivedAsioSamples[i]);
             }
             Console.WriteLine(builder.ToString());*/
+            recordedIterations++;
             Console.WriteLine("waveIn_DataAvailableAsioTestA end");
 
         }

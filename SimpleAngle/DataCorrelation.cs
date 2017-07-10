@@ -73,6 +73,7 @@ namespace SimpleAngle
 
         public static int[,] alignAndCombineSignalData(int[,] source, int spareMicIndex1, int spareMicIndex2, int maxShiftCount)
         {
+            if (spareMicIndex1 == -1 || spareMicIndex2 == -1) return source;
             int minSpareMicIndex = Math.Min(spareMicIndex1, spareMicIndex2);
             int maxSpareMicIndex = Math.Max(spareMicIndex1, spareMicIndex2);
             int[,] resultArray = new int[source.GetLength(0), source.GetLength(1)];
@@ -103,7 +104,7 @@ namespace SimpleAngle
                 micIndex++;
             }
             Console.WriteLine("Test");
-           // resultArray = MyUtils.TrimArrayRow(maxSpareMicIndex, resultArray);
+            resultArray = MyUtils.TrimArrayRow(maxSpareMicIndex, resultArray);
             SignalsOperations.shiftMultidimensional(resultArray, maxSpareMicIndex, maxIndex);
             return resultArray;
         }
