@@ -1,5 +1,4 @@
-﻿using MicAngle;
-using SimpleAngle.Models;
+﻿using SimpleAngle.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,11 +112,11 @@ namespace SimpleAngle
             }
             Console.WriteLine("Test");
             resultArray = MyUtils.TrimArrayRow(maxSpareMicIndex, resultArray);
-            SignalsOperations.shiftMultidimensional(resultArray, maxSpareMicIndex, maxIndex);
+            SignalManager.shiftMultidimensional(resultArray, maxSpareMicIndex, maxIndex);
             return resultArray;
         }
 
-        public int getShiftBetweenMicrophones(int[,] source, int mic1Index, int mic2Index, int maxShiftCount)
+        public ShiftWithValue getShiftBetweenMicrophones(int[,] source, int mic1Index, int mic2Index, int maxShiftCount)
         {
 
             long maxCorrelation = 0;
@@ -134,8 +133,9 @@ namespace SimpleAngle
             }
 
             Console.WriteLine("Max shift (ANGLE PROCESSING):" + maxShift);
+            ShiftWithValue shiftAndValue = new ShiftWithValue(maxShift, maxCorrelation);
 
-            return maxShift;
+            return shiftAndValue;
         }
 
 

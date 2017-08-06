@@ -43,7 +43,6 @@ namespace MicAngle
         }
         public int getMaxMicDelay(int mic1Index,int mic2Index, out double distance)
         {
-            int firstMicrophoneIndex = 0;
             int lastMicrophoneIndex = Mn.Count - 1;
             double L = SignalsManager.getDistance(Mn[mic1Index].X, Mn[mic1Index].Y, Mn[mic2Index].X, Mn[mic2Index].Y);
             distance = L;

@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 
-namespace MicAngle
+namespace SimpleAngle
 {
     class MyUtils
     {

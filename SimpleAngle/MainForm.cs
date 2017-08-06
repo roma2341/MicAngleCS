@@ -1,5 +1,4 @@
-﻿using MicAngle;
-using NAudio.Wave;
+﻿using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 using SimpleAngle.Models;
 using System;
@@ -20,12 +19,16 @@ namespace SimpleAngle
         const int SAMPLING_RATE = 44100;
         const int CHANNELS = 2;
         const int MICROPHONES_COUNT = 4;
-        const double MICROPHONE_DISTANCE = 0.5; //Meters
+        const double MICROPHONE_DISTANCE = 1; //Meters
         const int CONJUNCTED_CHANNELS_1 = 1;
         const int CONJUNCTED_CHANNELS_2 = 2;
         const bool CONJUNTION_ENABLED = true;
         const int ALIGN_MIC_DATA_SHIFTS_MAX = 130;
         const int V = 340;
+        const int SOUND_EMITER_LISTEN_TIME = 150;
+        const int CENTRAL_MIRCOPHONE_INDEX = 1;
+
+        SignalManager signalManager = new SignalManager(SAMPLING_RATE);
 
         DataCorrelation correlationer;
         SoundConfig soundConfig;
@@ -169,14 +172,14 @@ namespace SimpleAngle
 
         }
         
-        public void drawAngles(double angle1, double  angle2)
+        public void drawAngles(List<double> angles,int mainMicrophoneIndex,bool[] relativityToCenter)
         {
-
+            const int POINT_SIZE = 15;
             int contextRotation = int.Parse(tbAngle.Text);
             float scaling = float.Parse(textBoxScaling.Text);
 
 
-     Bitmap MyImage = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
+            Bitmap MyImage = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
             pictureBox1.Image = MyImage;
 
             Graphics g;
@@ -188,48 +191,132 @@ namespace SimpleAngle
 
             Pen mypen = new Pen(Brushes.Black);
             g.Clear(Color.White);
-            MicAngle.Point center = new MicAngle.Point(0, 0);
-            MicAngle.Point point1 = new MicAngle.Point(-100, 0);
-            MicAngle.Point point2 = new MicAngle.Point(100, 0);
-            MicAngle.Point rotated1 = MyUtils.rotate(center, point1, angle1);
-            MicAngle.Point rotated2 = MyUtils.rotate(center, point2, 360 - angle2);
+          //  System.Windows.Point center = new System.Windows.Point(0, 0);
+         //   System.Windows.Point point1 = new System.Windows.Point(-100, 0);
+          //  System.Windows.Point point2 = new System.Windows.Point(100, 0);
+
+           // Pen penMicro = new Pen(Color.Red);
+            Pen penSound = new Pen(Color.Blue);
+            Pen intersectionPencil = new Pen(Color.DarkViolet);
+            Pen[] microphonePencils = new Pen[3];
+            microphonePencils[0] = new Pen(Color.Red);
+            microphonePencils[1] = new Pen(Color.Green);
+            microphonePencils[2] = new Pen(Color.Blue);
 
 
+            System.Windows.Point soundPoint = signalManager.Sn[0].Position;
+            
 
-            Pen pen1 = new Pen(Color.Red);
+            g.DrawEllipse(penSound, (float)soundPoint.X- POINT_SIZE/2, 
+                (float)soundPoint.Y- POINT_SIZE/2, POINT_SIZE, POINT_SIZE);
+        
+            for (var i = 0; i < signalManager.Mn.Count; i++)
+            {
+                g.DrawEllipse(microphonePencils[i], (float)signalManager.Mn[i].X- POINT_SIZE/2, 
+                    (float)signalManager.Mn[i].Y- POINT_SIZE/2, POINT_SIZE, POINT_SIZE);
+            }
+            List<System.Windows.Point> mnPoints = new List<System.Windows.Point>();
+            List<System.Windows.Point> rotatedPoints = new List<System.Windows.Point>();
 
-            g.DrawLine(mypen, (float)center.X, (float)center.Y, (float)point1.X, (float)point1.Y);
-            g.DrawLine(mypen, (float)center.X, (float)center.Y, (float)point2.X, (float)point2.Y);
+            System.Windows.Point centerPoint = signalManager.Mn[mainMicrophoneIndex].Position;
+            int currentAngle = 0;
+            for (int i = 0; i < signalManager.Mn.Count; i++)
+            {
+                if (i == mainMicrophoneIndex) continue;
+                System.Windows.Point pointToDraw = signalManager.Mn[i].Position;
+                System.Windows.Point rotatedPoint =new System.Windows.Point();
+                if (relativityToCenter[currentAngle])
+                    rotatedPoint = MyUtils.rotate(centerPoint, pointToDraw, angles[currentAngle]);
+                else
+                    rotatedPoint = MyUtils.rotate(pointToDraw,centerPoint, angles[currentAngle]);
 
-            MicAngle.Point prolongedRotated1 = MyUtils.CalculatePointWithDistance(point1, rotated1, 1000);
-            MicAngle.Point prolongedRotated2 = MyUtils.CalculatePointWithDistance(point2, rotated2, 1000);
+                mnPoints.Add(pointToDraw);
+                rotatedPoints.Add(rotatedPoint);
 
-            float rot1X = (float)prolongedRotated1.X;
-            float rot1Y = (float)prolongedRotated1.Y;
-            float rot2X = (float)prolongedRotated2.X;
-            float rot2Y = (float)prolongedRotated2.Y;
+                g.DrawLine(mypen, (float)centerPoint.X, (float)centerPoint.Y,
+                    (float)pointToDraw.X, (float)pointToDraw.Y);
+                System.Windows.Point prolongedRotated1 = MyUtils.CalculatePointWithDistance(
+                    signalManager.Mn[i].Position, rotatedPoint, 500);
 
-            g.DrawLine(pen1, (float)point1.X, (float)point1.Y, rot1X, rot1Y);
-            g.DrawLine(pen1, (float)point2.X, (float)point2.Y, rot2X, rot2Y);
+                float rotatedX = (float)prolongedRotated1.X;
+                float rotatedY = (float)prolongedRotated1.Y;
 
+                g.DrawLine(microphonePencils[i], (float)pointToDraw.X, (float)pointToDraw.Y, rotatedX, rotatedY);
+                currentAngle++;
+            }
 
+            System.Windows.Point intersectionPoint = GlobalMercator.Intersection(mnPoints[0], 
+                rotatedPoints[0], mnPoints[1], rotatedPoints[1]);
+            if(!Double.IsNaN(intersectionPoint.X) && !Double.IsNaN(intersectionPoint.Y )) { 
+            g.DrawEllipse(intersectionPencil, (float)intersectionPoint.X - POINT_SIZE / 2,
+                   (float)intersectionPoint.Y - POINT_SIZE / 2, POINT_SIZE, POINT_SIZE);
+            }
+
+            // System.Windows.Point rotated2 = MyUtils.rotate(center, point2, 360 - angle2);
 
             g.Dispose();
         }
 
-        public void processSoundData(int[,] data)
+        public void processSoundData(int[,] data,bool combine = false)
         {
+            if (combine) { 
             data =  DataCorrelation.alignAndCombineSignalData(data, CONJUNCTED_CHANNELS_1, CONJUNCTED_CHANNELS_2, ALIGN_MIC_DATA_SHIFTS_MAX);
-            int maxShiftCount = SignalsOperations.processMaxShiftsCount(MICROPHONE_DISTANCE, SAMPLING_RATE, V);
-           int shift01 = correlationer.getShiftBetweenMicrophones(data, 0, 1, maxShiftCount);
-            int shift12 = correlationer.getShiftBetweenMicrophones(data, 0, 1, maxShiftCount);
+            }
+            double distance10 = signalManager.getDistanceBetweenMicrophones(0, CENTRAL_MIRCOPHONE_INDEX);
+            double distance12 = signalManager.getDistanceBetweenMicrophones(2, CENTRAL_MIRCOPHONE_INDEX);
 
-            double angle01 = SignalsOperations.getAngleFromDelay(soundConfig, shift01);
-            double angle12 = SignalsOperations.getAngleFromDelay(soundConfig, shift12);
+            int maxShiftCount10 = signalManager.processMaxShiftsCount(distance10);
+            int maxShiftCount12 = signalManager.processMaxShiftsCount(distance12);
+            ShiftWithValue shift10 = correlationer.getShiftBetweenMicrophones(data, CENTRAL_MIRCOPHONE_INDEX, 0, maxShiftCount10);
+            ShiftWithValue shift10Negative = correlationer.getShiftBetweenMicrophones(data, 0, CENTRAL_MIRCOPHONE_INDEX, maxShiftCount10);
+            ShiftWithValue shift12 = correlationer.getShiftBetweenMicrophones(data, CENTRAL_MIRCOPHONE_INDEX, 2, maxShiftCount12);
+            ShiftWithValue shift12Negative = correlationer.getShiftBetweenMicrophones(data, 2, CENTRAL_MIRCOPHONE_INDEX, maxShiftCount12);
 
-            drawAngles(angle01, angle12);
+            int shift10Value = 0;
+            bool shift10Positive = false;
+            if (shift10.Value > shift10Negative.Value)
+            {
+                shift10Value = shift10.Shift;
+                shift10Positive = true;
+            }
+            else
+            {
+                shift10Value = shift10Negative.Shift;
+                shift10Positive = false;
+            }
 
-            Console.WriteLine("angle01:" + angle01);
+            int shift12Value = 0;
+            bool shift12Positive = false;
+            if (shift12.Value > shift12Negative.Value)
+            {
+                shift12Value = shift12.Shift;
+                shift12Positive = true;
+            }
+            else
+            {
+                shift12Value = shift12Negative.Shift;
+                shift12Positive = false;
+            }
+            Console.WriteLine("shift10Positive:" + shift10Positive);
+            Console.WriteLine("shift12Positive:" + shift12Positive);
+
+
+            double angle10 = SignalManager.getAngleFromDelay(soundConfig, shift10Value);
+            double angle12 = SignalManager.getAngleFromDelay(soundConfig, shift12Value);
+
+            // if (shift10Positive) angle10 = -angle10;
+            // if (shift12Positive) angle12 = -angle12;
+            bool[] relativityToCenter = new bool[2];
+            relativityToCenter[0] = shift10Positive;
+            relativityToCenter[1] = shift12Positive;
+
+            List<double> angles = new List<double>();
+            angles.Add(angle10);
+            angles.Add(angle12);
+
+            drawAngles(angles,CENTRAL_MIRCOPHONE_INDEX, relativityToCenter);
+
+            Console.WriteLine("angle01:" + angle10);
             Console.WriteLine("angle12:" + angle12);
 
             //clear chatrts part
@@ -251,7 +338,7 @@ namespace SimpleAngle
                 }
             }
 
-            int maxShift = SignalsOperations.processMaxShiftsCount(MICROPHONE_DISTANCE, SAMPLING_RATE,V);
+            int maxShift = signalManager.processMaxShiftsCount(MICROPHONE_DISTANCE);
             /*int[] shiftsCorrelation = DataCorrelation.generateCorrelationArray(data, new CorrelationConfig(maxShift, maxShift, false));
             int[] backwardShiftCorrelation = DataCorrelation.generateCorrelationArray(data, new CorrelationConfig(maxShift, maxShift, true));
 
@@ -377,7 +464,7 @@ namespace SimpleAngle
                 int[,] arr = aggregatedArraysToSeparated(soundData, MICROPHONES_COUNT);
                
 
-                processSoundData(arr);
+                processSoundData(arr,true);
                 //recAsio.Dispose();
                 //recAsio = null;
                // recAsio.Dispose();
@@ -400,6 +487,56 @@ namespace SimpleAngle
         {
             if (recAsio!=null)
             recAsio.ShowControlPanel();
+        }
+
+        private void btnProcessAngle_Click(object sender, EventArgs e)
+        {
+            if(cbTestMode.Checked)
+            {
+                //Prepearing signals array
+                int smnSizeMin = int.MaxValue;
+                int signalValuesCount = signalManager.processSignalElementsCount(SOUND_EMITER_LISTEN_TIME);
+                  //signalManager.Sn[0].processEmiterArr(SOUND_EMITER_LISTEN_TIME, signalManager.SamplingRate, SignalManager.V);
+                   int[,] signalsArr = new int[signalManager.Mn.Count, signalValuesCount];
+
+                for (int i = 0; i < signalManager.Mn.Count; i++)
+                    {
+                    double distanceFromSoundEmiterToMic = signalManager.getDistanceFromSoundEmitterToMicrophone(0, i);
+                   int kDelay = (int)(distanceFromSoundEmiterToMic * signalManager.SamplingRate / V);
+                    int[] arr = signalManager.processEmiterArr(SOUND_EMITER_LISTEN_TIME, SignalManager.V, kDelay);
+                       
+                     if (arr.Length < smnSizeMin) smnSizeMin = arr.Length;
+
+                        for (int j = 0; j < arr.Length; j++)
+                        {
+                            signalsArr[i, j] = arr[j];
+                            //  if (j< SIGNAL_VALUES_TO_OUTPUT)
+                            if (j<50 || j > arr.Length - 50)
+                             Console.Write(arr[j]+" ");
+                        }
+                         Console.WriteLine();
+                    }
+                    ResizeArray<int>(signalsArr, signalManager.Mn.Count, smnSizeMin);
+                //processing signals data
+                processSoundData(signalsArr);
+
+            }
+        }
+
+       private T[,] ResizeArray<T>(T[,] original, int rows, int cols)
+        {
+            var newArray = new T[rows, cols];
+            int minRows = Math.Min(rows, original.GetLength(0));
+            int minCols = Math.Min(cols, original.GetLength(1));
+            for (int i = 0; i < minRows; i++)
+                for (int j = 0; j < minCols; j++)
+                    newArray[i, j] = original[i, j];
+            return newArray;
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            signalManager = SignalManager.fromConfig(rtbConfig.Text);
         }
     }
 }

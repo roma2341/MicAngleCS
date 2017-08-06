@@ -22,3 +22,7 @@ C:\Users\roma\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.MainForm.re
 C:\Users\roma\Documents\MicAngleCS\SimpleAngle\bin\Debug\Newtonsoft.Json.dll
 C:\Users\roma\Documents\MicAngleCS\SimpleAngle\bin\Debug\Newtonsoft.Json.xml
 C:\Users\roma\Documents\MicAngleCS\SimpleAngle\obj\Debug\SimpleAngle.csprojResolveAssemblyReference.cache
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\bin\Debug\GMap.NET.Core.dll
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\bin\Debug\GMap.NET.WindowsForms.dll
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\bin\Debug\GMap.NET.Core.xml
+C:\Users\roma\Documents\MicAngleCS\SimpleAngle\bin\Debug\GMap.NET.WindowsForms.xml

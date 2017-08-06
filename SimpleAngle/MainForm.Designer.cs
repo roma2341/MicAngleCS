@@ -28,16 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series7 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series8 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series9 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series10 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series11 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.Windows.Forms.DataVisualization.Charting.Series series12 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series3 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series4 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series5 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series6 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.btnShowDiagrams = new System.Windows.Forms.Button();
             this.signalChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.tbAngle = new System.Windows.Forms.TextBox();
@@ -50,11 +50,18 @@
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.rtbConfig = new System.Windows.Forms.RichTextBox();
             this.comboAsioDevice = new System.Windows.Forms.ComboBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.btnAsioControlPanel = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.cbTestMode = new System.Windows.Forms.CheckBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnProcessAngle = new System.Windows.Forms.Button();
             this.textBoxScaling = new System.Windows.Forms.TextBox();
+            this.btnAsioControlPanel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.signalChart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.correlationChart)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -72,11 +79,12 @@
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.tabPage3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // btnShowDiagrams
@@ -91,35 +99,35 @@
             // 
             // signalChart
             // 
-            chartArea3.CursorX.IsUserEnabled = true;
-            chartArea3.CursorX.IsUserSelectionEnabled = true;
-            chartArea3.Name = "ChartArea1";
-            this.signalChart.ChartAreas.Add(chartArea3);
+            chartArea1.CursorX.IsUserEnabled = true;
+            chartArea1.CursorX.IsUserSelectionEnabled = true;
+            chartArea1.Name = "ChartArea1";
+            this.signalChart.ChartAreas.Add(chartArea1);
             this.signalChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend3.Name = "Legend1";
-            this.signalChart.Legends.Add(legend3);
+            legend1.Name = "Legend1";
+            this.signalChart.Legends.Add(legend1);
             this.signalChart.Location = new System.Drawing.Point(0, 0);
             this.signalChart.Name = "signalChart";
-            series7.ChartArea = "ChartArea1";
-            series7.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series7.Legend = "Legend1";
-            series7.Name = "Series1";
-            series8.ChartArea = "ChartArea1";
-            series8.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series8.Legend = "Legend1";
-            series8.Name = "Series2";
-            series9.ChartArea = "ChartArea1";
-            series9.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series9.Legend = "Legend1";
-            series9.Name = "Series3";
-            series10.ChartArea = "ChartArea1";
-            series10.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series10.Legend = "Legend1";
-            series10.Name = "Series4";
-            this.signalChart.Series.Add(series7);
-            this.signalChart.Series.Add(series8);
-            this.signalChart.Series.Add(series9);
-            this.signalChart.Series.Add(series10);
+            series1.ChartArea = "ChartArea1";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series1.Legend = "Legend1";
+            series1.Name = "Series1";
+            series2.ChartArea = "ChartArea1";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series2.Legend = "Legend1";
+            series2.Name = "Series2";
+            series3.ChartArea = "ChartArea1";
+            series3.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series3.Legend = "Legend1";
+            series3.Name = "Series3";
+            series4.ChartArea = "ChartArea1";
+            series4.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series4.Legend = "Legend1";
+            series4.Name = "Series4";
+            this.signalChart.Series.Add(series1);
+            this.signalChart.Series.Add(series2);
+            this.signalChart.Series.Add(series3);
+            this.signalChart.Series.Add(series4);
             this.signalChart.Size = new System.Drawing.Size(760, 170);
             this.signalChart.TabIndex = 1;
             this.signalChart.Text = "chart1";
@@ -134,23 +142,23 @@
             // 
             // correlationChart
             // 
-            chartArea4.Name = "ChartArea1";
-            this.correlationChart.ChartAreas.Add(chartArea4);
+            chartArea2.Name = "ChartArea1";
+            this.correlationChart.ChartAreas.Add(chartArea2);
             this.correlationChart.Dock = System.Windows.Forms.DockStyle.Fill;
-            legend4.Name = "Legend1";
-            this.correlationChart.Legends.Add(legend4);
+            legend2.Name = "Legend1";
+            this.correlationChart.Legends.Add(legend2);
             this.correlationChart.Location = new System.Drawing.Point(0, 0);
             this.correlationChart.Name = "correlationChart";
-            series11.ChartArea = "ChartArea1";
-            series11.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series11.Legend = "Legend1";
-            series11.Name = "Series1";
-            series12.ChartArea = "ChartArea1";
-            series12.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-            series12.Legend = "Legend1";
-            series12.Name = "Series2";
-            this.correlationChart.Series.Add(series11);
-            this.correlationChart.Series.Add(series12);
+            series5.ChartArea = "ChartArea1";
+            series5.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series5.Legend = "Legend1";
+            series5.Name = "Series1";
+            series6.ChartArea = "ChartArea1";
+            series6.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+            series6.Legend = "Legend1";
+            series6.Name = "Series2";
+            this.correlationChart.Series.Add(series5);
+            this.correlationChart.Series.Add(series6);
             this.correlationChart.Size = new System.Drawing.Size(760, 210);
             this.correlationChart.TabIndex = 5;
             this.correlationChart.Text = "chart2";
@@ -179,6 +187,7 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
@@ -260,6 +269,46 @@
             this.tabPage2.Text = "tabPage2";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(903, 384);
+            this.pictureBox1.TabIndex = 9;
+            this.pictureBox1.TabStop = false;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.btnSave);
+            this.tabPage3.Controls.Add(this.rtbConfig);
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(909, 390);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "tabPage3";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(301, 7);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(75, 23);
+            this.btnSave.TabIndex = 1;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // rtbConfig
+            // 
+            this.rtbConfig.Location = new System.Drawing.Point(6, 6);
+            this.rtbConfig.Name = "rtbConfig";
+            this.rtbConfig.Size = new System.Drawing.Size(288, 105);
+            this.rtbConfig.TabIndex = 0;
+            this.rtbConfig.Text = "З(X:0;y:10;A:1,0)\nМ(X:0;y:0)\nМ(X:1;y:0)\nМ(X:2;y:0)\nsamplingRate(44100)";
+            // 
             // comboAsioDevice
             // 
             this.comboAsioDevice.FormattingEnabled = true;
@@ -277,6 +326,10 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.cbTestMode);
+            this.splitContainer2.Panel1.Controls.Add(this.label2);
+            this.splitContainer2.Panel1.Controls.Add(this.label1);
+            this.splitContainer2.Panel1.Controls.Add(this.btnProcessAngle);
             this.splitContainer2.Panel1.Controls.Add(this.textBoxScaling);
             this.splitContainer2.Panel1.Controls.Add(this.btnAsioControlPanel);
             this.splitContainer2.Panel1.Controls.Add(this.btnShowDiagrams);
@@ -290,6 +343,54 @@
             this.splitContainer2.SplitterDistance = 65;
             this.splitContainer2.TabIndex = 9;
             // 
+            // cbTestMode
+            // 
+            this.cbTestMode.AutoSize = true;
+            this.cbTestMode.Checked = true;
+            this.cbTestMode.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbTestMode.Location = new System.Drawing.Point(732, 32);
+            this.cbTestMode.Name = "cbTestMode";
+            this.cbTestMode.Size = new System.Drawing.Size(76, 17);
+            this.cbTestMode.TabIndex = 11;
+            this.cbTestMode.Text = "Test mode";
+            this.cbTestMode.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(242, 13);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(42, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Scaling";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(135, 11);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(77, 13);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Rotate graphic";
+            // 
+            // btnProcessAngle
+            // 
+            this.btnProcessAngle.Location = new System.Drawing.Point(611, 29);
+            this.btnProcessAngle.Name = "btnProcessAngle";
+            this.btnProcessAngle.Size = new System.Drawing.Size(103, 23);
+            this.btnProcessAngle.TabIndex = 8;
+            this.btnProcessAngle.Text = "processAngle";
+            this.btnProcessAngle.UseVisualStyleBackColor = true;
+            this.btnProcessAngle.Click += new System.EventHandler(this.btnProcessAngle_Click);
+            // 
+            // textBoxScaling
+            // 
+            this.textBoxScaling.Location = new System.Drawing.Point(242, 30);
+            this.textBoxScaling.Name = "textBoxScaling";
+            this.textBoxScaling.Size = new System.Drawing.Size(100, 20);
+            this.textBoxScaling.TabIndex = 7;
+            this.textBoxScaling.Text = "0,1";
+            // 
             // btnAsioControlPanel
             // 
             this.btnAsioControlPanel.Location = new System.Drawing.Point(520, 30);
@@ -299,24 +400,6 @@
             this.btnAsioControlPanel.Text = "ASIO CTRL";
             this.btnAsioControlPanel.UseVisualStyleBackColor = true;
             this.btnAsioControlPanel.Click += new System.EventHandler(this.btnAsioControlPanel_Click);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(903, 384);
-            this.pictureBox1.TabIndex = 9;
-            this.pictureBox1.TabStop = false;
-            // 
-            // textBoxScaling
-            // 
-            this.textBoxScaling.Location = new System.Drawing.Point(242, 30);
-            this.textBoxScaling.Name = "textBoxScaling";
-            this.textBoxScaling.Size = new System.Drawing.Size(100, 20);
-            this.textBoxScaling.TabIndex = 7;
-            this.textBoxScaling.Text = "0,1";
             // 
             // MainForm
             // 
@@ -343,12 +426,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.tabPage3.ResumeLayout(false);
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -372,6 +456,13 @@
         private System.Windows.Forms.Button btnAsioControlPanel;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.TextBox textBoxScaling;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.RichTextBox rtbConfig;
+        private System.Windows.Forms.Button btnProcessAngle;
+        private System.Windows.Forms.CheckBox cbTestMode;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
     }
 }
 
