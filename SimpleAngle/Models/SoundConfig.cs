@@ -10,6 +10,5 @@ namespace SimpleAngle.Models
     {
         public int V { get; set; }
         public int SamplingRate { get; set; }
-        public double DistanceBetweenMicrophones { get; set; }
     }
 }

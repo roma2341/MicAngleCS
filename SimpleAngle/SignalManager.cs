@@ -68,7 +68,7 @@ namespace SimpleAngle
 
         public int processMaxShiftsCount(double micDistanceDelta)
         {
-            return (int)Math.Ceiling(micDistanceDelta * SamplingRate / V);
+            return (int)Math.Floor(micDistanceDelta * SamplingRate / V);
         }
 
         public static void shiftMultidimensionalRight(int[,] source, int dimensionI, int n)
@@ -120,10 +120,10 @@ namespace SimpleAngle
             return arr;
         }
 
-        public static double getAngleFromDelay(SoundConfig config,int delay)
+        public static double getAngleFromDelay(SoundConfig config,double distance,int delay)
         {
 
-            double cosA = config.V * delay / (config.DistanceBetweenMicrophones * config.SamplingRate);
+            double cosA = config.V * delay / (distance * config.SamplingRate);
             double arcCosA = Math.Acos(cosA);
             double angle = arcCosA * 180 / Math.PI;
             // if (delay < 0)angle = 360-angle;

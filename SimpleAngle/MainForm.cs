@@ -64,7 +64,6 @@ namespace SimpleAngle
             soundConfig = new Models.SoundConfig();
             soundConfig.SamplingRate = SAMPLING_RATE;
             soundConfig.V = V;
-            soundConfig.DistanceBetweenMicrophones = MICROPHONE_DISTANCE;
             correlationer = new DataCorrelation(soundConfig);
 
             string[] asioDevices = AsioOut.GetDriverNames();
@@ -309,7 +308,7 @@ namespace SimpleAngle
                 double distanceBetweenMicrophones = signalManager.getDistanceBetweenMicrophones(micPair.Key, micPair.Value);
                 int maxShiftCount = signalManager.processMaxShiftsCount(distanceBetweenMicrophones);
                 ShiftWithValue optimalShift= correlationer.getShiftBetweenMicrophones(data, micPair.Key, micPair.Value, maxShiftCount);
-                double optimalAngle = SignalManager.getAngleFromDelay(soundConfig, optimalShift.Shift);
+                double optimalAngle = SignalManager.getAngleFromDelay(soundConfig, distanceBetweenMicrophones, optimalShift.Shift);
                 if (!optimalShift.Positive) optimalAngle = 180-optimalAngle;
                 Console.WriteLine("optimal angle:" + optimalAngle);
                 drawAngleToSound(g,signalManager.Mn[micPair.Key],signalManager.Mn[micPair.Value],optimalAngle,Color.Black);
