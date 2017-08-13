@@ -73,7 +73,7 @@ namespace SimpleAngle
                 else
                     elementOfSecondArray = source[indexOfSecondArray, elementOfSecondArrayIndex];
 
-                result += elementOfFirstArray * elementOfSecondArray;
+                result += (long)Math.Sqrt(elementOfFirstArray * elementOfSecondArray);
             }
             return result;
         }
@@ -122,19 +122,27 @@ namespace SimpleAngle
             long maxCorrelation = 0;
             int maxShift = 0;
             if (maxShiftCount > source.GetLength(1)) throw new IndexOutOfRangeException("max shift can't be greatest than array");
+            //Console.WriteLine("getShiftBetweenMicrophones:");
             for (int i = -maxShiftCount; i < maxShiftCount; i++)
             {
+                
                 long correlation = getCrossCorrelation(source, mic1Index, mic2Index, 0, i, maxShiftCount);
+                //if (correlation < 0) correlation = -correlation;
                 if (correlation > maxCorrelation)
                 {
                     maxCorrelation = correlation;
                     maxShift = i;
                 }
+                //Console.WriteLine("k:" + i +" - "+ correlation);
             }
-
+            Console.WriteLine("end:");
+            int resultShift = Math.Abs(maxShift);
             Console.WriteLine("Max shift (ANGLE PROCESSING):" + maxShift);
-            ShiftWithValue shiftAndValue = new ShiftWithValue(maxShift, maxCorrelation);
-
+            ShiftWithValue shiftAndValue = new ShiftWithValue(resultShift, maxCorrelation);
+            if (maxShift < 0)
+            {
+                shiftAndValue.Positive = false;
+            }
             return shiftAndValue;
         }
 

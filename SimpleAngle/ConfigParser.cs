@@ -30,6 +30,7 @@ namespace SimpleAngle
                 y = Double.Parse(m.Groups[3].Value);
                 microphones.Add(new Microphone(x, y));
             }
+            microphones = microphones.OrderBy(m => m.X).ToList<Microphone>();
             if (!isCorrect) Console.Out.WriteLine("Невірні данні");
             return microphones;
             //Звук(x:0;y:10;А:10)

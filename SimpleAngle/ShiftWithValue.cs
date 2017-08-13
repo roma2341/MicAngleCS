@@ -8,12 +8,14 @@ namespace SimpleAngle
 {
     class ShiftWithValue
     {
-        public ShiftWithValue(int shift, long value)
+        public ShiftWithValue(int shift, long value,bool positive = true)
         {
             this.Shift = shift;
-            this.Value = value;
+            this.FunctionResult = value;
+            this.Positive = positive;
         }
         public int Shift { get; set; }
-        public long Value { get; set; }
+        public long FunctionResult { get; set; }
+        public bool Positive { get; set; }
     }
 }

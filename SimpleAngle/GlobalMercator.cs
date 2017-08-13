@@ -227,6 +227,20 @@ namespace SimpleAngle
 
             return new Point(x, y);
         }
+        /*Sort points in ascending order by x*/
+        public static List<Point> SortPointsByXAsc(List<Point> points)
+        {
+            return points.OrderBy(o => o.X).ToList();
+        }
+        public static Point getMiddlePoint(Point leftPoint, Point rightPoint)
+        {
+            List<Point> points = new List<Point>();
+            double x = (Math.Max(leftPoint.X, rightPoint.X) - Math.Min(leftPoint.X, rightPoint.X)) / 2 + Math.Min(leftPoint.X, rightPoint.X);
+            double y = (Math.Max(leftPoint.Y, rightPoint.Y) - Math.Min(leftPoint.Y, rightPoint.Y)) / 2 + Math.Min(leftPoint.Y, rightPoint.Y);
+            var middlePoint = new Point(x, y);
+            return middlePoint;
+        }
+
 
     }
 }
