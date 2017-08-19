@@ -228,10 +228,12 @@ namespace SimpleAngle
             /*Drawing angles */        
             System.Windows.Point centralPoint = GlobalMercator.getMiddlePoint(m1.Position, m2.Position);
             System.Windows.Point rotatedM2Point = MyUtils.rotate(m2.Position, centralPoint, angle);
+            System.Windows.Point rotatedM2PointDownPart = MyUtils.rotate(m2.Position, centralPoint, 180 - angle);
             System.Windows.Point prolongedM1Point = MyUtils.CalculatePointWithDistance(rotatedM2Point, centralPoint, 500);
-            System.Windows.Point prolongedM2Point = MyUtils.CalculatePointWithDistance(centralPoint, rotatedM2Point, 500);
+            System.Windows.Point prolongedM2Point = MyUtils.CalculatePointWithDistance(centralPoint, rotatedM2PointDownPart, 500);
 
-            g.DrawLine(microphonePencil, (float)prolongedM1Point.X, (float)prolongedM1Point.Y, (float)prolongedM2Point.X, (float)prolongedM2Point.Y);
+            g.DrawLine(microphonePencil, (float)prolongedM1Point.X, (float)prolongedM1Point.Y, (float)centralPoint.X, (float)centralPoint.Y);
+            g.DrawLine(microphonePencil, (float)prolongedM2Point.X, (float)prolongedM2Point.Y, (float)centralPoint.X, (float)centralPoint.Y);
 
             /* List<System.Windows.Point> mnPoints = new List<System.Windows.Point>();
              List<System.Windows.Point> rotatedPoints = new List<System.Windows.Point>();
